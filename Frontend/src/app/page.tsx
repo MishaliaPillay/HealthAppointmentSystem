@@ -1,4 +1,4 @@
-// src/app/page.tsx
+
 "use client";
 import Image from "next/image";
 import LoginPage from "./login/page";
