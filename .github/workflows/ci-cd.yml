@@ -9,9 +9,6 @@ on:
     branches:
       - development
       - main
-      
-
-      
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -29,14 +26,16 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
+          working-directory: Frontend # Specify the working directory
 
       - name: Install dependencies
         run: npm install
+        working-directory: Frontend # Ensure commands run in the Frontend directory
 
       - name: Build project
         run: npm run build
+        working-directory: Frontend # Ensure commands run in the Frontend directory
 
       - name: Run linting
         run: npm run lint
-
-    
+        working-directory: Frontend # Ensure commands run in the Frontend directory
