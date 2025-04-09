@@ -28,6 +28,7 @@ namespace HealthAPP.Domain.Persons
         public string Role { get; set; }
 
         [ForeignKey("UserId")]
+        public long UserId { get; set; }
         public virtual User User { get; set; }
 
 
