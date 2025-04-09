@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import {
   Form,
@@ -8,6 +9,7 @@ import {
   Typography,
   Radio,
   Select,
+  RadioChangeEvent,
 } from "antd";
 import {
   UserOutlined,
@@ -77,10 +79,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     "Urology",
   ];
 
-  const handleUserTypeChange = (e: any) => {
+  const handleUserTypeChange = (e: RadioChangeEvent) => {
     setUserType(e.target.value);
   };
-
   const loginForm = (
     <Form
       name="login"
@@ -194,7 +195,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           { required: true, message: "Please select your account type!" },
         ]}
       >
-        <Radio.Group onChange={handleUserTypeChange}>
+        <Radio.Group onChange={handleUserTypeChange} value={userType}>
           <Radio value="patient">Patient</Radio>
           <Radio value="doctor">Doctor</Radio>
         </Radio.Group>
