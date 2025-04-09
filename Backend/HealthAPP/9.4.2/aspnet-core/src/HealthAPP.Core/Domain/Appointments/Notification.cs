@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HealthAPP.Domain.Appointments
 {
-    class Notfications
+   public class Notification
     {
     }
 }
