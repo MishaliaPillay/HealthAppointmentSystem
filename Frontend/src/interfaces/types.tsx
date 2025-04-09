@@ -11,5 +11,5 @@ export interface Appointment {
   specialty: string;
   date: string;
   time: string;
-  status: "upcoming" | "completed" | "cancelled";
+  status: "confirmed" | "pending" | "completed" | "cancelled" | "upcoming";
 }

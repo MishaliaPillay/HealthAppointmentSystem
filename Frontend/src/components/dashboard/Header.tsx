@@ -40,7 +40,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         justifyContent: "space-between",
       }}
     >
-      {/* Toggle sidebar button */}
+
+        
       <Button
         type="text"
         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -48,7 +49,6 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         style={{ color: "white" }}
       />
 
-      {/* User menu */}
       <Dropdown menu={{ items }} placement="bottomRight">
         <Space style={{ cursor: "pointer", color: "white" }}>
           <UserOutlined />

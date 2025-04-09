@@ -6,7 +6,7 @@ services:
     image: abp/host
     environment:
       ASPNETCORE_ENVIRONMENT: "Staging"
-      ConnectionStrings__Default: "Server=192.168.110.243; Database=HealthAPPDb; User Id=sa; Password=yourStrong(!)Password; TrustServerCertificate=True;"
+      ConnectionStrings__Default: "Server=host.docker.internal,1433; Database=HealthAPPDb; User Id=sa; Password=yourStrong(!)Password; TrustServerCertificate=True;"
       App__ServerRootAddress: "http://localhost:44311/"
       App__ClientRootAddress: "http://localhost:4200/"
       App__CorsOrigins: "http://localhost:4200"

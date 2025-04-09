@@ -6,7 +6,7 @@ import type { Appointment } from "@/interfaces/types";
 const { Title } = Typography;
 
 export default function AppointmentsPage() {
-  // Mock data for appointments to be replaced with real data 
+  // Mock data for appointments to be replaced with real data
   const appointmentsData: Appointment[] = [
     {
       id: "1",
@@ -68,8 +68,8 @@ export default function AppointmentsPage() {
     {
       title: "Action",
       key: "action",
-      render: (_: any, record: Appointment) => (
-        <Button type="link" size="small">
+      render: (_: unknown, record: Appointment) => (
+        <Button type="link">
           {record.status === "upcoming" ? "Reschedule" : "View Details"}
         </Button>
       ),

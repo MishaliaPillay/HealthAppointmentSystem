@@ -58,6 +58,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   return (
     <Sider
+      trigger={null}
+      collapsible
       collapsed={collapsed}
       onCollapse={setCollapsed}
       breakpoint="lg"

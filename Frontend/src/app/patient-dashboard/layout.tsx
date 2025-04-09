@@ -19,15 +19,14 @@ export default function DashboardLayout({
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <Layout
         className="site-layout"
-        style={{ marginLeft: collapsed ? 80 : 200 }}
+        style={{ marginLeft: collapsed ? 60 : 200, transition: "all 0.2s" }}
       >
         <Header collapsed={collapsed} setCollapsed={setCollapsed} />
         <Content
           style={{
             margin: "24px 16px",
             padding: 24,
-            background: "#fff",
-            borderRadius: "8px",
+            background: "#f5f5f5",
             minHeight: 280,
           }}
         >

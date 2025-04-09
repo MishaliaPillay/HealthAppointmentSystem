@@ -70,7 +70,7 @@ namespace HealthAPP.Web.Host.Startup
             ConfigureSwagger(services);
 
             // Configure Abp and Dependency Injection
-            services.AddAbpWithoutCreatingServiceProvider<HealthAPPWebHostModule>(
+            services.AddAbp<HealthAPPWebHostModule>(
                 // Configure Log4Net logging
                 options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(
                     f => f.UseAbpLog4Net().WithConfig(_hostingEnvironment.IsDevelopment()
