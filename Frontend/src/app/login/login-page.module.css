@@ -1,0 +1,45 @@
+/* src/components/auth/LoginSignup.module.css */
+.formCard {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px !important;
+}
+
+.tabs {
+  margin-bottom: 24px;
+}
+
+.form {
+  width: 100%;
+}
+
+.rememberForgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgotLink {
+  float: right;
+}
+
+.submitButton {
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+}
+
+.socialButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.socialButton {
+  flex: 1;
+}
