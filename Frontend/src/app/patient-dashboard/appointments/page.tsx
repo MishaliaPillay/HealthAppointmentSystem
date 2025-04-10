@@ -135,7 +135,7 @@ export default function AppointmentsPage() {
       {
         title: "Action",
         key: "action",
-        render: (_: any, record: Appointment) => (
+        render: (_: unknown, record: Appointment) => (
           <Space size="small">
             <Button type="link" style={styles.actionButton}>
               {record.status === "upcoming" ? "Reschedule" : "View Details"}
