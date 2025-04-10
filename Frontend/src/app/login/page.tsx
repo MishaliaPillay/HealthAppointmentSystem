@@ -16,6 +16,8 @@ import {
   LockOutlined,
   MailOutlined,
   MedicineBoxOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import styles from "./login-page.module.css";
 
@@ -45,6 +47,8 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
+  const [password, setPassword] = useState<string>("");
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const onFinishLogin = (values: LoginFormValues) => {
     console.log("Login success:", values);
@@ -53,7 +57,13 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const onFinishSignup = (values: SignupFormValues) => {
     console.log("Signup success:", values);
   };
-
+  const passwordChecks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    specialChar: /[@$!%*?&]/.test(password),
+  };
   const medicalSpecialties = [
     "Cardiology",
     "Dermatology",
@@ -106,18 +116,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       </Form.Item>
 
       <Form.Item>
-        <div className={styles.rememberForgot}>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
-          <a href="#" className={styles.forgotLink}>
-            Forgot password?
-          </a>
-        </div>
-      </Form.Item>
-
-      <Form.Item>
         <Button
           type="primary"
           htmlType="submit"
@@ -162,7 +160,57 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           { min: 8, message: "Password must be at least 8 characters!" },
         ]}
       >
-        <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+        <div style={{ position: "relative" }}>
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Password"
+            size="large"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setShowTooltip(e.target.value.length > 0);
+            }}
+            onBlur={() => setShowTooltip(false)}
+          />
+          {showTooltip && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                background: "#fff",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                width: "100%",
+                zIndex: 10,
+              }}
+            >
+              <p>Password must contain:</p>
+              {Object.entries(passwordChecks).map(([key, valid]) => (
+                <p
+                  key={key}
+                  style={{
+                    color: valid ? "green" : "red",
+                    marginBottom: 4,
+                  }}
+                >
+                  {valid ? (
+                    <CheckCircleOutlined style={{ color: "green" }} />
+                  ) : (
+                    <CloseCircleOutlined style={{ color: "red" }} />
+                  )}
+                  {key === "length" && "At least 8 characters"}
+                  {key === "lowercase" && "At least one lowercase letter"}
+                  {key === "uppercase" && "At least one uppercase letter"}
+                  {key === "number" && "At least one number"}
+                  {key === "specialChar" &&
+                    "At least one special character (!@#$%^&*)"}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
       </Form.Item>
 
       <Form.Item
