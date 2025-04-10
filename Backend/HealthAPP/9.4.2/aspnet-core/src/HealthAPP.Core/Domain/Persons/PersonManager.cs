@@ -1,11 +1,9 @@
-﻿using Abp.Domain.Repositories;
-using System;
-using Abp.Domain.Services;
-using AutoMapper;
-using HealthAPP.Authorization.Users;
+﻿using System;
 using System.Threading.Tasks;
-using System.Linq;
+using Abp.Domain.Repositories;
+using Abp.Domain.Services;
 using Abp.UI;
+using HealthAPP.Authorization.Users;
 
 namespace HealthAPP.Domain.Persons
 {
