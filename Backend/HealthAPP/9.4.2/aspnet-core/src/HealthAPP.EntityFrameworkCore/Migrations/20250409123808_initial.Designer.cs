@@ -4,6 +4,7 @@ using HealthAPP.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthAPP.Migrations
 {
     [DbContext(typeof(HealthAPPDbContext))]
-    partial class HealthAPPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409123808_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1583,131 +1586,6 @@ namespace HealthAPP.Migrations
                     b.ToTable("AbpUsers");
                 });
 
-            modelBuilder.Entity("HealthAPP.Domain.Appointments.Appointment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("AppointmentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("AppointmentTime")
-                        .HasColumnType("time");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid?>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProviderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Purpose")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Appointments.ProviderAvailabilty", b =>
-                {
-                    b.ToTable("ProviderAvailabilties");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Person", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Persons");
-
-                    b.HasDiscriminator().HasValue("Person");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("HealthAPP.MultiTenancy.Tenant", b =>
                 {
                     b.Property<int>("Id")
@@ -1823,56 +1701,6 @@ namespace HealthAPP.Migrations
                     b.ToTable("AbpPermissions");
 
                     b.HasDiscriminator().HasValue("UserPermissionSetting");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Patient", b =>
-                {
-                    b.HasBaseType("HealthAPP.Domain.Persons.Person");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Country")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("PreferredContactMedthod")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Patient");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Provider", b =>
-                {
-                    b.HasBaseType("HealthAPP.Domain.Persons.Person");
-
-                    b.Property<string>("Biography")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MaxAppointmentsPerDay")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Qualification")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("YearsOfExperience")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Provider");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Roles.RoleClaim", b =>
@@ -2040,26 +1868,6 @@ namespace HealthAPP.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
-            modelBuilder.Entity("HealthAPP.Domain.Appointments.Appointment", b =>
-                {
-                    b.HasOne("HealthAPP.Domain.Persons.Patient", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("PatientId");
-
-                    b.HasOne("HealthAPP.Domain.Persons.Provider", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("ProviderId");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Person", b =>
-                {
-                    b.HasOne("HealthAPP.Authorization.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("HealthAPP.MultiTenancy.Tenant", b =>
                 {
                     b.HasOne("HealthAPP.Authorization.Users.User", "CreatorUser")
@@ -2156,16 +1964,6 @@ namespace HealthAPP.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Patient", b =>
-                {
-                    b.Navigation("Appointments");
-                });
-
-            modelBuilder.Entity("HealthAPP.Domain.Persons.Provider", b =>
-                {
-                    b.Navigation("Appointments");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,12 +1,9 @@
-version: '3'
-
 services:
-
   abp_host:
     image: abp/host
     environment:
       ASPNETCORE_ENVIRONMENT: "Staging"
-      ConnectionStrings__Default: "Server=10.0.75.1; Database=HealthAPPDb; User=HealthAPPUser; Password=YourStrongPassword;TrustServerCertificate=True;"
+      ConnectionStrings__Default: "Server=tcp:healthappserver27.database.windows.net,1433; Database=HealthAPPDb; User Id=sqladmin; Password=MySecurePass123!; TrustServerCertificate=True; Encrypt=True;"
       App__ServerRootAddress: "http://localhost:44311/"
       App__ClientRootAddress: "http://localhost:4200/"
       App__CorsOrigins: "http://localhost:4200"
@@ -15,9 +12,9 @@ services:
     ports:
       - "44311:80"
     volumes:
-      - "./Host-Logs:/app/App_Data/Logs"
+      - ./dataProtectionKeys:/root/.aspnet/DataProtection-Keys
     restart: always
-
+ 
   abp_ng:
     image: abp/ng
     ports:
