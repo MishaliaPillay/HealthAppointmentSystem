@@ -19,7 +19,7 @@ namespace HealthAPP.Domain.Persons
             _personManager = personManager;
         }
 
-        public async Task<Person> CreateProviderAsync(string firstName, string surname, string emailAddress, string phonenumber, string username, string password,string role ,string title, string biography ,int yearsOfExperience,int maxApp,string qauli)
+        public async Task<Person> CreateProviderAsync(string firstName, string surname, string emailAddress, string phonenumber, string username, string password,string title, string biography ,int yearsOfExperience,int maxApp,string qauli)
 
         {
             try
@@ -31,7 +31,7 @@ namespace HealthAPP.Domain.Persons
                     Email=emailAddress,
                     PhoneNumber= phonenumber,
                     UserName = username,
-                    Role=role,
+                    Role= "Provider",
                     Title =title,
                     Biography=biography,
                     YearsOfExperience= yearsOfExperience,
