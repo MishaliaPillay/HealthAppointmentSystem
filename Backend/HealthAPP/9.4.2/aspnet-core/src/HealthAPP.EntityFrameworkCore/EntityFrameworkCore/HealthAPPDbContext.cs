@@ -23,13 +23,6 @@ namespace HealthAPP.EntityFrameworkCore
         public DbSet<Notification> NotificationS { get; set; }
 
         public DbSet<ProviderAvailabilty> ProviderAvailabilties { get; set; }
-
-
-
-
-
-
-
         public HealthAPPDbContext(DbContextOptions<HealthAPPDbContext> options)
             : base(options)
         {
