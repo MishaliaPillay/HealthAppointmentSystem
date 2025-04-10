@@ -31,7 +31,6 @@ namespace HealthAPP.Domain.Persons
                     Email=emailAddress,
                     PhoneNumber= phonenumber,
                     UserName = username,
-                    Password = password,
                     Role=role,
                     Title =title,
                     Biography=biography,
