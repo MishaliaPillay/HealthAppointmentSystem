@@ -19,7 +19,7 @@ namespace HealthAPP.Domain.Persons
         [NotMapped]
         public virtual ICollection<ProviderAvailabilty> Availabilities { get; set; }
         //public virtual ICollection<Locations> Locations { get; set; }
-        //        public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
 
 
     }

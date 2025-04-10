@@ -1,18 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Abp.Domain.Entities.Auditing;
 
 namespace HealthAPP.Domain.Appointments
 {
-    [Keyless]
-    public class Appointment
+
+    public class Appointment : FullAuditedEntity<Guid>
     {
 
-        public DateTime AppointmentDate { get; set; }
+        [Required]
+        public DateTime AppointmentDate { get; set; } // Holds the date part of the appointment
+
+        [Required]
+        public TimeSpan AppointmentTime { get; set; } // Holds the time part of the appointment
+        public string Purpose { get; set; }
+        public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
 
     }
 }

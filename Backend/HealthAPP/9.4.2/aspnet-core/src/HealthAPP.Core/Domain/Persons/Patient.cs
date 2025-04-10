@@ -14,6 +14,6 @@ namespace HealthAPP.Domain.Persons
         public string PostalCode { get; set; }
         public int Country { get; set; }
         public virtual ReflistConMethod PreferredContactMedthod { get; set; }
-        // public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }
