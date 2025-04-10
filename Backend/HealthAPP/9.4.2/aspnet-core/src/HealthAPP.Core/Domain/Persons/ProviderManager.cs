@@ -5,46 +5,56 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Domain.Services;
+using Abp.UI;
 using AutoMapper;
+using HealthAPP.Authorization.Roles;
 using HealthAPP.Authorization.Users;
+using HealthAPP.Domain.Appointments;
 
 namespace HealthAPP.Domain.Persons
 {
     public class ProviderManager : DomainService
     {
-        private readonly PersonManager _personManger;
+        private readonly PersonManager _personManager;
         private readonly IRepository<Provider, Guid> _providerRepository;
 
-        public ProviderManager(UserManager _personManger, IRepository<Provider, Guid> providerRepository)
+        public ProviderManager(PersonManager personManager, IRepository<Provider, Guid> providerRepository)
         {
             _providerRepository = providerRepository;
-            _personManger = _personManger;
+            _personManager = personManager;
         }
 
-        public async Task<Person> CreateProviderAsync(string firstName, string surname, string emailAddress, string username, string password, string title, string biography ,int yearsOfExperience,int maxApp,string qauli)
+        public async Task<Person> CreateProviderAsync(string firstName, string surname, string emailAddress, string phonenumber, string username, string password,string role ,string title, string biography ,int yearsOfExperience,int maxApp,string qauli)
 
         {
             try
             {
-                CreateProfileAsync
-
-
                var provider = new Provider
                 {
-                    Title=title,
+                    FirstName = firstName,
+                    Surname = surname,
+                    Email=emailAddress,
+                    PhoneNumber= phonenumber,
+                    UserName = username,
+                    Password = password,
+                    Role=role,
+                    Title =title,
                     Biography=biography,
                     YearsOfExperience= yearsOfExperience,
                     MaxAppointmentsPerDay= maxApp,
                     Qualification= qauli,
-
-                    UserId = user.Id,
-                    User = user
-                };
+                    Appointments=new List<Appointment>(),
+                    Availabilities=new List<ProviderAvailabilty>(),
+               };
                 //creates the person
-                return await _providerRepository.InsertAsync(provider);
+                await _personManager.CreatePersonAsync(provider, password);
+
+                return provider;
             }
             catch (Exception ex)
             {
+                Logger.Error("Error creating provider", ex);
+                throw new UserFriendlyException("An error occured while creating your provider", ex);
                 throw;
             }
 
