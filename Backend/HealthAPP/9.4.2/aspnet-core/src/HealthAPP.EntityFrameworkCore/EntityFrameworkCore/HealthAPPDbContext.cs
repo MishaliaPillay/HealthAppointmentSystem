@@ -14,25 +14,51 @@ namespace HealthAPP.EntityFrameworkCore
 
        public DbSet<Person> Persons { get; set; }
        public DbSet<Patient> Patients { get; set; }
-        
-       public DbSet<Provider> Providers { get; set; }
 
-        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Provider> Providers { get; set; }
+
+
+        //public DbSet<Appointment> Appointments { get; set; }
+
         //TODO:MK
-        //Check(refining the comment)if Notifications for Abp inherited member
-        public DbSet<Notification> NotificationS { get; set; }
+        ////Check(refining the comment)if Notifications for Abp inherited member
+        //public DbSet<Notification> NotificationS { get; set; }
 
         public DbSet<ProviderAvailabilty> ProviderAvailabilties { get; set; }
-
-
-
-
-
 
 
         public HealthAPPDbContext(DbContextOptions<HealthAPPDbContext> options)
             : base(options)
         {
+
         }
+
+        //protected override void OnModelCreating(ModelBuilder builder)
+        //{
+        //    // Ignore User audit properties
+        //    builder.Entity<User>().Ignore(u => u.CreatorUser);
+        //    builder.Entity<User>().Ignore(u => u.LastModifierUser);
+        //    builder.Entity<User>().Ignore(u => u.DeleterUser);
+
+        //    // Configure TPT (Table Per Type) inheritance instead of TPH
+        //    builder.Entity<Person>().ToTable("Persons");
+        //    builder.Entity<Patient>().ToTable("Patients");
+        //    builder.Entity<Provider>().ToTable("Providers");
+
+        //    // Configure relationships
+        //    builder.Entity<Appointment>()
+        //        .HasOne<Patient>()
+        //        .WithMany(p => p.Appointments)
+        //        .HasForeignKey("PatientId")
+        //        .OnDelete(DeleteBehavior.Cascade);
+
+        //    builder.Entity<Appointment>()
+        //        .HasOne<Provider>()
+        //        .WithMany(p => p.Appointments)
+        //        .HasForeignKey("ProviderId")
+        //        .OnDelete(DeleteBehavior.Restrict);
+
+
+        //}
     }
 }

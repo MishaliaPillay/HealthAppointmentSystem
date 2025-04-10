@@ -1,7 +1,7 @@
-﻿namespace HealthAPP.Domain
-{
-    public class Specialty
-    {
+﻿//namespace HealthAPP.Domain
+//{
+//    public class Specialty
+//    {
 
-    }
-}
+//    }
+//}

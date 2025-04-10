@@ -1,6 +1,6 @@
-﻿namespace HealthAPP.Domain
-{
-    public class Location
-    {
-    }
-}
+﻿//namespace HealthAPP.Domain
+//{
+//    public class Location
+//    {
+//    }
+//}

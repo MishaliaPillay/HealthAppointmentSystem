@@ -17,7 +17,9 @@ namespace HealthAPP.Domain.Persons
         //public virtual ICollection<Specialty> Specialty { get; set; }
         public virtual ICollection<ProviderAvailabilty> Availabilities { get; set; }
         //public virtual ICollection<Locations> Locations { get; set; }
-        public virtual ICollection<Appointment> Appointments { get; set; }
+
+        //public virtual ICollection<Appointment> Appointments { get; set; }
+
 
 
     }
