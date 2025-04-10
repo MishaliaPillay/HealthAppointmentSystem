@@ -14,7 +14,7 @@ services:
     volumes:
       - ./dataProtectionKeys:/root/.aspnet/DataProtection-Keys
     restart: always
-
+ 
   abp_ng:
     image: abp/ng
     ports:
