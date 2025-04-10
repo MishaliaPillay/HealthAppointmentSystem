@@ -1,12 +1,9 @@
-version: '3'
-
 services:
-
   abp_host:
     image: abp/host
     environment:
       ASPNETCORE_ENVIRONMENT: "Staging"
-      ConnectionStrings__Default: "Server=host.docker.internal,1433; Database=HealthAPPDb; User Id=sa; Password=yourStrong(!)Password; TrustServerCertificate=True;"
+      ConnectionStrings__Default: "Server=tcp:healthappserver27.database.windows.net,1433; Database=HealthAPPDb; User Id=sqladmin; Password=MySecurePass123!; TrustServerCertificate=True; Encrypt=True;"
       App__ServerRootAddress: "http://localhost:44311/"
       App__ClientRootAddress: "http://localhost:4200/"
       App__CorsOrigins: "http://localhost:4200"
@@ -15,19 +12,10 @@ services:
     ports:
       - "44311:80"
     volumes:
-      - "./Host-Logs:/app/App_Data/Logs"
-      - "./data-protection-keys:/root/.aspnet/DataProtection-Keys"  # Persist Data Protection keys
-    networks:
-      - app_network
+      - ./dataProtectionKeys:/root/.aspnet/DataProtection-Keys
     restart: always
-
+ 
   abp_ng:
     image: abp/ng
     ports:
       - "4200:80"
-    networks:
-      - app_network
-
-networks:
-  app_network:
-    driver: bridge
