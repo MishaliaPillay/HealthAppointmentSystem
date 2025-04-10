@@ -3,7 +3,8 @@
 namespace HealthAPP.Domain.Appointments
 {
     [Keyless]
-    public class Notification
+    public class NotificationS
     {
+        public string Message { get; set; }
     }
 }
