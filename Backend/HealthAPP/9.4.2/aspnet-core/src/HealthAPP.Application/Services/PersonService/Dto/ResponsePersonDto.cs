@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Abp.Application.Services.Dto;
 
 namespace HealthAPP.Services.PersonService.Dto
 {
-    public class ProviderResponseDto : ResponsePersonDto
+    public class ResponsePersonDto:FullAuditedEntityDto<Guid>
     {
         public string Title { get; set; }
         public string Biography { get; set; }
@@ -11,6 +13,5 @@ namespace HealthAPP.Services.PersonService.Dto
         public string Qualification { get; set; }
         public List<ProviderAvailabiltyDto> Availabilities { get; set; }
         public List<AppointmentDto> Appointments { get; set; }
-
     }
 }
