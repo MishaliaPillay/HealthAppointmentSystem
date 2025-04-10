@@ -29,12 +29,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./../Frontend # Ensure package-lock.json is in ./Frontend
+        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted to correct folder structure
 
       - name: Build project
         run: npm run build
-        working-directory: ./../Frontend 
+        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted
 
       - name: Run linting
         run: npm run lint
-        working-directory: ./../Frontend 
+        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted
