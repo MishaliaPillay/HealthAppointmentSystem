@@ -12,13 +12,13 @@ namespace HealthAPP.Domain.Persons
 {
     public class ProviderManager : DomainService
     {
-        private readonly UserManager _userManager;
+        private readonly PersonManager _personManger;
         private readonly IRepository<Provider, Guid> _providerRepository;
 
-        public ProviderManager(UserManager userManager, IRepository<Provider, Guid> providerRepository)
+        public ProviderManager(UserManager _personManger, IRepository<Provider, Guid> providerRepository)
         {
             _providerRepository = providerRepository;
-            _userManager = userManager;
+            _personManger = _personManger;
         }
 
         public async Task<Person> CreateProviderAsync(string firstName, string surname, string emailAddress, string username, string password, string title, string biography ,int yearsOfExperience,int maxApp,string qauli)
@@ -26,18 +26,10 @@ namespace HealthAPP.Domain.Persons
         {
             try
             {
-                var user = new User
-                {
-                    Name = firstName,
-                    Surname = surname,
-                    EmailAddress = emailAddress,
-                    UserName = username
-                };
-
-                var identityResult = await _userManager.CreateAsync(user, password);
+                CreateProfileAsync
 
 
-                var provider = new Provider
+               var provider = new Provider
                 {
                     Title=title,
                     Biography=biography,

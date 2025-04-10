@@ -4,6 +4,8 @@ using Abp.Domain.Services;
 using AutoMapper;
 using HealthAPP.Authorization.Users;
 using System.Threading.Tasks;
+using System.Linq;
+using Abp.UI;
 
 namespace HealthAPP.Domain.Persons
 {
@@ -19,33 +21,41 @@ namespace HealthAPP.Domain.Persons
         }
 
 
-        public async Task<Person> CreateProfileAsync(string firstName, string surname, string emailAddress, string username, string password, string role)
+        public async Task<Person> CreatePersonAsync(Person person,string password)
         {
             try
             {
                 var user = new User
                 {
-                    Name = firstName,
-                    Surname = surname,
-                    EmailAddress = emailAddress,
-                    UserName = username
-                };
-                //creates the user
-                //TODO:Validate if the creation of the user  has succeeded 
-                var identityResult = await _userManager.CreateAsync(user, password);
+                    Name = person.FirstName,
+                    Surname = person.Surname,
+                    EmailAddress = person.Email,
+                    UserName = person.UserName,
+                    PhoneNumber = person.PhoneNumber,
+                    IsActive = true,
+                    IsEmailConfirmed = true
 
-                var profile = new Person
-                {
-                    Role = role,
-                    UserId = user.Id,
-                    User = user
                 };
+                //creates the user with Password 
+                var identityResult = await _userManager.CreateAsync(user, password);
+                if (identityResult.Succeeded) 
+                { 
+                    throw new UserFriendlyException("Could not create user");
+                }
+                if (!string.IsNullOrEmpty(person.Role))
+                {
+                    await _userManager.AddToRoleAsync(user, person.Role);
+                }
+                person.UserId=user.Id;
+                person.User=user;
+
                 //creates the person
-                return await _personRepository.InsertAsync(profile);
+                return await _personRepository.InsertAsync(person);
             }
             catch (Exception ex)
             {
-                throw;
+                Logger.Error("Error creating hte person", ex);
+                throw new UserFriendlyException("An error occured while create the person", ex);
             }
 
         }
