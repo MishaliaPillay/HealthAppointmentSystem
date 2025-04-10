@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using HealthAPP.Domain.Appointments;
 
 namespace HealthAPP.Domain.Persons
@@ -15,6 +16,7 @@ namespace HealthAPP.Domain.Persons
         public string Qualification { get; set; }
         //TODO:Find out if virtual
         //public virtual ICollection<Specialty> Specialty { get; set; }
+        [NotMapped]
         public virtual ICollection<ProviderAvailabilty> Availabilities { get; set; }
         //public virtual ICollection<Locations> Locations { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
