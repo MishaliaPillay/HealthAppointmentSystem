@@ -20,9 +20,9 @@ namespace HealthAPP.EntityFrameworkCore
         public DbSet<Appointment> Appointments { get; set; }
         //TODO:MK
         //Check(refining the comment)if Notifications for Abp inherited member
-        public DbSet<Notification> NotificationS { get; set; }
+        //public DbSet<Notification> NotificationS { get; set; }
 
-        public DbSet<ProviderAvailabilty> ProviderAvailabilties { get; set; }
+        //public DbSet<ProviderAvailabilty> ProviderAvailabilties { get; set; }
         public HealthAPPDbContext(DbContextOptions<HealthAPPDbContext> options)
             : base(options)
         {
