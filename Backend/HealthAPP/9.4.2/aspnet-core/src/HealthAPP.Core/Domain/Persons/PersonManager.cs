@@ -1,9 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Abp.Domain.Repositories;
+﻿using Abp.Domain.Repositories;
+using System;
 using Abp.Domain.Services;
-using Abp.UI;
+using AutoMapper;
 using HealthAPP.Authorization.Users;
+using System.Threading.Tasks;
+using System.Linq;
+using Abp.UI;
 
 namespace HealthAPP.Domain.Persons
 {
@@ -53,7 +55,7 @@ namespace HealthAPP.Domain.Persons
             catch (Exception ex)
             {
                 Logger.Error("Error creating hte person", ex);
-                throw new UserFriendlyException("An error occured while create the person", ex);
+                throw new UserFriendlyException("An error occured while create the person",ex);
             }
 
         }

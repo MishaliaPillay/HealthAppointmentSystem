@@ -24,24 +24,27 @@ namespace HealthAPP.Domain.Persons
         {
             try
             {
-               var provider = new Provider
+                var provider = new Provider
                 {
                     FirstName = firstName,
                     Surname = surname,
-                    Email=emailAddress,
-                    PhoneNumber= phonenumber,
+                    Email = emailAddress,
+                    PhoneNumber = phonenumber,
                     UserName = username,
-                    Role= "Provider",
-                    Title =title,
-                    Biography=biography,
-                    YearsOfExperience= yearsOfExperience,
-                    MaxAppointmentsPerDay= maxApp,
-                    Qualification= qauli,
-                    Appointments=new List<Appointment>(),
-                    Availabilities=new List<ProviderAvailabilty>(),
-               };
+                    Role = "Provider",
+                    Title = title,
+                    Biography = biography,
+                    YearsOfExperience = yearsOfExperience,
+                    MaxAppointmentsPerDay = maxApp,
+                    Qualification = qauli,
+                    Appointments = new List<Appointment>(),
+                    Availabilities = new List<ProviderAvailabilty>(),
+                };
+ 
+
                 //creates the person
                 await _personManager.CreatePersonAsync(provider, password);
+  
 
                 return provider;
             }
