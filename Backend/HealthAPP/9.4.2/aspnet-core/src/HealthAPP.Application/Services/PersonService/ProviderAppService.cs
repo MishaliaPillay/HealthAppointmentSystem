@@ -16,6 +16,7 @@ namespace HealthAPP.Services.PersonService
        IProviderAppService
     {
         private readonly ProviderManager _providerManager;
+
         public ProviderAppService(IRepository<Provider, Guid> repository,ProviderManager providerManager): base(repository)
         {
             _providerManager = providerManager;
