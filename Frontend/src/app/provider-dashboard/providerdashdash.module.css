@@ -1,0 +1,151 @@
+.dashboardContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.welcomeCard {
+  margin-bottom: 24px;
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.rowSpacing {
+  margin-bottom: 24px;
+}
+
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statBlock {
+  margin-bottom: 16px;
+}
+
+.statLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.appointmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appointmentCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.appointmentInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.initialsCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #1890ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.patientName {
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.details {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.appointmentActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusScheduled {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.statusCheckedIn {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.statusInProgress {
+  color: #722ed1;
+  font-weight: 500;
+}
+
+.statusCompleted {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.statusCancelled {
+  color: #f5222d;
+  font-weight: 500;
+}
+
+.newPatientTag {
+  margin-left: 8px;
+}
+
+.actionsList,
+.notesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.actionItem:last-child {
+  border-bottom: none;
+}
+
+.noteItem {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.noteItem:last-child {
+  border-bottom: none;
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.noteHeader :last-child {
+  margin-left: auto;
+}

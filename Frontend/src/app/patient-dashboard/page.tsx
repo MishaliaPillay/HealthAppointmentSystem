@@ -21,7 +21,7 @@ export default function Dashboard() {
                 Book New Appointment
               </Button>
               <Button size="large" block>
-                Upload Medical Records
+                Update profile
               </Button>
             </div>
           </Card>
