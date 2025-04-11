@@ -1834,7 +1834,7 @@ namespace HealthAPP.Migrations
                     b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PreferredContactMedthod")
+                    b.Property<long>("PreferredContactMethod")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Province")

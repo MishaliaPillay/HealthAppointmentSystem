@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HealthAPP.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -761,7 +761,7 @@ namespace HealthAPP.Migrations
                     Province = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Country = table.Column<int>(type: "int", nullable: true),
-                    PreferredContactMedthod = table.Column<long>(type: "bigint", nullable: true),
+                    PreferredContactMethod = table.Column<long>(type: "bigint", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Biography = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     YearsOfExperience = table.Column<string>(type: "nvarchar(max)", nullable: true),

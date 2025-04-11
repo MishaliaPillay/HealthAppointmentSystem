@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthAPP.Migrations
 {
     [DbContext(typeof(HealthAPPDbContext))]
-    [Migration("20250410164408_passwordProp")]
-    partial class passwordProp
+    [Migration("20250411112430_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1679,10 +1679,6 @@ namespace HealthAPP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1841,7 +1837,7 @@ namespace HealthAPP.Migrations
                     b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PreferredContactMedthod")
+                    b.Property<long>("PreferredContactMethod")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Province")
