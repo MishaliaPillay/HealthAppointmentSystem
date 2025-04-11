@@ -1,7 +1,7 @@
 ﻿using Abp.Zero.EntityFrameworkCore;
 using healthap.Authorization.Roles;
 using healthap.Authorization.Users;
-using healthap.Domain;
+using healthap.Domain.Appointments;
 using healthap.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
 

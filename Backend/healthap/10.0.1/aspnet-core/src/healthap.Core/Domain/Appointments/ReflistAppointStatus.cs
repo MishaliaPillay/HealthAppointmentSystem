@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace healthap.Domain
+namespace healthap.Domain.Appointments
 {
     public enum ReflistAppointStatus
     {
