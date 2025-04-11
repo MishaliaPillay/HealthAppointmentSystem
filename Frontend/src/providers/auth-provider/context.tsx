@@ -1,20 +1,14 @@
-
 "use client";
 import { createContext } from "react";
 
-// User object interface
+//User object interface
 export interface IUser {
-  id?: string;
-  name?: string;
-  email: string;
-  password: string;
-  role?: string;
-  contactNumber?: string;
-  activeState?: boolean;
-  planType?: string;
-  trial?: boolean;
-  policiesAccepted?: boolean;
-  date?: string;
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  PhoneNumber: string;
+  UserId: string;
+  Role: string;
 }
 
 // Context shape interface
@@ -28,32 +22,11 @@ export interface IUserStateContext {
 
 // User action context interface
 export interface IUserActionContext {
-  // getUsers: () => Promise<UserListResponse>;
-  getUser: () => Promise<UserResponse>;
-  verifyUser: (user: IUser) => Promise<void>;
-}
-
-// Login response interface
-export interface ILoginResponse {
-  status: number;
-  message: string;
-  data: {
-    token: string;
-  };
-}
-
-// Interface for user response
-export interface UserResponse {
-  data: {
-    data: IUser;
-  };
-}
-
-// Interface for user list response
-export interface UserListResponse {
-  data: {
-    data: IUser[];
-  };
+  getUsers: () => void; // Fetch all Users
+  getUser: (id: string) => void; // Fetch a single User
+  createUser: (user: IUser) => void; // Create a new User
+  updateUser: (user: IUser) => void; // Update existing User
+  deleteUser: (id: string) => void; // Delete a user
 }
 
 // Initial state with default values
