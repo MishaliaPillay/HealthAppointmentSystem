@@ -5,7 +5,7 @@ using HealthAPP.Domain.Persons;
 namespace HealthAPP.Domain.Appointments
 {
 
-    public class ProviderAvailabilty:FullAuditedEntity
+    public class ProviderAvailabilty:FullAuditedEntity<Guid>
     {
 
         //DayOfWeek:DayOfWeek
