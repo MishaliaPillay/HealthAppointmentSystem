@@ -14,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\HealthAPP.Core\HealthAPP.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\PersonService\Mapping\" />
-  </ItemGroup>
 </Project>
