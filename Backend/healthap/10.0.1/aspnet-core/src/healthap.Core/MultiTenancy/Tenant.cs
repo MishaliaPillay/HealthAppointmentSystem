@@ -1,0 +1,16 @@
+﻿using Abp.MultiTenancy;
+using healthap.Authorization.Users;
+
+namespace healthap.MultiTenancy;
+
+public class Tenant : AbpTenant<User>
+{
+    public Tenant()
+    {
+    }
+
+    public Tenant(string tenancyName, string name)
+        : base(tenancyName, name)
+    {
+    }
+}
