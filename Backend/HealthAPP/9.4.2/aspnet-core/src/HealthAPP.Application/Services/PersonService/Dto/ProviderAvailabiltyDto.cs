@@ -2,7 +2,7 @@
 
 namespace HealthAPP.Services.PersonService.Dto
 {
-    public class ProviderAvailabiltyDto:FullAuditedEntityDto
+    public class ProviderAvailabiltyDto:EntityDto
     {
     }
 }

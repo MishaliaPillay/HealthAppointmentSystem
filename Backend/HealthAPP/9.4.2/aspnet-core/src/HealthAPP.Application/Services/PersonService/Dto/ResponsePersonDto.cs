@@ -4,7 +4,7 @@ using Abp.Application.Services.Dto;
 
 namespace HealthAPP.Services.PersonService.Dto
 {
-    public class ResponsePersonDto:FullAuditedEntityDto<Guid>
+    public class ResponsePersonDto:EntityDto<Guid>
     {
         public string Title { get; set; }
         public string Biography { get; set; }
