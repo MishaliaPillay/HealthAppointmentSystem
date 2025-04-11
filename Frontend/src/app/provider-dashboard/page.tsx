@@ -26,7 +26,7 @@ export default function ProviderDashboard() {
           <Card title="Quick Actions" variant="outlined">
             <div className={styles.quickActions}>
               <Button type="primary" size="large" block>
-                View Today's Schedule
+                View Today&apos;s Schedule
               </Button>
               <Button size="large" block>
                 Manage Availability
@@ -38,13 +38,13 @@ export default function ProviderDashboard() {
           <Card title="Practice Stats" variant="outlined">
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>
-                <Text>Today's Appointments: 5</Text>
+                <Text>Today&apos;s Appointments: 5</Text>
               </div>
               <Progress percent={50} strokeColor="#52c41a" showInfo={false} />
             </div>
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>
-                <Text>Week's Schedule: 83% Full</Text>
+                <Text>Week&apos;s Schedule: 83% Full</Text>
               </div>
               <Progress percent={83} strokeColor="#faad14" showInfo={false} />
             </div>

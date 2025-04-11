@@ -24,6 +24,7 @@ import {
   MailOutlined,
 } from "@ant-design/icons";
 import styles from "./ProviderCalendar.module.css";
+import { Appointment } from "@/interfaces/provider-interface";
 
 const { Title, Text } = Typography;
 
@@ -37,7 +38,7 @@ const appointmentTypes = {
   therapy: { color: "orange", label: "Therapy" },
 };
 
-// Generate dummy appointments for the next 30 days
+// dummy appointments for the next 30 days
 const generateAppointments = () => {
   const appointments = [];
   const today = dayjs();
@@ -45,21 +46,18 @@ const generateAppointments = () => {
   // Generate 2-5 appointments per day for the next 30 days
   for (let i = 0; i < 30; i++) {
     const date = today.add(i, "day");
-    const appointmentCount = Math.floor(Math.random() * 4) + 2; // 2-5 appointments
+    const appointmentCount = Math.floor(Math.random() * 4) + 2;
 
     for (let j = 0; j < appointmentCount; j++) {
-      // Generate a random hour between 9 AM and 5 PM
       const hour = Math.floor(Math.random() * 8) + 9;
       const minute = Math.random() > 0.5 ? 0 : 30;
 
-      // Get random appointment type
       const appointmentTypeKeys = Object.keys(appointmentTypes);
       const type =
         appointmentTypeKeys[
           Math.floor(Math.random() * appointmentTypeKeys.length)
         ];
 
-      // Generate random patient name
       const firstNames = [
         "John",
         "Sarah",
@@ -98,7 +96,7 @@ const generateAppointments = () => {
         patientEmail: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
         date: date.format("YYYY-MM-DD"),
         time: `${hour}:${minute === 0 ? "00" : "30"}`,
-        duration: 30, // minutes
+        duration: 30,
         type,
         notes: `${appointmentTypes[type].label} appointment for ${firstName} ${lastName}.`,
       });
@@ -114,10 +112,10 @@ const ProviderCalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [mode, setMode] = useState<CalendarMode>("month");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment>(null);
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
 
-  // Filter appointments for selected date
   const getAppointmentsForDate = (date: Dayjs) => {
     return dummyAppointments.filter((appointment) => {
       return appointment.date === date.format("YYYY-MM-DD");
@@ -152,7 +150,7 @@ const ProviderCalendarPage = () => {
     );
   };
 
-  const handleAppointmentClick = (appointment: any) => {
+  const handleAppointmentClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setDrawerOpen(true);
   };
