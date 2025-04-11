@@ -35,7 +35,6 @@ namespace HealthAPP.Domain.Persons
         {
             try
             {
-                // Create a new Patient entity
                 var patient = new Patient
                 {
                     FirstName = firstName,
