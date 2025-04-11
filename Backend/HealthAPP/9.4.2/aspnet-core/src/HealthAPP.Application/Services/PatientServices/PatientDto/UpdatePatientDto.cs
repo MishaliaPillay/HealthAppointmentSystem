@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HealthAPP.Services.PatientServices.PatientDto
 {
-    [AutoMapTo(typeof(Patient))]
+    [AutoMap(typeof(Patient))]
     public class UpdatePatientDto : UpdatePersonDto
     {
         public DateTime DateOfBirth { get; set; }
@@ -18,6 +18,6 @@ namespace HealthAPP.Services.PatientServices.PatientDto
         public string Province { get; set; }
         public string PostalCode { get; set; }
         public int Country { get; set; }
-        public ReflistConMethod PreferredContactMedthod { get; set; }
+        //public ReflistConMethod PreferredContactMedthod { get; set; }
     }
 }

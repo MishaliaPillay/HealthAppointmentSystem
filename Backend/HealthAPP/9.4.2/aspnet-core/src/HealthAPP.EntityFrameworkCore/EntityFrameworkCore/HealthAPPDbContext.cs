@@ -33,32 +33,5 @@ namespace HealthAPP.EntityFrameworkCore
 
         }
 
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    // Ignore User audit properties
-        //    builder.Entity<User>().Ignore(u => u.CreatorUser);
-        //    builder.Entity<User>().Ignore(u => u.LastModifierUser);
-        //    builder.Entity<User>().Ignore(u => u.DeleterUser);
-
-        //    // Configure TPT (Table Per Type) inheritance instead of TPH
-        //    builder.Entity<Person>().ToTable("Persons");
-        //    builder.Entity<Patient>().ToTable("Patients");
-        //    builder.Entity<Provider>().ToTable("Providers");
-
-        //    // Configure relationships
-        //    builder.Entity<Appointment>()
-        //        .HasOne<Patient>()
-        //        .WithMany(p => p.Appointments)
-        //        .HasForeignKey("PatientId")
-        //        .OnDelete(DeleteBehavior.Cascade);
-
-        //    builder.Entity<Appointment>()
-        //        .HasOne<Provider>()
-        //        .WithMany(p => p.Appointments)
-        //        .HasForeignKey("ProviderId")
-        //        .OnDelete(DeleteBehavior.Restrict);
-
-
-        //}
     }
 }

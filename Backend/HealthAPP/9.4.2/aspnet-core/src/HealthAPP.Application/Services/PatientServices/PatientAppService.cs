@@ -13,58 +13,79 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
+using HealthAPP.Authorization.Roles;
 
 namespace HealthAPP.Services.PatientServices
 {
     public class PatientAppService : ApplicationService, IPatientService
     {
-
         private readonly IRepository<Patient, Guid> _patientRepository;
         private readonly UserManager _userManager;
+        private readonly RoleManager _roleManager;
         public ILogger Logger { get; set; }
 
         public PatientAppService(
-        IRepository<Patient, Guid> patientRepository,
-        UserManager userManager)
+            IRepository<Patient, Guid> patientRepository,
+            UserManager userManager,
+            RoleManager roleManager)
         {
-            
             _patientRepository = patientRepository;
-         
             _userManager = userManager;
-
+            _roleManager = roleManager;
             Logger = NullLogger.Instance;
         }
 
-public async Task<PatientDto.PatientDto> CreatePatientAsync(CreatePatientDto input)
-{
-    var user = new User
-    {
-        UserName = input.Email,
-        Name = input.FirstName,
-        Surname = input.LastName,
-        EmailAddress = input.Email,
-        PhoneNumber = input.PhoneNumber,
-        IsActive = true
-    };
-    
-    // This stores the password securely in ABP's User table
-    var result = await _userManager.CreateAsync(user, input.Password);
-    if (!result.Succeeded)
-    {
-        throw new UserFriendlyException("User creation failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
-    }
-    
-    await _userManager.AddToRoleAsync(user, "Patient");
-    
-    var patient = ObjectMapper.Map<Patient>(input);
-    patient.User = user;  // Link to the ABP User
-    patient.Role = "Patient";  // Set your domain role
-    
-    await _patientRepository.InsertAsync(patient);
-    await CurrentUnitOfWork.SaveChangesAsync();
-    
-    return ObjectMapper.Map<PatientDto.PatientDto>(patient);
-}
+        public async Task<PatientDto.PatientDto> CreatePatientAsync(CreatePatientDto input)
+        {
+            try
+            {
+                // Check if the Patient role exists
+                var patientRole = await _roleManager.FindByNameAsync("Patient");
+                if (patientRole == null)
+                {
+                    throw new UserFriendlyException("Patient role does not exist. Please create it first.");
+                }
+
+                var user = new User
+                {
+                    UserName = input.Email,
+                    Name = input.FirstName,
+                    Surname = input.LastName,
+                    EmailAddress = input.Email,
+                    PhoneNumber = input.PhoneNumber,
+                    IsActive = true
+                };
+
+                // Create the ABP user
+                var result = await _userManager.CreateAsync(user, input.Password);
+                if (!result.Succeeded)
+                {
+                    throw new UserFriendlyException("User creation failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+
+                // Add to Patient role
+                var roleResult = await _userManager.AddToRoleAsync(user, "Patient");
+                if (!roleResult.Succeeded)
+                {
+                    throw new UserFriendlyException("Failed to assign Patient role: " + string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                }
+
+                // Create and map the patient
+                var patient = ObjectMapper.Map<Patient>(input);
+                patient.User = user;  // Link to the ABP User
+                patient.Role = "Patient";  // Set your domain role
+
+                await _patientRepository.InsertAsync(patient);
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                return ObjectMapper.Map<PatientDto.PatientDto>(patient);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error creating patient", ex);
+                throw new UserFriendlyException("An error occurred while creating the patient: " + ex.Message);
+            }
+        }
 
         public async Task DeletePatientAsync(Guid id)
         {
@@ -93,81 +114,33 @@ public async Task<PatientDto.PatientDto> CreatePatientAsync(CreatePatientDto inp
         }
 
 
-        //    public async Task<PagedResultDto<PatientDto.PatientDto>> GetAllPatientsAsync(GetPatientsInput input)
-        //    {
-        //        Logger.Debug("Starting GetAllPatientsAsync with input: {@Input}", input);
+        public async Task<PagedResultDto<PatientDto.PatientDto>> GetAllPatientsAsync(GetPatientsInput input)
+        {
+            // Simple query to get all patients
+            var query = _patientRepository.GetAll();
 
-        //        var allowedSortFields = new List<string>
-        //{
-        //    nameof(Patient.FirstName),
-        //    nameof(Patient.LastName),
-        //    nameof(Patient.Email),
-        //    nameof(Patient.PhoneNumber),
-        //    nameof(Patient.Address),
-        //    nameof(Patient.City),
-        //    nameof(Patient.CreationTime)
-        //};
+            // Get total count for pagination
+            var totalCount = await query.CountAsync();
 
-        //        var query = _patientRepository.GetAll();
+            // Apply basic ordering by name
+            query = query.OrderBy(p => p.LastName).ThenBy(p => p.FirstName);
 
-        //        // Fixed filtering (case-insensitive without ILike)
-        //        if (!string.IsNullOrWhiteSpace(input.Filter))
-        //        {
-        //            var filter = input.Filter.ToLower();
-        //            query = query.Where(p =>
-        //                p.FirstName.ToLower().Contains(filter) ||
-        //                p.LastName.ToLower().Contains(filter) ||
-        //                p.Email.ToLower().Contains(filter) ||
-        //                p.PhoneNumber.Contains(filter) ||
-        //                p.Address.ToLower().Contains(filter) ||
-        //                p.City.ToLower().Contains(filter)
-        //            );
-        //        }
+            // Apply paging
+            var patients = await query
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
+                .ToListAsync();
 
-        //        // Fixed sorting with dynamic LINQ
-        //        if (!string.IsNullOrWhiteSpace(input.Sorting) && IsSortingValid(input.Sorting, allowedSortFields))
-        //        {
-        //            query = query.OrderBy(input.Sorting);
-        //        }
-        //        else
-        //        {
-        //            query = query.OrderBy(p => p.LastName).ThenBy(p => p.FirstName);
-        //        }
+            // Map to DTOs
+            var patientDtos = ObjectMapper.Map<List<PatientDto.PatientDto>>(patients);
 
-        //        var totalCount = await query.CountAsync();
-
-        //        var patients = await query
-        //            .Skip(input.SkipCount)
-        //            .Take(input.MaxResultCount)
-        //            .ToListAsync();
-
-        //        Logger.Debug("Retrieved {Count} patients", patients.Counts);
-
-        //        var patientDtos = ObjectMapper.Map<List<PatientDto.PatientDto>>(patients);
-
-        //        return new PagedResultDto<PatientDto.PatientDto>
-        //        {
-        //            TotalCount = totalCount,
-        //            Items = patientDtos
-        //        };
-        //    }
-
-        //    private bool IsSortingValid(string sortingExpression, List<string> allowedFields)
-        //    {
-        //        if (string.IsNullOrWhiteSpace(sortingExpression)) return false;
-
-        //        var field = sortingExpression.Split(' ')[0];
-        //        return allowedFields.Contains(field, StringComparer.OrdinalIgnoreCase);
-        //    }
-
-        //    // Helper method to validate sorting field
-        //    private bool IsSortingValid(string sortingExpression, List<string> allowedFields)
-        //    {
-        //        if (string.IsNullOrWhiteSpace(sortingExpression)) return false;
-
-        //        var field = sortingExpression.Split(' ')[0]; // Extract field name
-        //        return allowedFields.Contains(field, StringComparer.OrdinalIgnoreCase);
-        //    }
+            // Return result
+            return new PagedResultDto<PatientDto.PatientDto>
+            {
+                TotalCount = totalCount,
+                Items = patientDtos
+            };
+        }
 
         public async Task<PatientDto.PatientDto> GetPatientAsync(Guid id)
         {

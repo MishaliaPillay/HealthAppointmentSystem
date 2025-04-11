@@ -19,8 +19,8 @@ namespace HealthAPP.Domain.Persons
 
         [Required]
 
-        public string Password { get; set; }
-        [Required]
+        //public string Password { get; set; }
+        //[Required]
 
         [EmailAddress]
         public string Email { get; set; }
@@ -33,6 +33,8 @@ namespace HealthAPP.Domain.Persons
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
+
+        public long? UserId { get; set; }
 
 
     }

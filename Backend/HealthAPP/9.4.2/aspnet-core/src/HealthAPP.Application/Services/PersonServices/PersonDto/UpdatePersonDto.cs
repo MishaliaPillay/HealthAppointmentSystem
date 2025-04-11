@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HealthAPP.Services.PersonServices.PersonDto
 {
-    [AutoMapTo(typeof(Person))]
+    [AutoMap(typeof(Person))]
     public class UpdatePersonDto : EntityDto<Guid>
     {
         public string FirstName { get; set; }

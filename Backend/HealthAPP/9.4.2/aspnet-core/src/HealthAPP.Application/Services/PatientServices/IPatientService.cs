@@ -12,7 +12,7 @@ namespace HealthAPP.Services.PatientServices.PatientDto
     {
 
         Task<PatientDto> GetPatientAsync(Guid id);
-        //Task<PagedResultDto<PatientDto>> GetAllPatientsAsync(GetPatientsInput input);
+        Task<PagedResultDto<PatientDto>> GetAllPatientsAsync(GetPatientsInput input);
         Task<PatientDto> CreatePatientAsync(CreatePatientDto input);
         Task<PatientDto> UpdatePatientAsync(UpdatePatientDto input);
         Task DeletePatientAsync(Guid id);

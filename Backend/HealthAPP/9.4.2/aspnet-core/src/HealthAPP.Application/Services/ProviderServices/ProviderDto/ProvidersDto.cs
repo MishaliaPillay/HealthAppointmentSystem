@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace HealthAPP.Services.ProviderServices.ProviderDto
 {
     [AutoMap(typeof(Provider))]
-    public class CreateProviderDto : CreatePersonDto
+    public class ProvidersDto : PersonDto
     {
         public string Title { get; set; }
         public string Biography { get; set; }

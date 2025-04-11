@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HealthAPP.Services.PersonServices.PersonDto
 {
-    [AutoMapTo(typeof(Person))]
+    [AutoMap(typeof(Person))]
     public class CreatePersonDto
     {
         public string FirstName { get; set; }
@@ -16,6 +16,7 @@ namespace HealthAPP.Services.PersonServices.PersonDto
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Role { get; set; }
+        public string Password { get; set; }
         public long? UserId { get; set; }
     }
 }
