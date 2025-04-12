@@ -1,4 +1,4 @@
- export interface IPaitientRegistration{
+ export interface IPatientRegistration{
     FirstName:string;
     LastName:string ;
     Email:string ;
@@ -11,7 +11,7 @@
     PostalCode:string;
     Country :string;
  }
-export interface IPaitient {
+export interface IPatient {
     _id:string;
     FirstName:string;
     LastName:string ;

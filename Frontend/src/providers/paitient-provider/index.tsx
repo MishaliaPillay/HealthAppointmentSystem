@@ -1,55 +1,55 @@
 import {getAxiosInstace}from "../../app/utils/axiosInstance";
-import { IPaitient } from "./models";
-import { INITIAL_STATE, PaitientActionContext, PaitientStateContext } from "./context";
-import { PaitientReducer } from "./reducer";
+import { IPatient } from "./models";
+import { INITIAL_STATE, PatientActionContext, PatientStateContext } from "./context";
+import { PatientReducer } from "./reducer";
 import { useContext, useReducer } from "react";
-import {registerPaitientPending, registerPaitientError, registerPaitientSuccess} from "./actions";
+import {registerPatientPending, registerPatientError, registerPatientSuccess} from "./actions";
 
-    export const PaitientProvider=({children}:{children: React.ReactNode})=>{
-        const [state, dispatch] = useReducer(PaitientReducer, INITIAL_STATE);
+    export const PatientProvider=({children}:{children: React.ReactNode})=>{
+        const [state, dispatch] = useReducer(PatientReducer, INITIAL_STATE);
         const instance = getAxiosInstace();
-        const registerPaitient = async(paitient: IPaitient) => {
-            dispatch(registerPaitientPending());
-            const endpoint = `/paitients`;
-            await instance.post(endpoint,paitient)
+        const registerPatient = async(Patient: IPatient) => {
+            dispatch(registerPatientPending());
+            const endpoint = `/Patients`;
+            await instance.post(endpoint,Patient)
             .then((response) => {
-                dispatch(registerPaitientSuccess(response.data));
+                dispatch(registerPatientSuccess(response.data));
             })
             .catch((error) => {
                 console.error(error);
-                dispatch(registerPaitientError());
+                dispatch(registerPatientError());
             })
             .finally(()=>{
                 console.log("Operaation complete")
             })
         }
-        const getPaitients= () => {}
-        const getPaitient= () => {}
-        const updatePaitient=(paitient:IPaitient)=>{}
-        const deletePaitientbyId=(paitientId:string)=>{}
+        const getPatients= () => {}
+        const getPatient= () => {}
+        const updatePatient=(Patient:IPatient)=>{}
+        const deletePatientbyId=(PatientId:string)=>{}
         return(
-            <PaitientStateContext.Provider value={state}>
-                <PaitientActionContext.Provider value={{registerPaitient,getPaitients,getPaitient,updatePaitient,deletePaitientbyId}}>
+            <PatientStateContext.Provider value={state}>
+                <PatientActionContext.Provider value={{registerPatient,getPatients,getPatient,updatePatient,deletePatientbyId}}>
                     {children}
-                </PaitientActionContext.Provider>
-            </PaitientStateContext.Provider>
+                </PatientActionContext.Provider>
+            </PatientStateContext.Provider>
         )
     };
-export const usePaitientState = () => {
-  const context = useContext(PaitientStateContext);
+export const usePatientState = () => {
+  const context = useContext(PatientStateContext);
   if (!context) {
     throw new Error(
-      "usePaitientState must be used within a PaitientProvider"
+      "usePatientState must be used within a PatientProvider"
     );
   }
   return context;
 };
 
-export const usePaitientActions = () => {
-  const context = useContext(PaitientActionContext);
+export const usePatientActions = () => {
+  const context = useContext(PatientActionContext);
   if (!context) {
     throw new Error(
-      "PaitientActionContext must be used within a PaitientProvider"
+      "PatientActionContext must be used within a PatientProvider"
     );
   }
   return context;

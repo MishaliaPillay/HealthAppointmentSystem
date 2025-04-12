@@ -1,34 +1,34 @@
-import { IPaitient, IPaitientRegistration } from "./models";
+import { IPatient, IPatientRegistration } from "./models";
 import { createContext } from 'react';
 
 // Context shape
-export interface IPaitientStateContext {
+export interface IPatientStateContext {
     isPending: boolean;
     isSuccess: boolean;
     isError: boolean;
     errorMessage?: string;
-    paitient?: IPaitient;
-    paitients?: IPaitient[]; // Array of Paitients
+    Patient?: IPatient;
+    Patients?: IPatient[]; // Array of Patients
   }
   
-  // Actions that will be performed on Paitientss
-export interface IPaitientActionContext {
-    getPaitients: () => void;
-    getPaitient: () => void;
-    registerPaitient:(paitient: IPaitientRegistration) => Promise<void>;
-    updatePaitient:(paitient:IPaitient)=>void;
-    deletePaitientbyId:(paitientId:string)=>void;//letting user delete their own profile
+  // Actions that will be performed on Patientss
+export interface IPatientActionContext {
+    getPatients: () => void;
+    getPatient: () => void;
+    registerPatient:(Patient: IPatientRegistration) => Promise<void>;
+    updatePatient:(Patient:IPatient)=>void;
+    deletePatientbyId:(PatientId:string)=>void;//letting user delete their own profile
   }
 // Initial state with default values
-export const INITIAL_STATE: IPaitientStateContext = {
+export const INITIAL_STATE: IPatientStateContext = {
     isPending: false,
     isSuccess: false,
     isError: false,
   };
   
   // Create the state context and the action context
-export const PaitientStateContext =
-createContext<IPaitientStateContext>(INITIAL_STATE);
+export const PatientStateContext =
+createContext<IPatientStateContext>(INITIAL_STATE);
 
-export const PaitientActionContext=
-createContext<IPaitientActionContext>(undefined);
+export const PatientActionContext=
+createContext<IPatientActionContext>(undefined);

@@ -1,65 +1,65 @@
 import { handleActions } from "redux-actions";
-import { INITIAL_STATE, IPaitientStateContext } from "./context";
-import { PaitientActionEnums } from "./actions";
+import { INITIAL_STATE, IPatientStateContext } from "./context";
+import { PatientActionEnums } from "./actions";
 
-export const PaitientReducer = handleActions<IPaitientStateContext, IPaitientStateContext>({
-    [PaitientActionEnums.getPaitientsPending]: (state, action) => ({
+export const PatientReducer = handleActions<IPatientStateContext, IPatientStateContext>({
+    [PatientActionEnums.getPatientsPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.getPaitientsSuccess]: (state, action) => ({
+    [PatientActionEnums.getPatientsSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.getPaitientsError]: (state, action) => ({
+    [PatientActionEnums.getPatientsError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.getPaitientPending]: (state, action) => ({
+    [PatientActionEnums.getPatientPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.getPaitientSuccess]: (state, action) => ({
+    [PatientActionEnums.getPatientSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.getPaitientError]: (state, action) => ({
+    [PatientActionEnums.getPatientError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.registerPaitientPending]: (state, action) => ({
+    [PatientActionEnums.registerPatientPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.registerPaitientSuccess]: (state, action) => ({
+    [PatientActionEnums.registerPatientSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.registerPaitientError]: (state, action) => ({
+    [PatientActionEnums.registerPatientError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.updatePaitientPending]: (state, action) => ({
+    [PatientActionEnums.updatePatientPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.updatePaitientSuccess]: (state, action) => ({
+    [PatientActionEnums.updatePatientSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.updatePaitientError]: (state, action) => ({
+    [PatientActionEnums.updatePatientError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.deletePaitientPending]: (state, action) => ({
+    [PatientActionEnums.deletePatientPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.deletePaitientSuccess]: (state, action) => ({
+    [PatientActionEnums.deletePatientSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.deletePaitientError]: (state, action) => ({
+    [PatientActionEnums.deletePatientError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),

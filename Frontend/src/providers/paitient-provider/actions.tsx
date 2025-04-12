@@ -1,48 +1,48 @@
 "use client"
-import { IPaitient } from './models';
-import {IPaitientStateContext } from './context';
+import { IPatient } from './models';
+import {IPatientStateContext } from './context';
 import {createAction} from "redux-actions";
 
 // Enum defining the type of actions that can be dispatched
-export enum PaitientActionEnums {
+export enum PatientActionEnums {
 
-    getPaitientsPending = "GET_PAITIENTS_PENDING",
-    getPaitientsSuccess = "GET_PAITIENTS_SUCCESS",
-    getPaitientsError = "GET_PAITIENTS_ERROR",
+    getPatientsPending = "GET_PATIENTS_PENDING",
+    getPatientsSuccess = "GET_PATIENTS_SUCCESS",
+    getPatientsError = "GET_PATIENTS_ERROR",
   
-    getPaitientPending = "GET_PAITIENT_PENDING",
-    getPaitientSuccess = "GET_PAITIENT_SUCCESS",
-    getPaitientError = "GET_PAITIENT_ERROR",
+    getPatientPending = "GET_PATIENT_PENDING",
+    getPatientSuccess = "GET_PATIENT_SUCCESS",
+    getPatientError = "GET_PATIENT_ERROR",
   
-   registerPaitientPending = "CREATE_PAITIENT_PENDING",
-   registerPaitientSuccess = "CREATE_PAITIENT_SUCCESS",
-   registerPaitientError = "CREATE_PAITIENT_ERROR",
+   registerPatientPending = "CREATE_PATIENT_PENDING",
+   registerPatientSuccess = "CREATE_PATIENT_SUCCESS",
+   registerPatientError = "CREATE_PATIENT_ERROR",
   
-    updatePaitientPending = "UPDATE_=PAITIENT_PENDING",
-    updatePaitientSuccess = "UPDATE_=PAITIENT_SUCCESS",
-    updatePaitientError = "UPDATE_=PAITIENT_ERROR",
+    updatePatientPending = "UPDATE_=PATIENT_PENDING",
+    updatePatientSuccess = "UPDATE_=PATIENT_SUCCESS",
+    updatePatientError = "UPDATE_=PATIENT_ERROR",
   
-    deletePaitientPending = "DELETE_PAITIENT_PENDING",
-    deletePaitientSuccess = "DELETE_PAITIENT_SUCCESS",
-    deletePaitientError = "DELETE_PAITIENT_ERROR",
+    deletePatientPending = "DELETE_PATIENT_PENDING",
+    deletePatientSuccess = "DELETE_PATIENT_SUCCESS",
+    deletePatientError = "DELETE_PATIENT_ERROR",
   }
 
-  export const registerPaitientPending = createAction<IPaitientStateContext>(
-    PaitientActionEnums.registerPaitientPending,
+  export const registerPatientPending = createAction<IPatientStateContext>(
+    PatientActionEnums.registerPatientPending,
     () => ({ isPending: true, isSuccess: false, isError: false })
   );
   
-  export const registerPaitientSuccess = createAction<
-    IPaitientStateContext,
-    IPaitient
-  >(PaitientActionEnums.registerPaitientSuccess, (paitient: IPaitient) => ({
+  export const registerPatientSuccess = createAction<
+    IPatientStateContext,
+    IPatient
+  >(PatientActionEnums.registerPatientSuccess, (Patient: IPatient) => ({
     isPending: false,
     isSuccess: true,
     isError: false,
-    paitient,
+    Patient,
   }));
 
-  export const registerPaitientError = createAction<IPaitientStateContext>(
-    PaitientActionEnums.registerPaitientError,
+  export const registerPatientError = createAction<IPatientStateContext>(
+    PatientActionEnums.registerPatientError,
     () => ({ isPending: false, isSuccess: false, isError: true })
   );
