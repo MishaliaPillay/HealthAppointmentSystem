@@ -1,8 +1,4 @@
-﻿using System;
-using Abp.Application.Services.Dto;
-using Abp.Domain.Entities;
-
-namespace healthap.Services.PersonServices.Dtos
+﻿namespace healthap.Services.PersonServices.Dtos
 {
     public class ProviderRequestDto : UserRequestDto
     {

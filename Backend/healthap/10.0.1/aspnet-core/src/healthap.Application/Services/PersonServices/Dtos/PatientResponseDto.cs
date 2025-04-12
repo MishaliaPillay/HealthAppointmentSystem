@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Abp.Application.Services.Dto;
-using Abp.Domain.Entities;
+using Abp.AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.AppointmentServices.Dtos;
 
 namespace healthap.Services.PersonServices.Dtos
 {
+    [AutoMap(typeof(Patient))]
     public class PatientResponseDto : EntityDto<Guid>
     {
 
         public UserResponseDto User { get; set; }
+        public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
