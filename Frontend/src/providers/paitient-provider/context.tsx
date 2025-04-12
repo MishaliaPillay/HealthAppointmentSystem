@@ -11,12 +11,13 @@ export interface IPaitientStateContext {
     paitients?: IPaitient[]; // Array of Paitients
   }
   
-  // Actions that will be performed on Clients
+  // Actions that will be performed on Paitientss
 export interface IPaitientActionContext {
     getPaitients: () => void;
     getPaitient: () => void;
-    createPaitient: (client: IPaitient) => void;
-    registerPaitient: (client: IPaitientRegistration) => Promise<void>;
+    createPaitient:(paitient: IPaitientRegistration) => Promise<void>;
+    updatePaitient:(paitient:IPaitient)=>void;
+    deletePaitientbyId:(paitientId:string)=>void;//letting user delete their own profile
   }
 // Initial state with default values
 export const INITIAL_STATE: IPaitientStateContext = {
