@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
+using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 
@@ -14,10 +15,13 @@ namespace healthap.Services.PersonServices
          IProviderAppService
     {
         private readonly ProviderManager _providerManager;
+        private readonly IMapper _mapper;
 
-        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager) : base(repository)
+        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager ,IMapper mapper) : base(repository)
         {
             _providerManager = providerManager;
+            _mapper = mapper;
+
         }
         public override async Task<ProviderResponseDto> CreateAsync(ProviderRequestDto input)
         {
@@ -34,7 +38,7 @@ namespace healthap.Services.PersonServices
                 input.MaxAppointmentsPerDay,
                 input.Qualification
             );
-            return MapToEntityDto(provider);
+            return _mapper.Map<ProviderResponseDto>(provider);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
+using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 
@@ -11,10 +12,12 @@ namespace healthap.Services.PersonServices
     public class PatientAppService : AsyncCrudAppService<Patient, PatientResponseDto, Guid, PagedAndSortedResultRequestDto, PatientRequestDto, PatientResponseDto>, IPatientAppService
     {
         private readonly PatientManager _patientManager;
+        private readonly IMapper _mapper;
 
-        public PatientAppService(IRepository<Patient, Guid> repository, PatientManager patientManager) : base(repository)
+        public PatientAppService(IRepository<Patient, Guid> repository, PatientManager patientManager,IMapper mapper) : base(repository)
         {
             _patientManager = patientManager;
+            _mapper = mapper;
         }
 
         public override async Task<PatientResponseDto> CreateAsync(PatientRequestDto input)
@@ -35,10 +38,9 @@ namespace healthap.Services.PersonServices
                 input.PostalCode,
                 input.Country,
                 input.PreferredContactMethod
-
             );
 
-            return MapToEntityDto(patient);
+            return _mapper.Map<PatientResponseDto>(patient);
 
         }
 
