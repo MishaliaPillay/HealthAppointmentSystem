@@ -30,6 +30,7 @@ export const INITIAL_STATE: IUserStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
+  users:[]
 };
 
 // Create the state context and the action context
