@@ -4,6 +4,7 @@ export interface IPatientRegistration {
   Email: string;
   PhoneNumber: string;
    //TODO:KM May have to remove at some point
+  Password:string;
   Role: string;
   DateOfBirth: Date;
   Address: string;
