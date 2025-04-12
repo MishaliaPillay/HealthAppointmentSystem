@@ -1,8 +1,10 @@
-export interface IPatientRegistration {
+export interface IPatientRegisteration {
   FirstName: string;
   LastName: string;
   Email: string;
   PhoneNumber: string;
+   //TODO:KM May have to remove at some point
+  Password:string;
   Role: string;
   DateOfBirth: Date;
   Address: string;
@@ -12,11 +14,12 @@ export interface IPatientRegistration {
   Country: string;
 }
 export interface IPatient {
-  _id: string;
+  _id?: string;
   FirstName: string;
   LastName: string;
   Email: string;
   PhoneNumber: string;
+  //TODO:KM May have to remove at some point
   Role: string;
   DateOfBirth: Date;
   Address: string;
