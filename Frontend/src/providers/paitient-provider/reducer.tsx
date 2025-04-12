@@ -27,15 +27,15 @@ export const PaitientReducer = handleActions<IPaitientStateContext, IPaitientSta
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.createPaitientPending]: (state, action) => ({
+    [PaitientActionEnums.registerPaitientPending]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.createPaitientSuccess]: (state, action) => ({
+    [PaitientActionEnums.registerPaitientSuccess]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
-    [PaitientActionEnums.createPaitientError]: (state, action) => ({
+    [PaitientActionEnums.registerPaitientError]: (state, action) => ({
         ...state,
         ...action.payload,
     }),
