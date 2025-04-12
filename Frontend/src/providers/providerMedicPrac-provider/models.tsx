@@ -16,6 +16,8 @@ export interface IProviderRegisteration {
     FirstName: string;
     LastName: string;
     Email: string;
+     //TODO:KM May have to remove at some point
+    Role: string;
     Title:string;
     Password:string;
     Biography:string;
