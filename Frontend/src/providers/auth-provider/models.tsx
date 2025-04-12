@@ -7,4 +7,10 @@ export interface IUser {
     UserId: string;
     Role: string;
   }
-  
+  export interface ILoginResponse{
+    token:string;
+}
+export interface ILoginResquest{
+    email: string,
+    password: string
+}
