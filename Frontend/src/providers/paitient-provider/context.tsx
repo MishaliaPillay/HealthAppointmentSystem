@@ -1,4 +1,4 @@
-import { IPatient, IPatientRegistration } from "./models";
+import { IPatient, IPatientRegisteration } from "./models";
 import { createContext } from "react";
 
 // Context shape
@@ -15,7 +15,7 @@ export interface IPatientStateContext {
 export interface IPatientActionContext {
   getPatients: () => void;
   getPatient: (id: string) => void;
-  registerPatient: (Patient: IPatientRegistration) => Promise<void>;
+  registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
   updatePatient: (Patient: IPatient) => void;
   deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
 }

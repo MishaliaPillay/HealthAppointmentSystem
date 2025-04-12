@@ -1,4 +1,4 @@
-export interface IPatientRegistration {
+export interface IPatientRegisteration {
   FirstName: string;
   LastName: string;
   Email: string;
@@ -14,7 +14,7 @@ export interface IPatientRegistration {
   Country: string;
 }
 export interface IPatient {
-  _id: string;
+  _id?: string;
   FirstName: string;
   LastName: string;
   Email: string;
