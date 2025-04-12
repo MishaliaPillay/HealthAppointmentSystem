@@ -7,7 +7,7 @@ using Abp.Application.Services.Dto;
 
 namespace healthap.Services.PersonServices.Dtos
 {
-    public class PersonResponseDto : EntityDto<Guid>
+    public class UserReponseDto:EntityDto<long>
     {
         public string Title { get; set; }
         public string FirstName { get; set; }
@@ -15,7 +15,5 @@ namespace healthap.Services.PersonServices.Dtos
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
-        public string Role { get; set; }
-        public long UserId { get; set; }
     }
 }

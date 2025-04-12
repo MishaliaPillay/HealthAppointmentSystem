@@ -7,7 +7,7 @@ using healthap.Domain.Persons;
 
 namespace healthap.Services.PersonServices.Dtos
 {
-    public class PatientRequestDto : PersonRequestDto
+    public class PatientRequestDto : UserRequestDto
     {
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
