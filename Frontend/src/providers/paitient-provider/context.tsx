@@ -14,7 +14,7 @@ export interface IPatientStateContext {
   // Actions that will be performed on Patientss
 export interface IPatientActionContext {
     getPatients: () => void;
-    getPatient: () => void;
+    getPatient: (id:string) => void;
     registerPatient:(Patient: IPatientRegistration) => Promise<void>;
     updatePatient:(Patient:IPatient)=>void;
     deletePatientbyId:(PatientId:string)=>void;//letting user delete their own profile
