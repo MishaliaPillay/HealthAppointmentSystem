@@ -29,15 +29,15 @@ export const UserReducer = handleActions<IUserStateContext, IUserStateContext>(
       ...state,
       ...action.payload,
     }),
-    [UserActionEnums.verifyUserPending]: (state, action) => ({
+    [UserActionEnums.signInPending]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
-    [UserActionEnums.verifyUserSuccess]: (state, action) => ({
+    [UserActionEnums.signInSuccess]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
-    [UserActionEnums.verifyUserError]: (state, action) => ({
+    [UserActionEnums.signInError]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
