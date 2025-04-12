@@ -11,6 +11,8 @@ namespace healthap.Services.PersonServices.Dtos
     public class PersonRequestDto : EntityDto<Guid>
     {
         [Required]
+        public string Title { get; set; }
+        [Required]
         public string FirstName { get; set; }
         [Required]
         public string Surname { get; set; }
@@ -23,7 +25,7 @@ namespace healthap.Services.PersonServices.Dtos
         public string UserName { get; set; }
         [Required]
         public string Password { get; set; }
-        public string Title { get; set; }
+
      
     }
 }

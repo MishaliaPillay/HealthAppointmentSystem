@@ -9,6 +9,7 @@ namespace healthap.Services.PersonServices.Dtos
 {
     public class PersonResponseDto : EntityDto<Guid>
     {
+        public string Title { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
