@@ -1,6 +1,6 @@
 "use client";
 import { createContext } from "react";
-import { IUser } from "./models";
+import { ILoginResponse, ILoginResquest, IUser } from "./models";
 
 
 // Context shape interface
@@ -14,7 +14,7 @@ export interface IUserStateContext {
 
 // User action context interface
 export interface IUserActionContext {
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (LoginResquest:ILoginResquest) => Promise<ILoginResponse>;
   signUp: (user: IUser) => Promise<void>;
   signOut: () => void;
   getCurrentUser: () => Promise<void>;
