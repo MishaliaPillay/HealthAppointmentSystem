@@ -11,7 +11,6 @@ namespace healthap.EntityFrameworkCore;
 public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDbContext>
 {
     /* Define a DbSet for each entity of the application */
-    public DbSet<Person> Persons { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Provider> Providers { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
