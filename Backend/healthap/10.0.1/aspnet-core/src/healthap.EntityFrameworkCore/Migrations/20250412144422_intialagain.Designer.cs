@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using healthap.EntityFrameworkCore;
 
@@ -11,9 +12,11 @@ using healthap.EntityFrameworkCore;
 namespace healthap.Migrations
 {
     [DbContext(typeof(healthapDbContext))]
-    partial class healthapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412144422_intialagain")]
+    partial class intialagain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1701,6 +1704,11 @@ namespace healthap.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1747,7 +1755,9 @@ namespace healthap.Migrations
 
                     b.ToTable("Persons");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator().HasValue("Person");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("healthap.MultiTenancy.Tenant", b =>
@@ -1892,7 +1902,7 @@ namespace healthap.Migrations
                     b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Patients", (string)null);
+                    b.HasDiscriminator().HasValue("Patient");
                 });
 
             modelBuilder.Entity("healthap.Domain.Persons.Provider", b =>
@@ -1911,7 +1921,7 @@ namespace healthap.Migrations
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");
 
-                    b.ToTable("Providers", (string)null);
+                    b.HasDiscriminator().HasValue("Provider");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Roles.RoleClaim", b =>
@@ -2162,24 +2172,6 @@ namespace healthap.Migrations
                     b.HasOne("healthap.Authorization.Users.User", null)
                         .WithMany("Permissions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
-                {
-                    b.HasOne("healthap.Domain.Persons.Person", null)
-                        .WithOne()
-                        .HasForeignKey("healthap.Domain.Persons.Patient", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("healthap.Domain.Persons.Provider", b =>
-                {
-                    b.HasOne("healthap.Domain.Persons.Person", null)
-                        .WithOne()
-                        .HasForeignKey("healthap.Domain.Persons.Provider", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
