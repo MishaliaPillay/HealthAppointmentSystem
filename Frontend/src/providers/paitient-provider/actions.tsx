@@ -33,14 +33,11 @@ export const getPatientsPending = createAction<IPatientStateContext>(
   PatientActionEnums.getPatientsPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
 );
-
-// createAction<ReturnType, PayloadType>
 export const getPatientsSuccess = createAction<
   IPatientStateContext, 
   IPatient[]           
 >(
   PatientActionEnums.getPatientsSuccess,
-  // Receives Patients array and returns state with Patients
   (Patients: IPatient[]) => ({
     isPending: false,
     isSuccess: true,
@@ -53,8 +50,6 @@ export const getPatientsError = createAction<IPatientStateContext>(
   PatientActionEnums.getPatientsError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-
-
 
 //Get Single Paitient
 export const getPatientError = createAction<IPatientStateContext>(
