@@ -11,13 +11,8 @@ import {
   signInError,
   signInPending,
   signInSuccess,
-  //   verifyUserPending,
-  //   verifyUserError,
-  //   verifyUserSuccess,
 } from "./actions";
-import axios from "axios";
-import { error } from "console";
-import { isPending } from "@reduxjs/toolkit";
+
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
