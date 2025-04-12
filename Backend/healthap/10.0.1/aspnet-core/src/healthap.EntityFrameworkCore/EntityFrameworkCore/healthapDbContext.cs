@@ -20,12 +20,5 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
         : base(options)
     {
     }
-    // Add the method here
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Patient>().ToTable("Patients");
-        modelBuilder.Entity<Provider>().ToTable("Providers");
-    }
 }

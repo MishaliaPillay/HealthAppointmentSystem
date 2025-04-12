@@ -15,8 +15,9 @@ namespace healthap.Domain.Persons
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
-
+        public string Title { get; set; }
         public string Biography { get; set; }
+        public string PhoneNumber { get; set; }
         public int YearsOfExperience { get; set; }
         public int MaxAppointmentsPerDay { get; set; }
         public string Qualification { get; set; }

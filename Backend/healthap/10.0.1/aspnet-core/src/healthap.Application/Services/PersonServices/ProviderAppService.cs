@@ -10,6 +10,7 @@ namespace healthap.Services.PersonServices
 {
     public class ProviderAppService :
          AsyncCrudAppService<Provider, ProviderResponseDto, Guid, PagedAndSortedResultRequestDto, ProviderRequestDto, ProviderResponseDto>,
+
          IProviderAppService
     {
         private readonly ProviderManager _providerManager;
@@ -21,13 +22,13 @@ namespace healthap.Services.PersonServices
         public override async Task<ProviderResponseDto> CreateAsync(ProviderRequestDto input)
         {
             var provider = await _providerManager.CreateProviderAsync(
+                input.Title,
                 input.FirstName,
                 input.Surname,
                 input.Email,
                 input.PhoneNumber,
                 input.UserName,
                 input.Password,
-                input.Title,
                 input.Biography,
                 input.YearsOfExperience,
                 input.MaxAppointmentsPerDay,
