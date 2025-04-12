@@ -1,6 +1,7 @@
 ﻿using Abp.AspNetCore;
 using Abp.AspNetCore.Configuration;
 using Abp.AspNetCore.SignalR;
+using Abp.Configuration.Startup;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Zero.Configuration;
@@ -46,6 +47,8 @@ namespace healthap
                  .CreateControllersForAppServices(
                      typeof(healthapApplicationModule).GetAssembly()
                  );
+            //Details about exceptions:
+            Configuration.Modules.AbpWebCommon().SendAllExceptionsToClients=true;
 
             ConfigureTokenAuth();
         }
