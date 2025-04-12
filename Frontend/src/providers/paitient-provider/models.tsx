@@ -2,7 +2,7 @@
     FirstName:string;
     LastName:string ;
     Email:string ;
-    PhoneNumbe:string;
+    PhoneNumber:string;
     Role :string;
     DateOfBirth:Date;
     Address:string ;
@@ -16,7 +16,7 @@ export interface IPaitient {
     FirstName:string;
     LastName:string ;
     Email:string ;
-    PhoneNumbe:string;
+    PhoneNumber:string;
     Role :string;
     DateOfBirth:Date;
     Address:string 
