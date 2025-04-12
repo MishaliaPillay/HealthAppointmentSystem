@@ -1,10 +1,10 @@
 ﻿using System;
 using Abp.Application.Services;
 using Abp.Domain.Repositories;
-using healthap.Domain;
-using healthap.Services.Dtos;
+using healthap.Domain.Appointments;
+using healthap.Services.AppointmentServices.Dtos;
 
-namespace healthap.Services
+namespace healthap.Services.AppointmentServices
 {
     public class AppointmentAppService : AsyncCrudAppService<Appointment, AppointmentDto, Guid>, IAppointmentAppService
     {

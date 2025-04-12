@@ -1,9 +1,9 @@
 ﻿using System;
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
-using healthap.Domain;
+using healthap.Domain.Appointments;
 
-namespace healthap.Services.Dtos
+namespace healthap.Services.AppointmentServices.Dtos
 {
     [AutoMap(typeof(Appointment))]
     public class AppointmentDto : EntityDto<Guid>
@@ -15,6 +15,8 @@ namespace healthap.Services.Dtos
 
         public string Purpose { get; set; }
         public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
+
+
 
     }
 }
