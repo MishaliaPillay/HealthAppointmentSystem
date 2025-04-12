@@ -31,7 +31,7 @@ namespace healthap.Domain.Persons
             string city,
             string province,
             string postalCode,
-            int country,
+            string country,
             ReflistConMethod preferredContactMethod)
         {
             try
@@ -60,9 +60,17 @@ namespace healthap.Domain.Persons
                 return patient;
             }
             catch (Exception ex)
+
             {
-                Logger.Error("Error creating patient", ex);
-                throw new UserFriendlyException("An error occurred while creating the patient", ex);
+
+                Logger.Error($"Error creating patient: {ex.Message}, Stack trace: {ex.StackTrace}", ex);
+
+                if (ex.InnerException != null)
+
+                    Logger.Error($"Inner exception: {ex.InnerException.Message}");
+
+                throw new UserFriendlyException("An error occurred while creating the patient. See logs for details.", ex);
+
             }
         }
     }
