@@ -15,7 +15,6 @@ namespace healthap.Services.PersonServices.Mappings
     {
         public CustomDtoMappings()
         {
-            CreateMap<Person, PersonResponseDto>();
 
             CreateMap<Patient, PatientResponseDto>();
             CreateMap<PatientRequestDto, Patient>()
@@ -24,6 +23,7 @@ namespace healthap.Services.PersonServices.Mappings
                 .ForMember(d => d.UserId, opt => opt.Ignore());
 
             CreateMap<Provider, ProviderResponseDto>();
+
             CreateMap<ProviderRequestDto, Provider>()
                 .ForMember(d => d.Id, opt => opt.Ignore())
                 .ForMember(d => d.User, opt => opt.Ignore())
