@@ -1,11 +1,7 @@
 ﻿using Abp.Domain.Entities.Auditing;
 using Abp.Domain.Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace healthap.Domain.Location
 {
@@ -15,7 +11,7 @@ namespace healthap.Domain.Location
     public class Location : Entity<int>, IHasCreationTime
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string Address { get; set; }
 
         [Required]
@@ -56,16 +52,20 @@ namespace healthap.Domain.Location
             double? latitude = null,
             double? longitude = null)
         {
-            Address = address;
-            City = city;
-            Country = country;
+            Address = address ?? throw new ArgumentNullException(nameof(address));
+            City = city ?? throw new ArgumentNullException(nameof(city));
+            Country = country ?? throw new ArgumentNullException(nameof(country));
             State = state;
             PostalCode = postalCode;
             Description = description;
             Latitude = latitude;
             Longitude = longitude;
-
             CreationTime = DateTime.Now;
+        }
+
+        public override string ToString()
+        {
+            return $"{Address}, {City}, {State}, {PostalCode}, {Country}";
         }
     }
 }
