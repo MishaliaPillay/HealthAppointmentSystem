@@ -85,7 +85,7 @@ export const ProviderProvider = ({
       });
   };
 
-  //Update Paitient
+  //Update Provider
   const updateProvider = async (Provider: IProvider) => {
     dispatch(updateProviderPending());
     const endpoint = `updateProvider`;
