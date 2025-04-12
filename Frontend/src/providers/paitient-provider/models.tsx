@@ -3,6 +3,7 @@ export interface IPatientRegistration {
   LastName: string;
   Email: string;
   PhoneNumber: string;
+   //TODO:KM May have to remove at some point
   Role: string;
   DateOfBirth: Date;
   Address: string;
@@ -17,6 +18,7 @@ export interface IPatient {
   LastName: string;
   Email: string;
   PhoneNumber: string;
+  //TODO:KM May have to remove at some point
   Role: string;
   DateOfBirth: Date;
   Address: string;
