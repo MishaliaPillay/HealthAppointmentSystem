@@ -9,7 +9,6 @@ import {
   INITIAL_STATE,
 } from "./context";
 import { AppointmentReducer } from "./reducers";
-import axios from "axios";
 import {
   bookAppointmentError,
   bookAppointmentPending,
@@ -27,6 +26,7 @@ import {
   updateAppointmentPending,
   updateAppointmentsSuccess,
 } from "./actions";
+import { getAxiosInstace } from "@/utils/axiosInstance";
 
 export const AppointmentProvider = ({
   children,
@@ -34,6 +34,7 @@ export const AppointmentProvider = ({
   children: React.ReactNode;
 }) => {
   const [state, dispatch] = useReducer(AppointmentReducer, INITIAL_STATE);
+  const instance = getAxiosInstace();
 
   //token into the session storage
   const getHeaders = () => {
@@ -53,23 +54,21 @@ export const AppointmentProvider = ({
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
     try {
-      const endpoint = "the endpoint Link";
-      const response = await axios.post(endpoint, appointment, getHeaders());
-      dispatch(bookAppointmentSuccess([response.data]));
+      const endpoint = `/rest of the url here`;
+      const response = await instance.post(endpoint, appointment, getHeaders());
+      dispatch(bookAppointmentSuccess(response.data));
     } catch (error) {
       console.error("Error booking an Appointment:", error);
       dispatch(bookAppointmentError());
     }
   };
-
   const getAppointments = async () => {
     dispatch(getAllAppointmentPending());
     try {
-      const endpoint = "end point for the get all";
+      const endpoint = `/rest of the url here`;
       const headers = getHeaders();
-      const response = await axios.get(endpoint, headers);
+      const response = await instance.get(endpoint, headers);
       dispatch(getAllAppointmentSuccess(response.data.data));
-      console.log(response.data.data);
     } catch (error) {
       console.error("fetching appointments failed", error);
       dispatch(getAllAppointmentError());
@@ -79,12 +78,12 @@ export const AppointmentProvider = ({
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
     try {
-      const endpoint = `endpoint of the fetvhing appointment by id/${id}`;
-      const response = await axios.get(endpoint, getHeaders());
+      const endpoint = `rest url of the fetching appointment by id/${id}`;
+      const headers = getHeaders();
+      const response = await instance.get(endpoint, headers);
       dispatch(getAppointmentSuccess(response.data));
-      console.log(response.data);
     } catch (error) {
-      console.error("Error fetching Appointment by ID:", error);
+      console.error("fetching appointment by ID failed", error);
       dispatch(getAppointmentError());
     }
   };
@@ -95,12 +94,12 @@ export const AppointmentProvider = ({
   ) => {
     dispatch(updateAppointmentPending());
     try {
-      const endpoint = `endpoint of the updating appointment/${id}`;
-      const response = await axios.put(endpoint, appointment, getHeaders());
+      const endpoint = `rest url of the updating appointment/${id}`;
+      const headers = getHeaders();
+      const response = await instance.put(endpoint, appointment, headers);
       dispatch(updateAppointmentsSuccess(response.data));
-      console.log(response.data);
     } catch (error) {
-      console.error("Error updating Appointment by ID:", error);
+      console.error("updating appointment by ID failed", error);
       dispatch(updateAppointmentError());
     }
   };
@@ -108,12 +107,12 @@ export const AppointmentProvider = ({
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
     try {
-      const endpoint = `endpoint of the deleting appointment/${id}`;
-      const response = await axios.delete(endpoint, getHeaders());
+      const endpoint = ` rest url of the deleting appointment/${id}`;
+      const headers = getHeaders();
+      const response = await instance.delete(endpoint, headers);
       dispatch(deleteAppointmenttSuccess(response.data));
-      console.log(response.data);
     } catch (error) {
-      console.error("Error deleting Appointment by ID:", error);
+      console.error("deleting appointment by ID failed", error);
       dispatch(deleteAppointmentError());
     }
   };
