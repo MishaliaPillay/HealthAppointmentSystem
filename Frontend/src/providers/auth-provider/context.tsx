@@ -1,15 +1,7 @@
 "use client";
 import { createContext } from "react";
+import { IUser } from "./models";
 
-//User object interface
-export interface IUser {
-  FirstName: string;
-  LastName: string;
-  Email: string;
-  PhoneNumber: string;
-  UserId: string;
-  Role: string;
-}
 
 // Context shape interface
 export interface IUserStateContext {
@@ -22,6 +14,10 @@ export interface IUserStateContext {
 
 // User action context interface
 export interface IUserActionContext {
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (user: IUser) => Promise<void>;
+  signOut: () => void;
+  getCurrentUser: () => Promise<void>;
   getUsers: () => void; // Fetch all Users
   getUser: (id: string) => void; // Fetch a single User
   createUser: (user: IUser) => void; // Create a new User
