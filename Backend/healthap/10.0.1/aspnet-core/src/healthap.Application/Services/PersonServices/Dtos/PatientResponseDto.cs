@@ -9,7 +9,8 @@ namespace healthap.Services.PersonServices.Dtos
 {
     public class PatientResponseDto : EntityDto<Guid>
     {
-        public UserReponseDto User { get; set; }
+
+        public UserResponseDto User { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
         public string City { get; set; }

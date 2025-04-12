@@ -24,7 +24,8 @@ namespace healthap.Domain.Persons
         public string PostalCode { get; set; }
         public string Country { get; set; }
         public virtual ReflistConMethod PreferredContactMedthod { get; set; }
+        public string ? PreferredContactMedthodText { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }
-}
+

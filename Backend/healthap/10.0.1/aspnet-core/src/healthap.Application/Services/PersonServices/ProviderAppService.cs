@@ -27,9 +27,9 @@ namespace healthap.Services.PersonServices
         {
             var provider = await _providerManager.CreateProviderAsync(
                 input.Title,
-                input.FirstName,
+                input.Name,
                 input.Surname,
-                input.Email,
+                input.EmailAddress,
                 input.PhoneNumber,
                 input.UserName,
                 input.Password,

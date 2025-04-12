@@ -6,7 +6,6 @@ namespace healthap.Services.PersonServices.Dtos
 {
     public class ProviderRequestDto : UserRequestDto
     {
-        public UserReponseDto User { get; set; }
         public string Title { get; set; }
         public string PhoneNumber { get; set; }
         public string Biography { get; set; }

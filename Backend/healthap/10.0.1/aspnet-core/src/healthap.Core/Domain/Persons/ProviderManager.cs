@@ -56,12 +56,12 @@ namespace healthap.Domain.Persons
                 }
 
                 // Add Provider role
-                await _userManager.AddToRoleAsync(user, "Provider");
+                await _userManager.AddToRoleAsync(user, "PROVIDER");
 
                 // Create provider entity
                 var provider = new Provider
                 {
-                    UserId = user.Id,
+                    UserId = Convert.ToInt64(user.Id),
                     Title = title,
                     Biography = biography,
                     PhoneNumber = phoneNumber,

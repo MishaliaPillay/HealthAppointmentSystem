@@ -25,9 +25,9 @@ namespace healthap.Services.PersonServices
 
             var patient = await _patientManager.CreatePatientAsync(
                 input.Title,
-                input.FirstName,
+                input.Name,
                 input.Surname,
-                input.Email,
+                input.EmailAddress,
                 input.PhoneNumber,
                 input.UserName,
                 input.Password,

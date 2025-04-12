@@ -9,15 +9,14 @@ namespace healthap.Services.PersonServices.Dtos
 {
     public class UserRequestDto
     {
+
         [Required]
-        public string Title { get; set; }
-        [Required]
-        public string FirstName { get; set; }
+        public string Name { get; set; }
         [Required]
         public string Surname { get; set; }
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string EmailAddress { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
         [Required]
