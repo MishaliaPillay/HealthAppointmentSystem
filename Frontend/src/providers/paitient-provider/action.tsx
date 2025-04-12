@@ -1,6 +1,6 @@
 "use client"
 import { IPaitient } from './models';
-import { IPaitientActionContext, IPaitientStateContext } from './context';
+import {IPaitientStateContext } from './context';
 import {createAction} from "redux-actions";
 
 // Enum defining the type of actions that can be dispatched
