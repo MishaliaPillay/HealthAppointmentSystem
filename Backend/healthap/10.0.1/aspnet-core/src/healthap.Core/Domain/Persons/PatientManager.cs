@@ -4,74 +4,87 @@ using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Domain.Services;
 using Abp.UI;
+using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
 
 namespace healthap.Domain.Persons
 {
     public class PatientManager : DomainService
     {
-        private readonly PersonManager _personManager;
-        private readonly IRepository<Patient, Guid> _patientRepository;
-        public PatientManager(PersonManager personManager, IRepository<Patient, Guid> patientRepository)
+        public class ProviderManager : DomainService
         {
-            _personManager = personManager;
-            _patientRepository = patientRepository;
-        }
+            private readonly UserManager _userManager;
+            private readonly IRepository<Provider, Guid> _providerRepository;
 
-        public async Task<Patient> CreatePatientAsync(
-            string title,
-            string firstName,
-            string surname,
-            string emailAddress,
-            string phoneNumber,
-            string username,
-            string password,
-            DateTime dateOfBirth,
-            string address,
-            string city,
-            string province,
-            string postalCode,
-            string country,
-            ReflistConMethod preferredContactMethod)
-        {
-            try
+            public ProviderManager(
+                UserManager userManager,
+                IRepository<Provider, Guid> providerRepository)
             {
-                var patient = new Patient
-                {
-                    Title = title,
-                    FirstName = firstName,
-                    Surname = surname,
-                    Email = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    UserName = username,
-                    Role = "Patient",
-                    DateOfBirth = dateOfBirth,
-                    Address = address,
-                    City = city,
-                    Province = province,
-                    PostalCode = postalCode,
-                    Country = country,
-                    PreferredContactMedthod = preferredContactMethod,
-                    Appointments = new List<Appointment>()
-                };
-                // creating Person and User entities
-                await _personManager.CreatePersonAsync(patient, password);
-                // Return the created Patient
-                return patient;
+                _userManager = userManager;
+                _providerRepository = providerRepository;
             }
-            catch (Exception ex)
 
+            public async Task<Provider> CreateProviderAsync(
+                string title,
+                string firstName,
+                string surname,
+                string emailAddress,
+                string phoneNumber,
+                string username,
+                string password,
+                string biography,
+                int yearsOfExperience,
+                int maxAppointmentsPerDay,
+                string qualification)
             {
+                try
+                {
 
-                Logger.Error($"Error creating patient: {ex.Message}, Stack trace: {ex.StackTrace}", ex);
+                    // Create provider user entity
+                    var user = new User
+                    {
+                        UserName = username,
+                        Name = firstName,
+                        Surname = surname,
+                        EmailAddress = emailAddress,
+                        PhoneNumber = phoneNumber,
+                        IsActive = true
+                    };
 
-                if (ex.InnerException != null)
+                    var result = await _userManager.CreateAsync(user, password);
+                    if (!result.Succeeded)
+                    {
+                        throw new UserFriendlyException("Failed to create user: " + string.Join(", ", result.Errors));
+                    }
 
-                    Logger.Error($"Inner exception: {ex.InnerException.Message}");
+                    // Add Provider role
+                    await _userManager.AddToRoleAsync(user, "Provider");
 
-                throw new UserFriendlyException("An error occurred while creating the patient. See logs for details.", ex);
+                    // Create provider entity
+                    var provider = new Provider
+                    {
+                        UserId = user.Id,
+                        Biography = biography,
+                        YearsOfExperience = yearsOfExperience,
+                        MaxAppointmentsPerDay = maxAppointmentsPerDay,
+                        Qualification = qualification,
+                        Availabilities = new List<ProviderAvailabilty>(),
+                        Appointments = new List<Appointment>()
+                    };
 
+                    await _providerRepository.InsertAsync(provider);
+
+                    return provider;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Error creating provider: {ex.Message}", ex);
+                    if (ex.InnerException != null)
+                        Logger.Error($"Inner exception: {ex.InnerException.Message}");
+                    throw new UserFriendlyException("An error occurred while creating the provider", ex);
+                }
             }
         }
     }
 }
+

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Domain.Services;
 using Abp.UI;
+using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
 
 namespace healthap.Domain.Persons
@@ -18,44 +19,82 @@ namespace healthap.Domain.Persons
             _providerRepository = providerRepository;
             _personManager = personManager;
         }
-
-        public async Task<Provider> CreateProviderAsync(string firstName, string surname, string emailAddress, string phonenumber, string username, string password, string title, string biography, int yearsOfExperience, int maxApp, string qauli)
-
-        {
-            try
+            public class PatientManager : DomainService
             {
-                var provider = new Provider
+                private readonly UserManager _userManager;
+                private readonly IRepository<Patient, Guid> _patientRepository;
+
+                public PatientManager(
+                    UserManager userManager,
+                    IRepository<Patient, Guid> patientRepository)
                 {
-                    Title = title,
-                    FirstName = firstName,
-                    Surname = surname,
-                    Email = emailAddress,
-                    PhoneNumber = phonenumber,
-                    UserName = username,
-                    Role = "Provider",
-                    Biography = biography,
-                    YearsOfExperience = yearsOfExperience,
-                    MaxAppointmentsPerDay = maxApp,
-                    Qualification = qauli,
-                    Appointments = new List<Appointment>(),
-                    Availabilities = new List<ProviderAvailabilty>(),
-                };
+                    _userManager = userManager;
+                    _patientRepository = patientRepository;
+                }
+
+                public async Task<Patient> CreatePatientAsync(
+                    string title,
+                    string firstName,
+                    string surname,
+                    string emailAddress,
+                    string phoneNumber,
+                    string username,
+                    string password,
+                    DateTime dateOfBirth,
+                    string address,
+                    string city,
+                    string province,
+                    string postalCode,
+                    string country,
+                    ReflistConMethod preferredContactMethod)
+                {
+                    try
+                    {
+                        var user = new User
+                        {
+                            UserName = username,
+                            Name = firstName,
+                            Surname = surname,
+                            EmailAddress = emailAddress,
+                            PhoneNumber = phoneNumber,
+                            IsActive = true
+                        };
+
+                        var result = await _userManager.CreateAsync(user, password);
+                        if (!result.Succeeded)
+                        {
+                            throw new UserFriendlyException("Failed to create user: " + string.Join(", ", result.Errors));
+                        }
+
+                        // Add to Patient role
+                        await _userManager.AddToRoleAsync(user, "Patient");
 
 
-                //creates the person
-                await _personManager.CreatePersonAsync(provider, password);
+                        var patient = new Patient
+                        {
+                            UserId = user.Id,
+                            DateOfBirth = dateOfBirth,
+                            Address = address,
+                            City = city,
+                            Province = province,
+                            PostalCode = postalCode,
+                            Country = country,
+                            PreferredContactMedthod = preferredContactMethod,
+                            Appointments = new List<Appointment>()
+                        };
 
+                        await _patientRepository.InsertAsync(patient);
 
-                return provider;
+                        return patient;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error creating patient: {ex.Message}", ex);
+                        if (ex.InnerException != null)
+                            Logger.Error($"Logger Inner exception: {ex.InnerException.Message}");
+                        throw new UserFriendlyException("An error occurred while creating the patient. See logs for details.", ex);
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                Logger.Error("Error creating provider", ex);
-                throw new UserFriendlyException("An error occured while creating your provider", ex);
-                throw;
-            }
-
         }
-
     }
-}
