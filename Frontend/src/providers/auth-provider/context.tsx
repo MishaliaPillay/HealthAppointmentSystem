@@ -1,43 +1,33 @@
 "use client";
 import { createContext } from "react";
-
-//User object interface
-export interface IUser {
-  FirstName: string;
-  LastName: string;
-  Email: string;
-  PhoneNumber: string;
-  UserId: string;
-  Role: string;
-}
+import {ILoginResquest, IAuth } from "./models";
 
 // Context shape interface
-export interface IUserStateContext {
+export interface IAuthStateContext {
   isPending: boolean;
   isSuccess: boolean;
   isError: boolean;
-  user?: IUser;
-  users?: IUser[]; // Array of Users
+  Auth?: IAuth;
+  Auths?: IAuth[]; // Array of Auths
 }
 
-// User action context interface
-export interface IUserActionContext {
-  getUsers: () => void; // Fetch all Users
-  getUser: (id: string) => void; // Fetch a single User
-  createUser: (user: IUser) => void; // Create a new User
-  updateUser: (user: IUser) => void; // Update existing User
-  deleteUser: (id: string) => void; // Delete a user
+// Auth action context interface
+export interface IAuthActionContext {
+  signIn: (LoginResquest:ILoginResquest) => Promise<void>;
+  signUp: (Auth: IAuth) => Promise<void>;
+  signOut: () => void;
 }
 
 // Initial state with default values
-export const INITIAL_STATE: IUserStateContext = {
+export const INITIAL_STATE: IAuthStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
+  Auths:[],
 };
 
 // Create the state context and the action context
-export const UserStateContext = createContext<IUserStateContext>(INITIAL_STATE);
-export const UserActionContext = createContext<IUserActionContext | undefined>(
+export const AuthStateContext = createContext<IAuthStateContext>(INITIAL_STATE);
+export const AuthActionContext = createContext<IAuthActionContext | undefined>(
   undefined
 );
