@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Domain.Services;
 using Abp.UI;
 using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
+using Microsoft.EntityFrameworkCore;
 
 namespace healthap.Domain.Persons
 {
@@ -62,9 +64,9 @@ namespace healthap.Domain.Persons
 
                 var patient = new Patient
                 {
-                    UserId =Convert.ToInt64(user.Id),
+                    UserId = Convert.ToInt64(user.Id),
                     Title = title,
-                    PhoneNumber= phoneNumber,
+                    PhoneNumber = phoneNumber,
                     DateOfBirth = dateOfBirth,
                     Address = address,
                     City = city,
@@ -86,6 +88,19 @@ namespace healthap.Domain.Persons
                     Logger.Error($"Logger Inner exception: {ex.InnerException.Message}");
                 throw new UserFriendlyException("An error occurred while creating the patient. See logs for details.", ex);
             }
+        }
+
+        public async Task<Patient> GetPatientByIdWithUserAsync(Guid id)
+        {
+            //returning an IQuerable that all/mutiple patients  with their users information and appointments nested  
+            var query = await _patientRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
+            //returning only one patient with that id
+            return await query.FirstOrDefaultAsync(p => p.Id == id);
+
+        }
+        public IQueryable<Patient> GetAllPaitentsAsync()
+        {
+             return _patientRepository.GetAllIncluding(p => p.User);
         }
     }
 }

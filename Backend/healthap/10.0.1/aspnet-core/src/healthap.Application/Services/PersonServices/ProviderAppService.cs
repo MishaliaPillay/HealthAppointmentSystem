@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
+using Abp.UI;
 using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace healthap.Services.PersonServices
 {
@@ -39,6 +43,31 @@ namespace healthap.Services.PersonServices
                 input.Qualification
             );
             return _mapper.Map<ProviderResponseDto>(provider);
+        }
+        public override async Task<ProviderResponseDto> GetAsync(EntityDto<Guid> input)
+        {
+            var proivder = await _providerManager.GetProviderByIdWithUserAsync(input.Id);
+            if (proivder == null)
+            {
+                throw new UserFriendlyException("Paitient not found");
+            }
+            return _mapper.Map<ProviderResponseDto>(proivder);
+
+        }
+        public override async Task<PagedResultDto<ProviderResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        {
+            var query = _providerManager.GetAllProvidersAsync();
+            var totalCount = await query.CountAsync();
+            //pagination:process of dividing a large set of data into smaller and more managebale chuncks 
+            var providers = await query
+                .Skip(input.SkipCount)//how many records to skip
+                .Take(input.MaxResultCount)//the number of records that should be retrieved 
+                .ToListAsync();
+
+            return new PagedResultDto<ProviderResponseDto>(
+                totalCount,
+                _mapper.Map<List<ProviderResponseDto>>(providers)
+            );
         }
     }
 }
