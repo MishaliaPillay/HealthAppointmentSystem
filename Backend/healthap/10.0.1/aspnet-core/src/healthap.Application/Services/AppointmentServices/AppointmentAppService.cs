@@ -16,15 +16,20 @@ namespace healthap.Services.AppointmentServices
         public override Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
 
-            return base.CreateAsync(input);
+            var createdAppointment = base.CreateAsync(input);
+
+            //whatsapp service , a static method
+         
+            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage($"Good day, your appointment is sucessfully submited for the date {input.AppointmentDate} and the time{input.AppointmentTime}.");
 
             // Format the cell number
             var ts = "0825185584";
             var cell = "+27" + ts.Substring(1);
 
-            // Send SMS (also assuming it's a static method)
+            // Send SMS , a  static method
             Services.NotificaServices.SmsService.SendMessage(cell, $"Good day, your appointment is sucessfully submited for the date {input.AppointmentDate} and the time{input.AppointmentTime}.");
 
+            return createdAppointment;
         }
     }
 }
