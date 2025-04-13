@@ -1,12 +1,12 @@
-//User object interface
-export interface IUser {
+//Auth object interface
+export interface IAuth {
     id?:string,
     title:string,
     name:string,
     surname:string, 
     emailAddress:string,
     phoneNumber:string,
-    userName:string,
+    UserName:string,
     password:string,
     role:string; 
     dateOfBirth?:Date,

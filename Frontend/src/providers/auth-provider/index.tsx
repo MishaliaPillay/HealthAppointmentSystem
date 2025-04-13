@@ -1,13 +1,10 @@
 "use client";
 import { getAxiosInstace } from "../../utils/axiosInstance";
-import { IUser, ILoginResquest } from "./models";
-import { INITIAL_STATE, UserActionContext, UserStateContext } from "./context";
-import { UserReducer } from "./reducer";
+import { IAuth, ILoginResquest } from "./models";
+import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
+import { AuthReducer } from "./reducer";
 import { useContext, useReducer } from "react";
 import {
-  getUserError,
-  getUserPending,
-  getUserSuccess,
   signInError,
   signInPending,
   signInSuccess,
@@ -16,36 +13,17 @@ import {
   signUpSuccess,
 } from "./actions";
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
-  const getUser = async () => {
-    dispatch(getUserPending());
-    const endpoint = `user/current`;
-    const token = sessionStorage.getItem("jwt")?.trim();
-    await instance
-      .get(endpoint, { headers: { Authorization: `${token}` } })
-      .then((response) => {
-        console.log("gettingusers");
-        dispatch(getUserSuccess(response.data.data));
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(getUserError());
-        return null; // Return null instead of nothing
-      })
-      .finally(() => {
-        //isPending=false
-        console.log("Done trying to process your getUser request");
-      });
-  };
-  const signUp = async (user: IUser): Promise<void> => {
+
+  const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
     const endpoint =
-      user.role == "PATIENT" ? `register/Patient` : `resigter:Provider`;
+      Auth.role == "PATIENT" ? `register/Patient` : `resigter:Provider`;
     await instance
-      .post<IUser>(endpoint, user)
+      .post<IAuth>(endpoint, Auth)
       .then((response) => {
         dispatch(signUpSuccess(response.data));
         console.log("Signup was successfull");
@@ -57,7 +35,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
-    const endpoint = "users/login";
+    const endpoint = "Auths/login";
     await instance
       .post(endpoint, LoginResquest)
       .then((response) => {
@@ -95,26 +73,26 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <UserStateContext.Provider value={state}>
-      <UserActionContext.Provider value={{ getUser, signIn, signUp, signOut }}>
+    <AuthStateContext.Provider value={state}>
+      <AuthActionContext.Provider value={{ signIn, signUp, signOut }}>
         {children}
-      </UserActionContext.Provider>
-    </UserStateContext.Provider>
+      </AuthActionContext.Provider>
+    </AuthStateContext.Provider>
   );
 };
 
-export const useUserState = () => {
-  const context = useContext(UserStateContext);
+export const useAuthState = () => {
+  const context = useContext(AuthStateContext);
   if (!context) {
-    throw new Error("useUserState must be used within a UserProvider");
+    throw new Error("useAuthState must be used within a AuthProvider");
   }
   return context;
 };
 
-export const useUserActions = () => {
-  const context = useContext(UserActionContext);
+export const useAuthActions = () => {
+  const context = useContext(AuthActionContext);
   if (!context) {
-    throw new Error("useUserActions must be used within a UserProvider");
+    throw new Error("useAuthActions must be used within a AuthProvider");
   }
   return context;
 };
