@@ -1,5 +1,5 @@
 "use client";
-import { useState, use } from 'react';
+import { useState} from 'react';
 import {
   Form,
   Input,
@@ -9,43 +9,33 @@ import {
   Typography,
   Radio,
   Select,
+  DatePicker,
   RadioChangeEvent,
+  Spin,
+  message
 } from "antd";
 import {
   UserOutlined,
   LockOutlined,
-  MailOutlined,
   MedicineBoxOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import styles from "./login-page.module.css";
-import { useUserActions } from '@/providers/users-provider';
-import { useRouter } from 'next/router';
-import { IUser } from '@/providers/users-provider/models';
 import { IAuth } from '@/providers/auth-provider/models';
-
+import { useAuthActions } from '@/providers/auth-provider';
 const { Title } = Typography;
 const { Option } = Select;
 
+message.config({
+  top: 50, // Distance from the top of the page in pixels
+  duration: 5, // Default duration in seconds
+});
 interface LoginFormValues {
   username: string;
   password: string;
   remember: boolean;
 }
-
-interface SignupFormValues {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-  userType: "patient" | "doctor";
-  specialty?: string;
-  agreeToTerms: boolean;
-}
-
-
-
 
 interface LoginSignupProps {
   className?: string; //if we want to style
@@ -53,23 +43,78 @@ interface LoginSignupProps {
 
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [Loading,setLoading]=useState(false);
-  const {signUp}=useUserActions();
+  const [Loading, setLoading] = useState(false);
+  const { signUp,signIn } =useAuthActions();
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
+
+
+  const mockPatientData = {
+    title: "Mr",
+    name: "John",
+    surname: "Doe",
+    emailAddress: "johndoe@example.com",
+    phoneNumber: "1234567890",
+    UserName: "johndoe",
+    password: "Password@123",
+    role: "PATIENT",
+    dateOfBirth: new Date("1990-01-01"),
+    address: "123 Main St",
+    city: "Anytown",
+    province: "State",
+    postalCode: "12345",
+    country: "Country",
+    preferredContactMethod: "Email"
+  };
+
+  const mockProviderData = {
+    title: "Dr",
+    name: "Jane",
+    surname: "Smith",
+    emailAddress: "janesmith@example.com",
+    phoneNumber: "0987654321",
+    UserName: "drjane",
+    password: "Password@123",
+    role: "PROVIDER",
+    Biography: "Experienced doctor with 10 years of practice in cardiology.",
+    YearsOfExperience: "10",
+    MaxAppointmentsPerDay: "8",
+    Qualification: "MD in Cardiology"
+  };
 
   const onFinishLogin = (values: LoginFormValues) => {
     console.log("Login success:", values);
   };
 
-  const onFinishSignup = async (values:IAuth) => {
-    setLoading(true)
-    
+  const onFinishSignup = async (values: IAuth) => {
+    setLoading(true);
+    try {
+      const authPayload: IAuth = userType === "patient"
+        ? {
+          ...mockPatientData,
+          ...values,
+          }
+        : {
+          ...mockProviderData,
+          ...values,
+          };
 
-    console.log("Signup success:", values);
-    
+      // simulating API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      await signUp(authPayload);
+      message.success('Your signup was successful!', 5); 
+      // router.push("/")
+      console.log("Signup success:", authPayload);
+    } catch (error) {
+      console.error("Signup error:", error);
+      message.error('Sorry couldnt sign you up something when wrong!',5); 
+    } finally {
+      setLoading(false);
+    }
   };
+
   const passwordChecks = {
     length: password.length >= 8,
     lowercase: /[a-z]/.test(password),
@@ -77,6 +122,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     number: /[0-9]/.test(password),
     specialChar: /[@$!%*?&]/.test(password),
   };
+
   const medicalSpecialties = [
     "Cardiology",
     "Dermatology",
@@ -102,6 +148,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     "Urology",
   ];
 
+
   const handleUserTypeChange = (e: RadioChangeEvent) => {
     setUserType(e.target.value);
   };
@@ -114,51 +161,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       layout="vertical"
       className={styles.form}
     >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: "Please input your username!" }]}
-      >
-        <Input prefix={<UserOutlined />} placeholder="Username" />
-      </Form.Item>
-
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}
-      >
-        <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-      </Form.Item>
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className={styles.submitButton}
-        >
-          Log In
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-
-  const signupForm = (
-    <Form
-      name="signup"
-      onFinish={onFinishSignup}
-      size="large"
-      layout="vertical"
-      className={styles.form}
-      initialValues={{ userType: "patient" }}
-    >
-      <Form.Item
-        name="email"
-        rules={[
-          { required: true, message: "Please input your email!" },
-          { type: "email", message: "Please enter a valid email!" },
-        ]}
-      >
-        <Input prefix={<MailOutlined />} placeholder="Email" />
-      </Form.Item>
-
       <Form.Item
         name="username"
         rules={[{ required: true, message: "Please input your username!" }]}
@@ -226,35 +228,32 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </div>
       </Form.Item>
 
-      <Form.Item
-        name="confirmPassword"
-        dependencies={["password"]}
-        rules={[
-          { required: true, message: "Please confirm your password!" },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue("password") === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error("The two passwords do not match!")
-              );
-            },
-          }),
-        ]}
-      >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder="Confirm Password"
-        />
+      <Form.Item>
+        <Button
+          type="primary"
+          htmlType="submit"
+          className={styles.submitButton}
+        >
+          Log In
+        </Button>
       </Form.Item>
+    </Form>
+  );
 
+  const signupForm = (
+    <Form
+      name="signup"
+      onFinish={onFinishSignup}
+      size="large"
+      layout="vertical"
+      className={styles.form}
+      initialValues={{ userType: "patient" }}
+    >
+      {/* User Type Selection - Moved to the top */}
       <Form.Item
         name="userType"
         label="I am a:"
-        rules={[
-          { required: true, message: "Please select your account type!" },
-        ]}
+        rules={[{ required: true, message: "Please select your account type!" }]}
       >
         <Radio.Group onChange={handleUserTypeChange} value={userType}>
           <Radio value="patient">Patient</Radio>
@@ -262,8 +261,147 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </Radio.Group>
       </Form.Item>
 
+      {/* Common Fields for Both Patients and Providers */}
+      <Form.Item
+        name="title"
+        rules={[{ required: true, message: "Please select your title!" }]}
+      >
+        <Select placeholder="Select your title">
+          <Option value="Mr">Mr</Option>
+          <Option value="Ms">Ms</Option>
+          <Option value="Dr">Dr</Option>
+          <Option value="Miss">Miss</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="name"
+        rules={[{ required: true, message: "Please input your name!" }]}
+      >
+        <Input placeholder="First Name" />
+      </Form.Item>
+
+      <Form.Item
+        name="surname"
+        rules={[{ required: true, message: "Please input your surname!" }]}
+      >
+        <Input placeholder="Last Name" />
+      </Form.Item>
+
+      <Form.Item
+        name="emailAddress"
+        rules={[
+          { required: true, message: "Please input your email!" },
+          { type: "email", message: "Please enter a valid email!" },
+        ]}
+      >
+        <Input placeholder="Email" />
+      </Form.Item>
+
+      <Form.Item
+        name="phoneNumber"
+        rules={[{ required: true, message: "Please input your phone number!" }]}
+      >
+        <Input placeholder="Phone Number" />
+      </Form.Item>
+
+      <Form.Item
+        name="UserName"
+        rules={[{ required: true, message: "Please input your username!" }]}
+      >
+        <Input placeholder="Username" />
+      </Form.Item>
+
+      <Form.Item
+        name="password"
+        rules={[
+          { required: true, message: "Please input your password!" },
+          { min: 8, message: "Password must be at least 8 characters!" },
+        ]}
+      >
+        <Input.Password placeholder="Password" />
+      </Form.Item>
+
+      {/* Patient-Specific Fields */}
+      {userType === "patient" && (
+        <>
+          <Form.Item
+            name="dateOfBirth"
+            rules={[{ required: true, message: "Please input your date of birth!" }]}
+          >
+            <DatePicker placeholder="Date of Birth" style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item
+            name="address"
+            rules={[{ required: true, message: "Please input your address!" }]}
+          >
+            <Input placeholder="Address" />
+          </Form.Item>
+
+          <Form.Item
+            name="city"
+            rules={[{ required: true, message: "Please input your city!" }]}
+          >
+            <Input placeholder="City" />
+          </Form.Item>
+
+          <Form.Item
+            name="province"
+            rules={[{ required: true, message: "Please input your province!" }]}
+          >
+            <Input placeholder="Province" />
+          </Form.Item>
+
+          <Form.Item
+            name="postalCode"
+            rules={[{ required: true, message: "Please input your postal code!" }]}
+          >
+            <Input placeholder="Postal Code" />
+          </Form.Item>
+
+          <Form.Item
+            name="country"
+            rules={[{ required: true, message: "Please input your country!" }]}
+          >
+            <Input placeholder="Country" />
+          </Form.Item>
+        </>
+      )}
+
       {userType === "doctor" && (
-        <Form.Item
+        <>
+          <Form.Item
+            name="Biography"
+            rules={[{ required: true, message: "Please input your biography!" }]}
+          >
+            <Input.TextArea placeholder="Biography" rows={4} />
+          </Form.Item>
+
+          <Form.Item
+            name="YearsOfExperience"
+            rules={[
+              {
+                required: true,
+                message: "Please input your years of experience!",
+              },
+            ]}
+          >
+            <Input placeholder="Years of Experience" type="number" />
+          </Form.Item>
+
+          <Form.Item
+            name="MaxAppointmentsPerDay"
+            rules={[
+              {
+                required: true,
+                message: "Please input max appointments per day!",
+              },
+            ]}
+          >
+            <Input placeholder="Max Appointments Per Day" type="number" />
+          </Form.Item>
+          <Form.Item
           name="specialty"
           label="Medical Specialty"
           rules={[{ required: true, message: "Please select your specialty!" }]}
@@ -279,8 +417,16 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             ))}
           </Select>
         </Form.Item>
+          <Form.Item
+            name="Qualification"
+            rules={[{ required: true, message: "Please input your qualification!" }]}
+          >
+            <Input placeholder="Qualification" />
+          </Form.Item>
+        </>
       )}
 
+      {/* Agree to Terms */}
       <Form.Item
         name="agreeToTerms"
         valuePropName="checked"
@@ -301,6 +447,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </Checkbox>
       </Form.Item>
 
+      {/* Submit Button */}
       <Form.Item>
         <Button
           type="primary"
@@ -327,6 +474,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   ];
 
   return (
+    <Spin spinning={Loading} tip="Please hold on we are are signing you up...">
     <div className={`${styles.formCard} ${className || ""}`}>
       <Title level={2} className={styles.title}>
         {activeTab === "login" ? "Welcome Back!" : "Create Account"}
@@ -345,5 +493,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         items={tabItems}
       />
     </div>
+    </Spin>
   );
 }

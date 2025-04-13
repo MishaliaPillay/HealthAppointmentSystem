@@ -60,8 +60,6 @@ export const signInPending = createAction<IAuthStateContext>(
     () => ({ isPending: false, isSuccess: false, isError: true })
   );
   
-
-  
   //SIGN OUT ACTIONS
   export const signOutPending = createAction<IAuthStateContext>(
     AuthActionEnums.signOutPending,
