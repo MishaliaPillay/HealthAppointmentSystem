@@ -1,9 +1,9 @@
 "use client";
-import { getAxiosInstace } from "@/utils/axios-instance";
-import { IUser, ILoginResponse, ILoginResquest } from "./models";
+import { getAxiosInstace } from "../../utils/axiosInstance";
+import { IUser, ILoginResquest } from "./models";
 import { INITIAL_STATE, UserActionContext, UserStateContext } from "./context";
 import { UserReducer } from "./reducer";
-import {useContext, useReducer } from "react";
+import { useContext, useReducer } from "react";
 import {
   getUserError,
   getUserPending,
@@ -11,8 +11,10 @@ import {
   signInError,
   signInPending,
   signInSuccess,
+  signOutSuccess,
+  signUpPending,
+  signUpSuccess,
 } from "./actions";
-
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
@@ -38,19 +40,36 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("Done trying to process your getUser request");
       });
   };
-
-  const signIn = async (LoginResquest:ILoginResquest) => {
+  const signUp = async (user: IUser): Promise<void> => {
+    dispatch(signUpPending());
+    const endpoint =
+      user.role == "PATIENT" ? `register/Patient` : `resigter:Provider`;
+    await instance
+      .post<IUser>(endpoint, user)
+      .then((response) => {
+        dispatch(signUpSuccess(response.data));
+        console.log("Signup was successfull");
+      })
+      .catch((error) => {
+        console.error(error);
+        console.log("Sign up was unsuccessfull");
+      });
+  };
+  const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
     const endpoint = "users/login";
     await instance
-      .post<ILoginResponse>(endpoint,LoginResquest)
+      .post(endpoint, LoginResquest)
       .then((response) => {
         // console.log("Response", response.data);
         const token = response.data.token;
-        console.log("session This where token stored");
-        sessionStorage.setItem("jwt", token);
+        if (token) {
+          console.log("session This where token is stored");
+          sessionStorage.setItem("jwt", token);
+        }
         dispatch(signInSuccess(response.data));
-        console.log(response);
+        console.log(response.data);
+        return response.data;
       })
       .catch((error) => {
         console.error(
@@ -65,10 +84,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("Done trying to process your signIn request");
       });
   };
+  const signOut = () => {
+    dispatch(signInPending());
+    sessionStorage.removeItem("jwt"); 
+    if(sessionStorage.length===0){
+        dispatch(signOutSuccess());
+        console.log("The session Storage empty")
+    }
+    dispatch(signInError);
+  };
 
   return (
     <UserStateContext.Provider value={state}>
-      <UserActionContext.Provider value={{getUser,signIn}}>
+      <UserActionContext.Provider value={{ getUser, signIn, signUp, signOut }}>
         {children}
       </UserActionContext.Provider>
     </UserStateContext.Provider>
