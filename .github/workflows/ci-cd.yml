@@ -26,15 +26,16 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
+          cache-dependency-path: "./Frontend/package-lock.json"
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted to correct folder structure
+        working-directory: ./Frontend # Adjusted to correct folder structure
 
       - name: Build project
         run: npm run build
-        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted
+        working-directory: ./Frontend # Adjusted
 
       - name: Run linting
         run: npm run lint
-        working-directory: ./HealthAppointmentSystem/Frontend # Adjusted
+        working-directory: ./Frontend # Adjusted
