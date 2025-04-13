@@ -1,7 +1,6 @@
 "use client";
 import { createContext } from "react";
-import {IUser } from "./models";
-
+import { IUser } from "./models";
 
 // Context shape interface
 export interface IUserStateContext {
@@ -14,7 +13,7 @@ export interface IUserStateContext {
 
 // User action context interface
 export interface IUserActionContext {
-  getCurrentUser: () => Promise<void>;
+  getCurrentUser: () => void;
   getUsers: () => void; // Fetch all Users
   getUser: (id: string) => void; // Fetch a single User
   createUser: (user: IUser) => void; // Create a new User
@@ -27,7 +26,7 @@ export const INITIAL_STATE: IUserStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
-  users:[],
+  users: [],
 };
 
 // Create the state context and the action context
