@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, use } from 'react';
 import {
   Form,
   Input,
@@ -20,6 +20,10 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import styles from "./login-page.module.css";
+import { useUserActions } from '@/providers/users-provider';
+import { useRouter } from 'next/router';
+import { IUser } from '@/providers/users-provider/models';
+import { IAuth } from '@/providers/auth-provider/models';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -40,12 +44,17 @@ interface SignupFormValues {
   agreeToTerms: boolean;
 }
 
+
+
+
 interface LoginSignupProps {
   className?: string; //if we want to style
 }
 
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
+  const [Loading,setLoading]=useState(false);
+  const {signUp}=useUserActions();
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
@@ -54,8 +63,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     console.log("Login success:", values);
   };
 
-  const onFinishSignup = (values: SignupFormValues) => {
+  const onFinishSignup = async (values:IAuth) => {
+    setLoading(true)
+    
+
     console.log("Signup success:", values);
+    
   };
   const passwordChecks = {
     length: password.length >= 8,

@@ -1,3 +1,4 @@
+"use client"
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
 import { IPatient } from "./models";
 import {
