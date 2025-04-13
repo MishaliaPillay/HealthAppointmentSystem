@@ -6,19 +6,6 @@ import { createAction } from "redux-actions";
 
 export enum UserActionEnums {
   // define 3 states for each action (pending , success, error)
-
-  signInPending = "SIGN_IN_PENDING",
-  signInSuccess = "SIGN_IN_SUCCESS",
-  signInError = "SIGN_IN_ERROR",
-
-  signUpPending = "SIGN_UP_PENDING",
-  signUpSuccess = "SIGN_UP_SUCCESS",
-  signUpError = "SIGN_UP_ERROR",
-
-  signOutPending = "SIGN_OUT_PENDING",
-  signOutSuccess = "SIGN_OUT_SUCCESS",
-  signOutError = "SIGN_OUT_ERROR",
-
   getUsersPending = "GET_USERS_PENDING",
   getUsersSuccess = "GET_USERS_SUCCESS",
   getUsersError = "GET_USERS_ERROR",
@@ -27,6 +14,10 @@ export enum UserActionEnums {
   getUserSuccess = "GET_USER_SUCCESS",
   getUserError = "GET_USER_ERROR",
 
+  getCurrentUserPending  = "GET_CURRENTUSER_PENDING",
+  getCurrentUserSuccess = "GET_CURRENTUSER_SUCCESS",
+  getCurrentUserError = "GET_CURRENTUSER_ERROR",
+  
   createUserPending = "CREATE_USER_PENDING",
   createUserSuccess = "CREATE_USER_SUCCESS",
   createUserError = "CREATE_USER_ERROR",
@@ -85,6 +76,28 @@ export const getUserError = createAction<IUserStateContext>(
   UserActionEnums.getUserError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
+
+//Get CurrentUser actions
+export const getCurrentUserPending = createAction<IUserStateContext>(
+    UserActionEnums.getUserPending,
+    () => ({ isPending: true, isSuccess: false, isError: false })
+  );
+  
+  export const getCurrentUserSuccess = createAction<IUserStateContext, IUser>(
+    UserActionEnums.getUserSuccess,
+    (user: IUser) => ({
+      isPending: false,
+      isSuccess: true,
+      isError: false,
+      user,
+    })
+  );
+  
+  export const getCurrentUserError = createAction<IUserStateContext>(
+    UserActionEnums.getUserError,
+    () => ({ isPending: false, isSuccess: false, isError: true })
+  );
+
 //Create User Actions
 export const createUserPending = createAction<IUserStateContext>(
   UserActionEnums.createUserPending,
