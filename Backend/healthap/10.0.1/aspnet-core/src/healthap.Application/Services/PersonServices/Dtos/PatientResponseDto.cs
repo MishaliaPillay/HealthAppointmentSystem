@@ -12,6 +12,7 @@ namespace healthap.Services.PersonServices.Dtos
     {
 
         public UserResponseDto User { get; set; }
+        public string Title { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
