@@ -44,7 +44,7 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
-  const { signUp,signIn } =useAuthActions();
+  const { signUp} =useAuthActions();
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
