@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities.Auditing;
 
-namespace healthap.Domain
+namespace healthap.Domain.Appointments
 {
     public class Appointment : FullAuditedEntity<Guid>
     {

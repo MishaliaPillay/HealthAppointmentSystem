@@ -1,43 +1,19 @@
 "use client";
 import { handleActions } from "redux-actions";
-import { INITIAL_STATE, IUserStateContext } from "./context";
-import { UserActionEnums } from "./action";
+import { INITIAL_STATE, IAuthStateContext } from "./context";
+import { AuthActionEnums } from "./actions";
 
-export const UserReducer = handleActions<IUserStateContext, IUserStateContext>(
+export const AuthReducer = handleActions<IAuthStateContext, IAuthStateContext>(
   {
-    [UserActionEnums.getUsersPending]: (state, action) => ({
+    [AuthActionEnums.signInPending]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
-    [UserActionEnums.getUsersSuccess]: (state, action) => ({
+    [AuthActionEnums.signInSuccess]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
-    [UserActionEnums.getUsersError]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.getUserPending]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.getUserSuccess]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.getUserError]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.verifyUserPending]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.verifyUserSuccess]: (state, action) => ({
-      ...state,
-      ...action.payload,
-    }),
-    [UserActionEnums.verifyUserError]: (state, action) => ({
+    [AuthActionEnums.signInError]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
