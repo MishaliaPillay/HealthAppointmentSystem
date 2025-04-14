@@ -6,7 +6,7 @@ export interface IAuth {
     surname:string, 
     emailAddress:string,
     phoneNumber:string,
-    UserName:string,
+    userName:string,
     password:string,
     role:string; 
     dateOfBirth?:Date,
@@ -15,13 +15,13 @@ export interface IAuth {
     province?:string,
     postalCode?:string,
     country?:string,
-    preferredContactMethod?:string
-    Password?:string,
-    Biography?:string,
-    YearsOfExperience?:string,
-    MaxAppointmentsPerDay?:string,
-    Qualification?:string
+    preferredContactMethod?:number
+    biography?:string,
+    yearsOfExperience?:string,
+    maxAppointmentsPerDay?:string,
+    qualification?:string
   }
+  
 export interface ILoginResquest{
   userNameOrEmailAddress: "string",
   password: "string",
