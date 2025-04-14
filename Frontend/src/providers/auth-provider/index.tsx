@@ -16,23 +16,46 @@ import axios from "axios";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
-  const instance = getAxiosInstace();
 
+  //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
+    debugger
     const endpoint =
-      Auth.role == "PATIENT" ? `/Patient/Create` : `/Provider/Create`;
-    await instance
+      Auth.role == "PATIENT" ? `https://localhost:44311/api/services/app/Patient/Create` : `https://localhost:44311/api/services/app/Provider/Create`;
+      console.log("Here is the role"+Auth.role)
+      debugger
+    await axios
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
         dispatch(signUpSuccess(response.data));
         console.log("Signup was successfull");
       })
       .catch((error) => {
+        debugger
         console.error(error);
         console.log("Sign up was unsuccessfull");
       });
   };
+  // const signUp = async (Auth: IAuth): Promise<void> => {
+  //   dispatch(signUpPending());
+  //   debugger
+  //   const endpoint =
+  //     Auth.role == "PATIENT" ? `/Patient/Create` : `/Provider/Create`;
+  //     console.log("Here is the role"+Auth.role)
+  //     debugger
+  //   await instance
+  //     .post<IAuth>(endpoint, Auth)
+  //     .then((response) => {
+  //       dispatch(signUpSuccess(response.data));
+  //       console.log("Signup was successfull");
+  //     })
+  //     .catch((error) => {
+  //       debugger
+  //       console.error(error);
+  //       console.log("Sign up was unsuccessfull");
+  //     });
+  // };
   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
     debugger;
