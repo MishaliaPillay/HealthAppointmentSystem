@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Domain.Services;
 using Abp.UI;
 using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
+using Microsoft.EntityFrameworkCore;
 
 namespace healthap.Domain.Persons
 {
@@ -84,7 +86,21 @@ namespace healthap.Domain.Persons
                 throw new UserFriendlyException("An error occurred while creating the provider", ex);
             }
         }
+        public async Task<Provider> GetProviderByIdWithUserAsync(Guid id)
+        {
+            //returning an IQuerable that all/mutiple patients  with their users information and appointments nested  
+            var query = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
+            //returning only one patient with that id
+            return await query.FirstOrDefaultAsync(p => p.Id == id);
+
+        }
+
+        public IQueryable<Provider> GetAllProvidersAsync()
+        {
+            return _providerRepository.GetAllIncluding(p => p.User);
+        }
+
     }
 
 
-    }
+}
