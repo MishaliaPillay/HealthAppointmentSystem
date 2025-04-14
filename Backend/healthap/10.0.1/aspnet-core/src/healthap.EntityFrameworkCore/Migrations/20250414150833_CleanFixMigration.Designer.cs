@@ -12,8 +12,8 @@ using healthap.EntityFrameworkCore;
 namespace healthap.Migrations
 {
     [DbContext(typeof(healthapDbContext))]
-    [Migration("20250412224418_MappingDBContextEntities")]
-    partial class MappingDBContextEntities
+    [Migration("20250414150833_CleanFixMigration")]
+    partial class CleanFixMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
