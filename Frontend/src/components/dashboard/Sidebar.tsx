@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   function signOutUser(): void {
     signOut()
-    router.push("/login");
+    router.push("/");
   }
   
 
