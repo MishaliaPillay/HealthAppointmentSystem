@@ -10,6 +10,11 @@ namespace healthap.Services.speciality
 {
     public interface ISpecialityAppService : IApplicationService
     {
-        Task<List<string>> GetAllSpecialitiesAsync();
+
+        Task<List<SpecialityDto>> GetAllAsync();
+        Task<SpecialityDto> GetByNameAsync(string name);
+        Task<SpecialityDto> CreateAsync(string name);       
+        Task<SpecialityDto> UpdateAsync(string oldName, string newName); 
+        Task<bool> DeleteAsync(string name);               
     }
 }

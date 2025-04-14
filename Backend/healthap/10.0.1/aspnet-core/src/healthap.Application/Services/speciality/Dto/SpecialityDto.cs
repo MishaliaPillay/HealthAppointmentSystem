@@ -11,6 +11,8 @@ namespace healthap.Services.speciality.Dto
     [AutoMap(typeof(Speciality))]
     public class SpecialityDto
     {
+        public string Value { get; set; }
+        public string DisplayName { get; set; }
         public SpecialtyName SpecialtyName { get; set; }
     }
 }
