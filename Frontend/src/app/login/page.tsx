@@ -12,7 +12,6 @@ import {
   DatePicker,
   RadioChangeEvent,
   Spin,
-  message,
 } from "antd";
 import {
   UserOutlined,
@@ -31,11 +30,6 @@ import { useRouter } from "next/navigation";
 const { Title } = Typography;
 const { Option } = Select;
 
-message.config({
-  top: 50, // Distance from the top of the page in pixels
-  duration: 5, // Default duration in seconds
-});
-
 interface LoginSignupProps {
   className?: string; //if we want to style
 }
@@ -49,10 +43,10 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
-  const routeDashboard =()=>{
+  const routeDashboard = () => {
     router.push("/patient-dashboard");
-  }
- 
+  };
+
   const onFinishLogin = async (values: ILoginResquest) => {
     setLoading(true);
     try {
@@ -513,7 +507,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             ? "Log in to connect with healthcare professionals"
             : "Join our platform to connect patients with healthcare professionals"}
         </Title>
-
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
