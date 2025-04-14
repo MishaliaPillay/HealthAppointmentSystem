@@ -4,11 +4,11 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface LayoutProps {
-  children: React.ReactNode; // Prop type for layout pages
+  children?: React.ReactNode; // Children are optional to prevent errors
 }
 
 const withAuth = (WrappedLayout: React.ComponentType<LayoutProps>) => {
-  const WithAuthWrapper = (props: LayoutProps) => {
+  const WithAuthWrapper: React.FC<LayoutProps> = ({ children, ...props }) => {
     const router = useRouter();
 
     useEffect(() => {
@@ -30,21 +30,23 @@ const withAuth = (WrappedLayout: React.ComponentType<LayoutProps>) => {
         const { role } = decodedPayload;
 
         // Redirect based on role
-        if (role === "PROVIDER") {
+        if (role === "provider") {
           router.push("/provider-dashboard");
-        } else if (role === "PATIENT") {
+        } else if (role === "patient") {
           router.push("/patient-dashboard");
         } else {
           router.push("/login");
         }
       } catch (error) {
         console.error("Error decoding token:", error);
-        router.push("/login"); // Redirect to login if decoding fails
+        router.push("/login"); //if decoding fails
       }
     }, [router]);
-
-    // Return the wrapped component if there is no need for redirection
-    return <WrappedLayout {...props} />;
+    return (
+      <WrappedLayout {...props}>
+        {children}
+      </WrappedLayout>
+    );
   };
 
   return WithAuthWrapper;
