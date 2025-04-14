@@ -18,7 +18,7 @@ namespace healthap.Services.NotificaServices
 
             string accountSid = configuration["Twilio:AccountSid"];
             string authToken = configuration["Twilio:AuthToken"];
-            string fromNumber = configuration["Twilio:PhoneNumber"];
+            string fromNumber = configuration["Twilio:fromNumber"];
 
             TwilioClient.Init(accountSid, authToken);
 
