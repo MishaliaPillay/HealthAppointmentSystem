@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twilio.Types;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+using Twilio.Types;
 
 namespace healthap.Services.NotificaServices
 {
