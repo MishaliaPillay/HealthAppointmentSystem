@@ -1,8 +1,12 @@
-
+/* login-signup.module.css */
 .formCard {
   width: 100%;
   max-width: 400px;
   padding: 2rem;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -10,12 +14,29 @@
   margin-bottom: 24px !important;
 }
 
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 16px !important;
+}
+
 .tabs {
   margin-bottom: 24px;
 }
 
+/* login-form.module.css */
+.formContainer {
+  width: 100%;
+}
+
 .form {
   width: 100%;
+}
+
+.submitButton {
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
 }
 
 .rememberForgot {
@@ -24,11 +45,44 @@
   align-items: center;
 }
 
-.forgotLink {
+.forgotPassword {
   float: right;
+  color: #1890ff;
+}
+
+.socialButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.socialButton {
+  flex: 1;
+}
+
+/* signup-form.module.css */
+.formContainer {
+  width: 100%;
+}
+
+.form {
+  width: 100%;
 }
 
 .submitButton {
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cancelButton {
   width: 100%;
   height: 40px;
   font-size: 16px;
@@ -38,6 +92,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
+  margin-top: 16px;
 }
 
 .socialButton {

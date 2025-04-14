@@ -12,11 +12,15 @@ export default function Home() {
             <div className="blurred-image-wrapper">
               <Image
                 className={styles.logo}
-                src="/images/logo.jpg"
+                src="/images/home.jpg"
                 alt="Next.js logo"
                 width={480}
                 height={420}
                 priority
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                }}
               />
             </div>
             <h1 className={styles.brandTitle}>Welcome to our platform</h1>
@@ -25,7 +29,6 @@ export default function Home() {
               platform.
             </p>
           </div>
-
           <div className={styles.formSide}>
             <LoginPage />
           </div>
