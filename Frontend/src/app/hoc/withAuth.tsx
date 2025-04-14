@@ -30,7 +30,7 @@ const withAuth = (WrappedLayout: React.ComponentType<LayoutProps>) => {
         const { role } = decodedPayload;
 
         // Redirect based on role
-        if (role === "PROIVDER") {
+        if (role === "PROVIDER") {
           router.push("/provider-dashboard");
         } else if (role === "PATIENT") {
           router.push("/patient-dashboard");
