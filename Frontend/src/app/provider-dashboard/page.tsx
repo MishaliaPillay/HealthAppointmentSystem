@@ -11,9 +11,10 @@ import {
   Tag,
 } from "antd";
 import styles from "./providerdashdash.module.css";
+import withAuth from "../hoc/withAuth";
 const { Title, Text } = Typography;
 
-export default function ProviderDashboard() {
+ const ProviderDashboard=()=>{
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
@@ -222,3 +223,4 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
     </div>
   );
 };
+export default withAuth(ProviderDashboard);
