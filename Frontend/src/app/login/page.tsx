@@ -22,8 +22,12 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import styles from "./login-page.module.css";
-import { IAuth } from '@/providers/auth-provider/models';
+import { IAuth, ILoginResquest } from '@/providers/auth-provider/models';
 import { useAuthActions } from '@/providers/auth-provider';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { signInError, signInSuccess } from '@/providers/auth-provider/actions';
+import { useRouter } from 'next/navigation';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -31,11 +35,7 @@ message.config({
   top: 50, // Distance from the top of the page in pixels
   duration: 5, // Default duration in seconds
 });
-interface LoginFormValues {
-  username: string;
-  password: string;
-  remember: boolean;
-}
+
 
 interface LoginSignupProps {
   className?: string; //if we want to style
@@ -44,47 +44,77 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
-  const { signUp} =useAuthActions();
+  const { signUp,signIn} =useAuthActions();
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const router = useRouter();
 
+  //   // try{
+  //   //   setLoading(true);
+  //   //   await signIn(values)
+  //   //   console.log("Login success:", values);
+  //   //   // isPending()
+  //   //   if(signInSuccess==true){
+  //   //     toast.success('Welcome Back You have logged in successfully', {
+  //   //       position: "top-right",
+  //   //       autoClose: 5000,
+  //   //       hideProgressBar: false,
+  //   //       closeOnClick: true,
+  //   //       pauseOnHover: true,
+  //   //       draggable: true,
+  //   //       progress: undefined,
+  //   //   });
+  //   //   }
+  //   // }
+  //   // catch{
+  //   //   if(signInError==true){
+  //   //     toast.error('Sorry we couldnt log you in', {
+  //   //       position: "top-right",
+  //   //       autoClose: 5000,
+  //   //       hideProgressBar: false,
+  //   //       closeOnClick: true,
+  //   //       pauseOnHover: true,
+  //   //       draggable: true,
+  //   //       progress: undefined,
+  //   //   });
+  //   //   }
+  //   // }
+    
 
-  const mockPatientData = {
-    title: "Mr",
-    name: "John",
-    surname: "Doe",
-    emailAddress: "johndoe@example.com",
-    phoneNumber: "1234567890",
-    UserName: "johndoe",
-    password: "Password@123",
-    role: "PATIENT",
-    dateOfBirth: new Date("1990-01-01"),
-    address: "123 Main St",
-    city: "Anytown",
-    province: "State",
-    postalCode: "12345",
-    country: "Country",
-    preferredContactMethod: "Email"
-  };
-
-  const mockProviderData = {
-    title: "Dr",
-    name: "Jane",
-    surname: "Smith",
-    emailAddress: "janesmith@example.com",
-    phoneNumber: "0987654321",
-    UserName: "drjane",
-    password: "Password@123",
-    role: "PROVIDER",
-    Biography: "Experienced doctor with 10 years of practice in cardiology.",
-    YearsOfExperience: "10",
-    MaxAppointmentsPerDay: "8",
-    Qualification: "MD in Cardiology"
-  };
-
-  const onFinishLogin = (values: LoginFormValues) => {
-    console.log("Login success:", values);
+  // };
+  const onFinishLogin = async (values: ILoginResquest) => {
+    setLoading(true);
+    try {
+      await signIn(values);
+      if(signInSuccess==true){
+        toast.success('Your signup was successful!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
+      router.push("/patient-dashboard");
+      }
+    } catch (error) {
+      if(signInError==true){
+        console.error("Signup error:", error);
+        toast.success('Your signup was successful!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      }); 
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onFinishSignup = async (values: IAuth) => {
@@ -92,24 +122,41 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     try {
       const authPayload: IAuth = userType === "patient"
         ? {
-          ...mockPatientData,
           ...values,
+          role:"PATIENT"
           }
         : {
-          ...mockProviderData,
           ...values,
+          role:"PROVIDER"
           };
-
-      // simulating API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       await signUp(authPayload);
-      message.success('Your signup was successful!', 5); 
-      // router.push("/")
-      console.log("Signup success:", authPayload);
+      if(signInSuccess==true){
+        toast.success('Your signup was successful!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
+        //switch to login tab when successful signup
+        setActiveTab("login")
+        console.log("Signup success:", authPayload);
+      }
     } catch (error) {
-      console.error("Signup error:", error);
-      message.error('Sorry couldnt sign you up something when wrong!',5); 
+      if(signInError==true){
+        console.error("Signup error:", error);
+        toast.success('Your signup was successful!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      }); 
+      }
     } finally {
       setLoading(false);
     }
@@ -162,7 +209,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       className={styles.form}
     >
       <Form.Item
-        name="username"
+        name="email"
         rules={[{ required: true, message: "Please input your username!" }]}
       >
         <Input prefix={<UserOutlined />} placeholder="Username" />

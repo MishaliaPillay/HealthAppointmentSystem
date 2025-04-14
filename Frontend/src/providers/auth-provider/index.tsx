@@ -3,7 +3,7 @@ import { getAxiosInstace } from "../../utils/axiosInstance";
 import { IAuth, ILoginResquest } from "./models";
 import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
 import { AuthReducer } from "./reducer";
-import { useContext, useReducer } from "react";
+import { useContext, useReducer, useState } from "react";
 import {
   signInError,
   signInPending,
@@ -12,16 +12,19 @@ import {
   signUpPending,
   signUpSuccess,
 } from "./actions";
+import {mockAuthService} from "../../utils/mockApiService"
+import axios from "axios";
+
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
-
+  const [Loading, setLoading] = useState(false);
 
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
     const endpoint =
-      Auth.role == "PATIENT" ? `register/Patient` : `resigter:Provider`;
+      Auth.role == "PATIENT" ? `/Patient/Create` : `/Provider/Create`;
     await instance
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
@@ -35,18 +38,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
-    const endpoint = "Auths/login";
-    await instance
-      .post(endpoint, LoginResquest)
+    const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
+    await axios.post(endpoint, LoginResquest)
       .then((response) => {
         // console.log("Response", response.data);
+        console.log("This is the token:"+response.data)
         const token = response.data.token;
         if (token) {
           console.log("session This where token is stored");
           sessionStorage.setItem("jwt", token);
         }
         dispatch(signInSuccess(response.data));
-        console.log(response.data);
+        console.log("this is the token"+response.data);
         return response.data;
       })
       .catch((error) => {
@@ -58,11 +61,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       })
       .finally(() => {
-        //isPending=false
+        setLoading(false)
         console.log("Done trying to process your signIn request");
       });
   };
-  const signOut = () => {
+//   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
+//     dispatch(signInPending());
+//     const endpoint = "";
+//     await instance
+//       .post(endpoint, LoginResquest)
+//       .then((response) => {
+//         // console.log("Response", response.data);
+//         const token = response.data.token;
+//         if (token) {
+//           console.log("session This where token is stored");
+//           sessionStorage.setItem("jwt", token);
+//         }
+//         dispatch(signInSuccess(response.data));
+//         console.log(response.data);
+//         return response.data;
+//       })
+//       .catch((error) => {
+//         console.error(
+//           "Error during login:",
+//           error.response?.data?.message || error
+//         );
+//         dispatch(signInError());
+//         throw error;
+//       })
+//       .finally(() => {
+//         setLoading(false)
+//         console.log("Done trying to process your signIn request");
+//       });
+//   };
+// const signIn = async (LoginRequest: ILoginResquest): Promise<void> => {
+//     dispatch(signInPending());
+//     try {
+//       const response = await mockAuthService.signIn(LoginRequest);
+//       const token = response.data.token;
+//       if (token) {
+//         sessionStorage.setItem("jwt", token);
+//         console.log("Token stored in sessionStorage:", token);
+//       }
+//       setLoading(false)
+//       dispatch(signInSuccess(response.data));
+//     } catch (error) {
+//       console.error("Sign-in error:", error.message);
+//       dispatch(signInError());
+      
+//     }
+//   };
+
+const signOut = () => {
     dispatch(signInPending());
     sessionStorage.removeItem("jwt"); 
     if(sessionStorage.length===0){

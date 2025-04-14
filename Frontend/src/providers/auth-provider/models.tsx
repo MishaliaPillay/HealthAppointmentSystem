@@ -23,6 +23,7 @@ export interface IAuth {
     Qualification?:string
   }
 export interface ILoginResquest{
-    email: string,
-    password: string
+  userNameOrEmailAddress: "string",
+  password: "string",
+  rememberClient: true
 }
