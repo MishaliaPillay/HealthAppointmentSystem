@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 
 namespace healthap.MultiTenancy.speciality
 {
-    public enum SpecialtyName
+    public enum RefistSpecialty
     {
         [Display(Name = "Cardiology")]
         Cardiology,
+
+        [Display(Name = "Doctor")]
+        Doctor,
 
         [Display(Name = "Dermatology")]
         Dermatology,

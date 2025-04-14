@@ -13,6 +13,6 @@ namespace healthap.Services.speciality.Dto
     {
         public string Value { get; set; }
         public string DisplayName { get; set; }
-        public SpecialtyName SpecialtyName { get; set; }
+        public int SpecialtyName { get; set; }
     }
 }

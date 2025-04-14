@@ -10,7 +10,7 @@ namespace healthap.MultiTenancy.speciality
 {
     public class Speciality : Entity
     {
-        public SpecialtyName SpecialtyName { get; set; }
+        public RefistSpecialty SpecialtyName { get; set; }
         public Guid ProviderId { get; set; }
 
         // Navigation property

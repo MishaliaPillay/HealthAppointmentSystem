@@ -13,8 +13,6 @@ namespace healthap.Services.speciality
 
         Task<List<SpecialityDto>> GetAllAsync();
         Task<SpecialityDto> GetByNameAsync(string name);
-        Task<SpecialityDto> CreateAsync(string name);       
-        Task<SpecialityDto> UpdateAsync(string oldName, string newName); 
-        Task<bool> DeleteAsync(string name);               
+            
     }
 }
