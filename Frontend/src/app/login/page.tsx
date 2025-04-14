@@ -20,6 +20,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
+import dayjs from 'dayjs';
 import styles from "./login-page.module.css";
 import { IAuth, ILoginResquest } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
@@ -44,7 +45,35 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const router = useRouter();
 
   const routeDashboard = () => {
-    router.push("/patient-dashboard");
+    const token=sessionStorage.getItem("jwt")
+    try {
+      debugger
+      if (!token || token.split(".").length !== 3) {
+        console.error("Invalid token format");
+        router.push("/");
+        return;
+      }
+      // Splitting token to get payload
+      const [, payload] = token.split(".");
+      // Decoding Base64 string
+      const decodedPayload = JSON.parse(atob(payload));
+      console.log(decodedPayload);
+      // Extracting role from payload
+      const { role } = decodedPayload;
+      console.log("this is the role from payload"+role)
+
+      // Redirect based on role
+      if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else if (role === "patient") {
+        router.push("/patient-dashboard");
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      router.push("/"); //if decoding fails
+    }
   };
 
   const onFinishLogin = async (values: ILoginResquest) => {
@@ -319,7 +348,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       </Form.Item>
 
       <Form.Item
-        name="UserName"
+        name="userName"
         rules={[{ required: true, message: "Please input your username!" }]}
       >
         <Input placeholder="Username" />
@@ -344,7 +373,14 @@ export default function LoginSignup({ className }: LoginSignupProps) {
               { required: true, message: "Please input your date of birth!" },
             ]}
           >
-            <DatePicker placeholder="Date of Birth" style={{ width: "100%" }} />
+            <DatePicker
+              placeholder="Date of Birth"
+              style={{ width: "100%" }}
+              onChange={(date) => {
+                const formattedDate = dayjs(date).toISOString(); // Format as ISO 8601
+                console.log(formattedDate); // Output: "1990-07-15T08:30:00.000Z"
+              }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -383,13 +419,33 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           >
             <Input placeholder="Country" />
           </Form.Item>
+          <Form.Item
+            name="preferredContactMethod"
+            rules={[
+              {
+                required: true,
+                message: "Please select your prefferedContactMethod",
+              },
+            ]}
+          >
+            <Select
+              placeholder="Please select your prefferedContactMethod"
+              onChange={(value) => {
+                const numericValue = Number(value);
+                console.log(numericValue);
+              }}
+            >
+              <Option value={1}>Email</Option>
+              <Option value={2}>SMS</Option>
+            </Select>
+          </Form.Item>
         </>
       )}
 
       {userType === "doctor" && (
         <>
           <Form.Item
-            name="Biography"
+            name="biography"
             rules={[
               { required: true, message: "Please input your biography!" },
             ]}
@@ -398,7 +454,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           </Form.Item>
 
           <Form.Item
-            name="YearsOfExperience"
+            name="yearsOfExperience"
             rules={[
               {
                 required: true,
@@ -410,7 +466,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           </Form.Item>
 
           <Form.Item
-            name="MaxAppointmentsPerDay"
+            name="maxAppointmentsPerDay"
             rules={[
               {
                 required: true,
@@ -439,7 +495,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             </Select>
           </Form.Item>
           <Form.Item
-            name="Qualification"
+            name="qualification"
             rules={[
               { required: true, message: "Please input your qualification!" },
             ]}
