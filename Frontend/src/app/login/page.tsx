@@ -1,5 +1,5 @@
 "use client";
-import { useState} from 'react';
+import { useState } from "react";
 import {
   Form,
   Input,
@@ -12,7 +12,7 @@ import {
   DatePicker,
   RadioChangeEvent,
   Spin,
-  message
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -22,12 +22,12 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import styles from "./login-page.module.css";
-import { IAuth, ILoginResquest } from '@/providers/auth-provider/models';
-import { useAuthActions } from '@/providers/auth-provider';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { signInError, signInSuccess } from '@/providers/auth-provider/actions';
-import { useRouter } from 'next/navigation';
+import { IAuth, ILoginResquest } from "@/providers/auth-provider/models";
+import { useAuthActions } from "@/providers/auth-provider";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { signInError, signInSuccess } from "@/providers/auth-provider/actions";
+import { useRouter } from "next/navigation";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -36,7 +36,6 @@ message.config({
   duration: 5, // Default duration in seconds
 });
 
-
 interface LoginSignupProps {
   className?: string; //if we want to style
 }
@@ -44,51 +43,22 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
-  const { signUp,signIn} =useAuthActions();
+  const { signUp, signIn } = useAuthActions();
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
-  //   // try{
-  //   //   setLoading(true);
-  //   //   await signIn(values)
-  //   //   console.log("Login success:", values);
-  //   //   // isPending()
-  //   //   if(signInSuccess==true){
-  //   //     toast.success('Welcome Back You have logged in successfully', {
-  //   //       position: "top-right",
-  //   //       autoClose: 5000,
-  //   //       hideProgressBar: false,
-  //   //       closeOnClick: true,
-  //   //       pauseOnHover: true,
-  //   //       draggable: true,
-  //   //       progress: undefined,
-  //   //   });
-  //   //   }
-  //   // }
-  //   // catch{
-  //   //   if(signInError==true){
-  //   //     toast.error('Sorry we couldnt log you in', {
-  //   //       position: "top-right",
-  //   //       autoClose: 5000,
-  //   //       hideProgressBar: false,
-  //   //       closeOnClick: true,
-  //   //       pauseOnHover: true,
-  //   //       draggable: true,
-  //   //       progress: undefined,
-  //   //   });
-  //   //   }
-  //   // }
-    
-
-  // };
+  const routeDashboard =()=>{
+    router.push("/patient-dashboard");
+  }
+ 
   const onFinishLogin = async (values: ILoginResquest) => {
     setLoading(true);
     try {
       await signIn(values);
-      if(signInSuccess==true){
-        toast.success('Your signup was successful!', {
+      if (signInSuccess == true) {
+        toast.success("Your signup was successful!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -96,13 +66,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-      });
-      router.push("/patient-dashboard");
+        });
       }
     } catch (error) {
-      if(signInError==true){
+      if (signInError == true) {
         console.error("Signup error:", error);
-        toast.success('Your signup was successful!', {
+        toast.success("Your signup was successful!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -110,7 +79,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-      }); 
+        });
       }
     } finally {
       setLoading(false);
@@ -120,18 +89,19 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const onFinishSignup = async (values: IAuth) => {
     setLoading(true);
     try {
-      const authPayload: IAuth = userType === "patient"
-        ? {
-          ...values,
-          role:"PATIENT"
-          }
-        : {
-          ...values,
-          role:"PROVIDER"
-          };
+      const authPayload: IAuth =
+        userType === "patient"
+          ? {
+              ...values,
+              role: "PATIENT",
+            }
+          : {
+              ...values,
+              role: "PROVIDER",
+            };
       await signUp(authPayload);
-      if(signInSuccess==true){
-        toast.success('Your signup was successful!', {
+      if (signInSuccess == true) {
+        toast.success("Your signup was successful!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -139,15 +109,15 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-      });
+        });
         //switch to login tab when successful signup
-        setActiveTab("login")
+        setActiveTab("login");
         console.log("Signup success:", authPayload);
       }
     } catch (error) {
-      if(signInError==true){
+      if (signInError == true) {
         console.error("Signup error:", error);
-        toast.success('Your signup was successful!', {
+        toast.success("Your signup was successful!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -155,7 +125,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-      }); 
+        });
       }
     } finally {
       setLoading(false);
@@ -194,7 +164,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     "Surgery",
     "Urology",
   ];
-
 
   const handleUserTypeChange = (e: RadioChangeEvent) => {
     setUserType(e.target.value);
@@ -280,6 +249,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           type="primary"
           htmlType="submit"
           className={styles.submitButton}
+          onClick={routeDashboard}
         >
           Log In
         </Button>
@@ -300,7 +270,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       <Form.Item
         name="userType"
         label="I am a:"
-        rules={[{ required: true, message: "Please select your account type!" }]}
+        rules={[
+          { required: true, message: "Please select your account type!" },
+        ]}
       >
         <Radio.Group onChange={handleUserTypeChange} value={userType}>
           <Radio value="patient">Patient</Radio>
@@ -374,7 +346,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         <>
           <Form.Item
             name="dateOfBirth"
-            rules={[{ required: true, message: "Please input your date of birth!" }]}
+            rules={[
+              { required: true, message: "Please input your date of birth!" },
+            ]}
           >
             <DatePicker placeholder="Date of Birth" style={{ width: "100%" }} />
           </Form.Item>
@@ -402,7 +376,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
           <Form.Item
             name="postalCode"
-            rules={[{ required: true, message: "Please input your postal code!" }]}
+            rules={[
+              { required: true, message: "Please input your postal code!" },
+            ]}
           >
             <Input placeholder="Postal Code" />
           </Form.Item>
@@ -420,7 +396,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         <>
           <Form.Item
             name="Biography"
-            rules={[{ required: true, message: "Please input your biography!" }]}
+            rules={[
+              { required: true, message: "Please input your biography!" },
+            ]}
           >
             <Input.TextArea placeholder="Biography" rows={4} />
           </Form.Item>
@@ -449,24 +427,28 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             <Input placeholder="Max Appointments Per Day" type="number" />
           </Form.Item>
           <Form.Item
-          name="specialty"
-          label="Medical Specialty"
-          rules={[{ required: true, message: "Please select your specialty!" }]}
-        >
-          <Select
-            placeholder="Select your specialty"
-            prefix={<MedicineBoxOutlined />}
+            name="specialty"
+            label="Medical Specialty"
+            rules={[
+              { required: true, message: "Please select your specialty!" },
+            ]}
           >
-            {medicalSpecialties.map((specialty) => (
-              <Option key={specialty} value={specialty}>
-                {specialty}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+            <Select
+              placeholder="Select your specialty"
+              prefix={<MedicineBoxOutlined />}
+            >
+              {medicalSpecialties.map((specialty) => (
+                <Option key={specialty} value={specialty}>
+                  {specialty}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
           <Form.Item
             name="Qualification"
-            rules={[{ required: true, message: "Please input your qualification!" }]}
+            rules={[
+              { required: true, message: "Please input your qualification!" },
+            ]}
           >
             <Input placeholder="Qualification" />
           </Form.Item>
@@ -522,24 +504,24 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
   return (
     <Spin spinning={Loading} tip="Please hold on we are are signing you up...">
-    <div className={`${styles.formCard} ${className || ""}`}>
-      <Title level={2} className={styles.title}>
-        {activeTab === "login" ? "Welcome Back!" : "Create Account"}
-      </Title>
-      <Title level={4} className={styles.subtitle}>
-        {activeTab === "login"
-          ? "Log in to connect with healthcare professionals"
-          : "Join our platform to connect patients with healthcare professionals"}
-      </Title>
+      <div className={`${styles.formCard} ${className || ""}`}>
+        <Title level={2} className={styles.title}>
+          {activeTab === "login" ? "Welcome Back!" : "Create Account"}
+        </Title>
+        <Title level={4} className={styles.subtitle}>
+          {activeTab === "login"
+            ? "Log in to connect with healthcare professionals"
+            : "Join our platform to connect patients with healthcare professionals"}
+        </Title>
 
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        centered
-        className={styles.tabs}
-        items={tabItems}
-      />
-    </div>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          centered
+          className={styles.tabs}
+          items={tabItems}
+        />
+      </div>
     </Spin>
   );
 }
