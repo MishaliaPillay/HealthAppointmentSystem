@@ -209,7 +209,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       className={styles.form}
     >
       <Form.Item
-        name="email"
+        name="userNameOrEmailAddress"
         rules={[{ required: true, message: "Please input your username!" }]}
       >
         <Input prefix={<UserOutlined />} placeholder="Username" />

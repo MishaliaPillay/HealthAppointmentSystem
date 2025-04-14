@@ -12,7 +12,6 @@ import {
   signUpPending,
   signUpSuccess,
 } from "./actions";
-import {mockAuthService} from "../../utils/mockApiService"
 import axios from "axios";
 
 
@@ -38,12 +37,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
+    debugger
     const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
     await axios.post(endpoint, LoginResquest)
       .then((response) => {
+        debugger
         // console.log("Response", response.data);
         console.log("This is the token:"+response.data)
-        const token = response.data.token;
+        const token = response.data.result.accessToken;
         if (token) {
           console.log("session This where token is stored");
           sessionStorage.setItem("jwt", token);
@@ -53,6 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return response.data;
       })
       .catch((error) => {
+        debugger
         console.error(
           "Error during login:",
           error.response?.data?.message || error
