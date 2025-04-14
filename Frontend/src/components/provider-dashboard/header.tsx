@@ -34,7 +34,6 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
     <AntHeader
       style={{
         padding: "0 20px",
-        background: "#4096ff",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
