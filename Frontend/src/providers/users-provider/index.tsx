@@ -114,7 +114,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       .then((response) => {
         console.log("gettingusers");
         //dispatch(getCurrentUser(response.data.data));
-        console.log(response.data.data);
+        console.log("get currnet user response"+response.data.data);
         dispatch(getCurrentUserSuccess());
       })
       .catch((error) => {

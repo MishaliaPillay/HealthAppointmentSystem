@@ -1,3 +1,4 @@
+"use client"
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
 import { IPatient } from "./models";
 import {
@@ -34,7 +35,7 @@ export const PatientProvider = ({
   //Register the patient
   const registerPatient = async (Patient: IPatient) => {
     dispatch(registerPatientPending());
-    const endpoint = `/register`;
+    const endpoint = `/Patient/Create`;
     await instance
       .post(endpoint, Patient)
       .then((response) => {
@@ -44,15 +45,12 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(registerPatientError());
       })
-      .finally(() => {
-        console.log("Register user complete");
-      });
   };
 
   //Get All Patients
   const getPatients = async () => {
     dispatch(getPatientsPending());
-    const endpoint = `paitents`;
+    const endpoint =  `/Provider/GetAll`;
     await instance
       .post(endpoint)
       .then((response) => {
@@ -62,15 +60,12 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(getPatientsError());
       })
-      .finally(() => {
-        console.log("getPatients user complete");
-      });
   };
 
   //Get Patient
   const getPatient = async (patientId: string) => {
     dispatch(getPatientPending());
-    const endpoint = `patient`;
+    const endpoint = `Provider/Get?Id=${patientId}`;
     await instance
       .post(endpoint, patientId)
       .then((response) => {
@@ -80,15 +75,12 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(getPatientError());
       })
-      .finally(() => {
-        console.log("getPatient user complete");
-      });
   };
 
   //Update Paitient
   const updatePatient = async (patient: IPatient) => {
     dispatch(updatePatientPending());
-    const endpoint = `updatePatient`;
+    const endpoint = `/Provider/Update`;
     await instance
       .post(endpoint, patient)
       .then((response) => {
@@ -98,15 +90,12 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(updatePatientError());
       })
-      .finally(() => {
-        console.log("updatePatient user complete");
-      });
   };
 
   //Delete Patient
   const deletePatientbyId = async (patientId: string) => {
     dispatch(deletePatientPending());
-    const endpoint = `${patientId}`;
+    const endpoint = `/Provider/Delete?Id=${patientId}`;
     await instance
       .delete(endpoint)
       .then((response) => {
@@ -115,11 +104,7 @@ export const PatientProvider = ({
       .catch((error) => {
         dispatch(deletePatientSuccess(error.data));
       })
-      .finally(() => {
-        console.log("delete user complete");
-      });
   };
-
   return (
     <PatientStateContext.Provider value={state}>
       <PatientActionContext.Provider

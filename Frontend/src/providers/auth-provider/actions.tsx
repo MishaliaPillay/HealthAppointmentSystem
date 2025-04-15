@@ -1,6 +1,6 @@
 "use client";
-import {IAuth} from "./models"
-import {IAuthStateContext } from "./context";
+import { IAuth } from "./models";
+import { IAuthStateContext } from "./context";
 import { createAction } from "redux-actions";
 //make enums defining the actions that can be dispatched
 
@@ -18,71 +18,68 @@ export enum AuthActionEnums {
   signOutSuccess = "SIGN_OUT_SUCCESS",
   signOutError = "SIGN_OUT_ERROR",
 }
-  //SIGN UP ACTIONS
-  export const signUpPending = createAction<IAuthStateContext>(
-    AuthActionEnums.signUpPending,
-    () => ({ isPending: true, isSuccess: false, isError: false })
-  );
-  
-  export const signUpSuccess = createAction<IAuthStateContext, IAuth>(
-    AuthActionEnums.signUpSuccess,
-    (Auth: IAuth) => ({
-      isPending: false,
-      isSuccess: true,
-      isError: false,
-      Auth: Auth,
-    })
-  );
-  
-  export const signUpError = createAction<IAuthStateContext>(
-    AuthActionEnums.signUpError,
-    () => ({ isPending: false, isSuccess: false, isError: true })
-  );
+//SIGN UP ACTIONS
+export const signUpPending = createAction<IAuthStateContext>(
+  AuthActionEnums.signUpPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
+
+export const signUpSuccess = createAction<IAuthStateContext, IAuth>(
+  AuthActionEnums.signUpSuccess,
+  (Auth: IAuth) => ({
+    isPending: false,
+    isSuccess: true,
+    isError: false,
+    Auth: Auth,
+  })
+);
+
+export const signUpError = createAction<IAuthStateContext>(
+  AuthActionEnums.signUpError,
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
 
 //SIGN IN ACTIONS
 export const signInPending = createAction<IAuthStateContext>(
-    AuthActionEnums.signInPending,
-    () => ({ isPending: true, isSuccess: false, isError: false })
-  );
-  
-  export const signInSuccess = createAction<IAuthStateContext, string>(
-    AuthActionEnums.signInSuccess,
-    (token: string) => ({
-      isPending: false,
-      isSuccess: true,
-      isError: false,
-      token: token,
-    })
-  );
+  AuthActionEnums.signInPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
 
-  export const signInError = createAction<IAuthStateContext>(
-    AuthActionEnums.signInError,
-    () => ({ isPending: false, isSuccess: false, isError: true })
-  );
-  
+export const signInSuccess = createAction<IAuthStateContext, string>(
+  AuthActionEnums.signInSuccess,
+  (token: string) => ({
+    isPending: false,
+    isSuccess: true,
+    isError: false,
+    token: token,
+  })
+);
+// export const signInSuccess = createAction<IAuthStateContext, string>(
+//   AuthActionEnums.signInSuccess,
+//   () => ({isPending: false,isSuccess:true,isError: false})
+// );
 
-  
-  //SIGN OUT ACTIONS
-  export const signOutPending = createAction<IAuthStateContext>(
-    AuthActionEnums.signOutPending,
-    () => ({ isPending: true, isSuccess: false, isError: false })
-  );
-  
-  export const signOutSuccess = createAction<IAuthStateContext>(
-    AuthActionEnums.signOutSuccess,
-    () => ({
-      isPending: false,
-      isSuccess: true,
-      isError: false,
-    })
-  );
-  
-  export const signOutError = createAction<IAuthStateContext>(
-    AuthActionEnums.signOutError,
-    () => ({ isPending: false, isSuccess: false, isError: true })
-  );
+export const signInError = createAction<IAuthStateContext>(
+  AuthActionEnums.signInError,
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
 
+//SIGN OUT ACTIONS
+export const signOutPending = createAction<IAuthStateContext>(
+  AuthActionEnums.signOutPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
 
+export const signOutSuccess = createAction<IAuthStateContext>(
+  AuthActionEnums.signOutSuccess,
+  () => ({
+    isPending: false,
+    isSuccess: true,
+    isError: false,
+  })
+);
 
-
-
+export const signOutError = createAction<IAuthStateContext>(
+  AuthActionEnums.signOutError,
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
