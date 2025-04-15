@@ -58,12 +58,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // };
   const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
     dispatch(signInPending());
-    debugger;
+    //debugger;
     const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
     await axios
       .post(endpoint, LoginResquest)
       .then((response) => {
-        debugger;
+        //debugger;
         // console.log("Response", response.data);
         console.log("This is the token:" + response.data);
         const token = response.data.result.accessToken;
