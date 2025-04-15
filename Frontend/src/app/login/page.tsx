@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import {
   Form,
   Input,
@@ -22,11 +22,11 @@ import {
 } from "@ant-design/icons";
 import dayjs from 'dayjs';
 import styles from "./login-page.module.css";
-import { IAuth, ILoginResquest } from "@/providers/auth-provider/models";
-import { useAuthActions } from "@/providers/auth-provider";
+import { IAuth, ISignInResquest } from "@/providers/auth-provider/models";
+import { useAuthActions,useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { signInError, signInSuccess } from "@/providers/auth-provider/actions";
+import { signUpSuccess } from "@/providers/auth-provider/actions";
 import { useRouter } from "next/navigation";
 import {jwtDecode} from "jwt-decode";
 const { Title } = Typography;
@@ -40,10 +40,12 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
-  const { signUp, signIn } = useAuthActions();
-  const [role, setrole] = useState<"patient" | "PROVIDER">("patient");
+  const { signUp, signIn} = useAuthActions();
+  const { isSuccess,isError,isPending} = useAuthState();
+  const [role, setrole] = useState<"PATIENT" | "PROVIDER">("PATIENT");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
+  //const [token,setToken]=useState("");
   const router = useRouter();
 
   // const routeDashboard = () => {
@@ -77,11 +79,13 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   //     router.push("/"); //if decoding fails
   //   }
   // };
-const routeDashboard = () => {
+console.log('statenow', isError, isPending, isSuccess)
+  console.log()
+  const routeDashboard = () => {
   const token = sessionStorage.getItem("jwt");
   try {
     if (!token) {
-      console.error("No token found");
+      console.error("No token found cant route to dashboard");
       router.push("/");
       return;
     }
@@ -107,44 +111,43 @@ const routeDashboard = () => {
   }
 };
 
-  const onFinishLogin = async (values: ILoginResquest) => {
-    setLoading(true);
-    try {
-      await signIn(values);
-      if (signInSuccess == true) {
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-    } catch (error) {
-      if (signInError == true) {
-        console.error("Signup error:", error);
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-    } finally {
-      setLoading(false);
+  const onFinishLogin = async (values: ISignInResquest) => {
+    if(isPending){
+      setLoading(true);
     }
-  };
-
+    debugger
+      const response =await signIn(values); 
+      console.log("Success response:",isSuccess)
+      if(isSuccess){
+        console.log("Token stored during login:",response)
+        console.log(response)
+        //sessionStorage.setItem("jwt",response.result.)
+        //waiting for token to be set before moving to the dashboard 
+        // debugger
+        // setTimeout(()=>{
+        //   routeDashboard();
+        // },5000);//adding a delay to make sure that the token is store correctly
+      }
+    } 
+      if (isError) {
+        console.log("Signup error")
+        toast.error("Your signup was unsuccessful!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
   const onFinishSignup = async (values: IAuth) => {
-    setLoading(true);
+    if(isPending){
+      setLoading(true);
+    }
     try {
       const authPayload: IAuth =
-        role === "patient"
+        role === "PATIENT"
           ? {
               ...values,
               role: "PATIENT",
@@ -154,7 +157,7 @@ const routeDashboard = () => {
               role: "PROVIDER",
             };
       await signUp(authPayload);
-      if (signInSuccess == true) {
+      if (isSuccess) {
         toast.success("Your signup was successful!", {
           position: "top-right",
           autoClose: 5000,
@@ -169,7 +172,7 @@ const routeDashboard = () => {
         console.log("Signup success:", authPayload);
       }
     } catch (error) {
-      if (signInError == true) {
+      if (isError) {
         console.error("Signup error:", error);
         toast.success("Your signup was successful!", {
           position: "top-right",
@@ -181,9 +184,7 @@ const routeDashboard = () => {
           progress: undefined,
         });
       }
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const passwordChecks = {
@@ -318,7 +319,7 @@ const routeDashboard = () => {
       size="large"
       layout="vertical"
       className={styles.form}
-      initialValues={{ role: "patient" }}
+      initialValues={{ role: "PATIENT" }}
     >
       {/* User Type Selection - Moved to the top */}
       <Form.Item
@@ -396,7 +397,7 @@ const routeDashboard = () => {
       </Form.Item>
 
       {/* Patient-Specific Fields */}
-      {role === "patient" && (
+      {role === "PATIENT" && (
         <>
           <Form.Item
             name="dateOfBirth"

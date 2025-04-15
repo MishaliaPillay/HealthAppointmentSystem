@@ -1,6 +1,6 @@
 "use client";
-import { getAxiosInstace } from "../../utils/axiosInstance";
-import { IAuth, ILoginResquest } from "./models";
+//import { getAxiosInstace } from "../../utils/axiosInstance";
+import { IAuth, ISignInResponse, ISignInResquest } from "./models";
 import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
 import { AuthReducer } from "./reducer";
 import { useContext, useReducer } from "react";
@@ -13,10 +13,13 @@ import {
   signUpSuccess,
 } from "./actions";
 import axios from "axios";
+import { getRole } from "@/utils/decoder";
+import { useRouter } from "next/navigation";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
-
+    const router = useRouter();
+console.log('state', state)
   //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
@@ -32,7 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("Signup was successfull");
       })
       .catch((error) => {
-        debugger
         console.error(error);
         console.log("Sign up was unsuccessfull");
       });
@@ -56,29 +58,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //       console.log("Sign up was unsuccessfull");
   //     });
   // };
-  const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
+  const signIn = async (SignInResquest: ISignInResquest): Promise<ISignInResponse> => {
     dispatch(signInPending());
-    debugger;
+    //debugger;
     const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
-    await axios
-      .post(endpoint, LoginResquest)
+    return axios
+      .post(endpoint, SignInResquest)
       .then((response) => {
-        debugger;
         // console.log("Response", response.data);
-        console.log("This is the token:" + response.data);
+        const role =getRole(response.data.result)
+        if (role === "provider") {
+          router.push("/provider-dashboard");
+        } else if (role=== "patient") {
+          router.push("/patient-dashboard");
+        } else {
+          router.push("/");
+        }
+        console.log("This is the token:" + response.data.result.accessToken,"and role",role);
         const token = response.data.result.accessToken;
         if (token) {
           console.log("session This where token is stored"+token);
           sessionStorage.setItem("jwt", token);
+          dispatch(signInSuccess(token));
+          console.log('SignUp success',token)
+          return token;
+        }else{
+          throw new Error("There is no response");
         }
-        dispatch(signInSuccess(response.data));
-        console.log("this is the token" + response.data);
-        return response.data;
       })
       .catch((error) => {
-        debugger;
         console.error(
-          "Error during login:",
+          "Error during signIn:",
           error.response?.data?.message || error
         );
         dispatch(signInError());

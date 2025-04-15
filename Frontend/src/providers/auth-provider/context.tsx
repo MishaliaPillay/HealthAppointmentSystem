@@ -1,6 +1,6 @@
 "use client";
 import { createContext } from "react";
-import {ILoginResquest, IAuth } from "./models";
+import {ISignInResquest, IAuth, ISignInResponse } from "./models";
 
 // Context shape interface
 export interface IAuthStateContext {
@@ -13,7 +13,7 @@ export interface IAuthStateContext {
 
 // Auth action context interface
 export interface IAuthActionContext {
-  signIn: (LoginResquest:ILoginResquest) => Promise<void>;
+  signIn: (SignInResquest:ISignInResquest) => Promise<ISignInResponse>;
   signUp: (Auth: IAuth) => Promise<void>;
   signOut: () => void;
 }

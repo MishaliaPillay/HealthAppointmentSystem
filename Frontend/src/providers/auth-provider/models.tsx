@@ -23,8 +23,13 @@ export interface IAuth {
     qualification?:string
   }
   
-export interface ILoginResquest{
+export interface ISignInResquest{
   userNameOrEmailAddress: "string",
   password: "string",
   rememberClient: true
+}
+export interface ISignInResponse {
+  result: {
+    accessToken: string;
+  };
 }
