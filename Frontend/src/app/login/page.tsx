@@ -52,6 +52,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     const response = await signIn(values);
     if (isSuccess) {
       const role = getRole(response.result);
+      console.log("this is the "+role)
       if (role === "provider") {
         router.push("/provider-dashboard");
       } else if (role === "patient") {
@@ -60,23 +61,18 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  };
-  if (isError) {
-    const token = sessionStorage.getItem("jwt");
-    if (!token) {
-      console.error("No token found cant route to dashboard");
-      router.push("/");
+    if (isError) {
+      toast.error("Your signup was unsuccessful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
-    toast.error("Your signup was unsuccessful!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
+  };
   const onFinishSignup = async (values: IAuth) => {
     if (isPending) {
       setLoading(true);
@@ -498,7 +494,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   ];
 
   return (
-    <Spin spinning={Loading} tip="Please hold on we are are signing you up...">
+    <Spin spinning={Loading} tip="Please Hold on...">
       <div className={`${styles.formCard} ${className || ""}`}>
         <Title level={2} className={styles.title}>
           {activeTab === "login" ? "Welcome Back!" : "Create Account"}
