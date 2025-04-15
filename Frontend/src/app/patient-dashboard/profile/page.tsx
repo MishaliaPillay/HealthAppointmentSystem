@@ -9,6 +9,7 @@ import { useUserState } from "../../../providers/users-provider";
 import { isPending } from "@reduxjs/toolkit";
 import { IUser } from "@/providers/users-provider/models";
 import { getuid } from "process";
+import { error } from 'console';
 const { Title } = Typography;
 
 export default function ProfilePage() {
@@ -16,20 +17,27 @@ export default function ProfilePage() {
   const [Loader, setLoader] = useState(true);
   const { getCurrentUser, getUser } = useUserActions();
   const { isPending } = useUserState();
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(undefined);
 
   useEffect(() => {
-    setToken(sessionStorage.getItem("jwtToken"));
+    //setToken(sessionStorage.getItem("jwtToken"));
+    const storedToken=sessionStorage.getItem("jwt");
+    if(storedToken){
+      setToken(storedToken)
+        console.log("This the token on mount:",storedToken);
+    }
   }, []);
-
   useEffect(() => {
     const fetchUser = async () => {
-      if (token) {
+      if (!token) return;
+      try{
         const user = await getCurrentUser();
         if (user) {
-          console.log("effect", user);
+          console.log("effect current userobj", user);
           getUser(user.id);
         }
+      }catch(error){
+        console.error("fetching user error",error)
       }
     };
     fetchUser();
