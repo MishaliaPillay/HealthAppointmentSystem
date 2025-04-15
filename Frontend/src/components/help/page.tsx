@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Typography, Collapse, Divider, Button, message } from 'antd';
-import { MailOutlined, QuestionCircleOutlined, PhoneOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined,  } from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
 const { Panel } = Collapse;
@@ -14,7 +14,7 @@ const HelpPage = () => {
     <div style={{ padding: '24px', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
       <Card style={{ maxWidth: '900px', margin: '0 auto' }}>
         <Title level={2}><QuestionCircleOutlined /> Help Center</Title>
-        <Paragraph>Welcome to the Health Appointment System Help Center. Here you’ll find answers to common questions, how to use the system, and ways to contact support.</Paragraph>
+        <Paragraph>Welcome to the Health Appointment System Help Center. Here you’ll find answers to common questions, how to use the system.</Paragraph>
 
         <Divider />
 
@@ -41,16 +41,6 @@ const HelpPage = () => {
             <li>✔️ Cancel an appointment from “My Appointments” section.</li>
           </ul>
         </Paragraph>
-
-        <Divider />
-
-        <Title level={4}>📞 Contact Support</Title>
-        <Paragraph>
-          <PhoneOutlined /> Toll-Free Support: <Text strong>0800-123-456</Text><br />
-          <MailOutlined /> Email: <Text strong>support@healthappoint.com</Text>
-        </Paragraph>
-
-        <Divider />
 
         <Title level={4}>💬 Give Us Feedback</Title>
         <Button type="primary" onClick={handleFeedbackClick}>Submit Feedback</Button>
