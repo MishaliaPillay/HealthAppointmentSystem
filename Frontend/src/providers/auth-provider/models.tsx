@@ -5,6 +5,7 @@ export interface IAuth {
     name:string,
     surname:string, 
     emailAddress:string,
+    isActive:true,
     phoneNumber:string,
     userName:string,
     password:string,
