@@ -46,7 +46,7 @@ export default function ProviderDashboard() {
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back,{user.Biography}</Title>
+        <Title level={3}>Welcome back,{user.id}</Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 

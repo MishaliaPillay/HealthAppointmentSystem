@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import styles from "./login-page.module.css";
 import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
-import { useUserActions} from "@/providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -44,26 +44,15 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
-  const { getCurrentUser } = useUserActions()
-  
+  const { getCurrentUser } = useUserActions();
 
-  const onFinishLogin = async (values: ISignInRequest) => {
+  useEffect(() => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) {
+      console.log("there is no token", token);
+    }
     if (isPending) {
       setLoading(true);
-    }
-    const response = await signIn(values);
-    if (isSuccess) {
-      sessionStorage.getItem("jwt")
-      const role = getRole(response.result);
-      //getCurrentUser(response.result.accessToken)
-      console.log("this is the " + role)
-      if (role === "provider") {
-        router.push("/provider-dashboard");
-      } else if (role === "patient") {
-        router.push("/patient-dashboard");
-      } else {
-        router.push("/");
-      }
     }
     if (isError) {
       toast.error("Your signup was unsuccessful!", {
@@ -76,6 +65,24 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         progress: undefined,
       });
     }
+    if (isSuccess) {
+      const role = getRole(token);
+      //getCurrentUser(response.result.accessToken)
+      console.log("this is the " + role);
+      if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else if (role === "patient") {
+        router.push("/patient-dashboard");
+      } else {
+        router.push("/");
+      }
+    }
+
+    // fetchUser();
+  }, [isPending, isError, router]);
+
+  const onFinishLogin = async (values: ISignInRequest) => {
+    await signIn(values);
   };
 
   const onFinishSignup = async (values: IAuth) => {
@@ -313,7 +320,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       </Form.Item>
 
       {/* Patient-Specific Fields */}
-      {role === "PATIENT" && (
+      {role === "patient" && (
         <>
           <Form.Item
             name="dateOfBirth"
@@ -388,7 +395,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </>
       )}
 
-      {role === "PROVIDER" && (
+      {role === "provider" && (
         <>
           <Form.Item
             name="biography"
@@ -520,5 +527,3 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     </Spin>
   );
 }
-
-
