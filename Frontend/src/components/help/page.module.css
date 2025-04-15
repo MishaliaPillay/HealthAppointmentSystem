@@ -1,0 +1,38 @@
+.container {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 24px;
+  }
+  
+  .title {
+    color: #1677ff;
+    margin-bottom: 16px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .paragraph {
+    font-size: 16px;
+    color: #595959;
+    margin-bottom: 24px;
+  }
+  
+  .collapse {
+    background-color: #fafafa;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .panelHeader {
+    font-weight: 500;
+    font-size: 16px;
+    color: #262626;
+  }
+  
+  .link {
+    color: #1677ff;
+    text-decoration: underline;
+  }
+  
