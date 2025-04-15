@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import {
   Form,
   Input,
@@ -20,18 +20,16 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import styles from "./login-page.module.css";
-import { IAuth, ISignInResquest } from "@/providers/auth-provider/models";
-import { useAuthActions,useAuthState } from "@/providers/auth-provider";
+import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
+import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { signUpSuccess } from "@/providers/auth-provider/actions";
 import { useRouter } from "next/navigation";
-import {jwtDecode} from "jwt-decode";
+import { getRole } from "@/utils/decoder";
 const { Title } = Typography;
 const { Option } = Select;
-
 
 interface LoginSignupProps {
   className?: string; //if we want to style
@@ -40,109 +38,47 @@ interface LoginSignupProps {
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
-  const { signUp, signIn} = useAuthActions();
-  const { isSuccess,isError,isPending} = useAuthState();
+  const { signUp, signIn } = useAuthActions();
+  const { isSuccess, isError, isPending } = useAuthState();
   const [role, setrole] = useState<"PATIENT" | "PROVIDER">("PATIENT");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
-  //const [token,setToken]=useState("");
   const router = useRouter();
 
-  // const routeDashboard = () => {
-  //   const token=sessionStorage.getItem("jwt")
-  //   try {
-  //     debugger
-  //     if (!token || token.split(".").length !== 3) {
-  //       console.error("Invalid token format");
-  //       router.push("/");
-  //       return;
-  //     }
-  //     // Splitting token to get payload
-  //     const [, payload] = token.split(".");
-  //     // Decoding Base64 string
-  //     const decodedPayload = JSON.parse(atob(payload));
-  //     console.log(decodedPayload);
-  //     // Extracting role from payload
-  //     const { role } = decodedPayload;
-  //     console.log("this is the role from payload"+role)
-
-  //     // Redirect based on role
-  //     if (role === "provider") {
-  //       router.push("/provider-dashboard");
-  //     } else if (role === "patient") {
-  //       router.push("/patient-dashboard");
-  //     } else {
-  //       router.push("/");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error decoding token:", error);
-  //     router.push("/"); //if decoding fails
-  //   }
-  // };
-console.log('statenow', isError, isPending, isSuccess)
-  console.log()
-  const routeDashboard = () => {
-  const token = sessionStorage.getItem("jwt");
-  try {
+  const onFinishLogin = async (values: ISignInRequest) => {
+    if (isPending) {
+      setLoading(true);
+    }
+    const response = await signIn(values);
+    if (isSuccess) {
+      const role = getRole(response.result);
+      if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else if (role === "patient") {
+        router.push("/patient-dashboard");
+      } else {
+        router.push("/");
+      }
+    }
+  };
+  if (isError) {
+    const token = sessionStorage.getItem("jwt");
     if (!token) {
       console.error("No token found cant route to dashboard");
       router.push("/");
-      return;
     }
-    // decoding the jwt token
-    const decodedTokenPayload = jwtDecode(token);
-    console.log("The token", decodedTokenPayload);
-
-    //Destructuring the token payload in order to get the role from the claim
-    const roleClaim = decodedTokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role"];
-    console.log("Role from payload:", roleClaim);
-
-    // Redirect based on role
-    if (roleClaim === "PROVIDER") {
-      router.push("/provider-dashboard");
-    } else if (roleClaim === "PATIENT") {
-      router.push("/patient-dashboard");
-    } else {
-      router.push("/");
-    }
-  } catch (error) {
-    console.error("Decoding token error:", error);
-    router.push("/");
+    toast.error("Your signup was unsuccessful!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   }
-};
-
-  const onFinishLogin = async (values: ISignInResquest) => {
-    if(isPending){
-      setLoading(true);
-    }
-    debugger
-      const response =await signIn(values); 
-      console.log("Success response:",isSuccess)
-      if(isSuccess){
-        console.log("Token stored during login:",response)
-        console.log(response)
-        //sessionStorage.setItem("jwt",response.result.)
-        //waiting for token to be set before moving to the dashboard 
-        // debugger
-        // setTimeout(()=>{
-        //   routeDashboard();
-        // },5000);//adding a delay to make sure that the token is store correctly
-      }
-    } 
-      if (isError) {
-        console.log("Signup error")
-        toast.error("Your signup was unsuccessful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
   const onFinishSignup = async (values: IAuth) => {
-    if(isPending){
+    if (isPending) {
       setLoading(true);
     }
     try {
@@ -158,33 +94,13 @@ console.log('statenow', isError, isPending, isSuccess)
             };
       await signUp(authPayload);
       if (isSuccess) {
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        //switch to login tab when successful signup
         setActiveTab("login");
-        console.log("Signup success:", authPayload);
       }
     } catch (error) {
       if (isError) {
         console.error("Signup error:", error);
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
       }
-    } 
+    }
   };
 
   const passwordChecks = {
@@ -304,7 +220,6 @@ console.log('statenow', isError, isPending, isSuccess)
           type="primary"
           htmlType="submit"
           className={styles.submitButton}
-          onClick={routeDashboard}
         >
           Log In
         </Button>
@@ -409,8 +324,7 @@ console.log('statenow', isError, isPending, isSuccess)
               placeholder="Date of Birth"
               style={{ width: "100%" }}
               onChange={(date) => {
-                const formattedDate = dayjs(date).toISOString(); // Format as ISO 8601
-                console.log(formattedDate); // Output: "1990-07-15T08:30:00.000Z"
+                dayjs(date).toISOString(); // Format as ISO 8601
               }}
             />
           </Form.Item>
@@ -463,8 +377,7 @@ console.log('statenow', isError, isPending, isSuccess)
             <Select
               placeholder="Please select your prefferedContactMethod"
               onChange={(value) => {
-                const numericValue = Number(value);
-                console.log(numericValue);
+                Number(value);
               }}
             >
               <Option value={1}>Email</Option>

@@ -45,9 +45,6 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(registerPatientError());
       })
-      .finally(() => {
-        console.log("Register user complete");
-      });
   };
 
   //Get All Patients
@@ -63,9 +60,6 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(getPatientsError());
       })
-      .finally(() => {
-        console.log("getPatients user complete");
-      });
   };
 
   //Get Patient
@@ -81,9 +75,6 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(getPatientError());
       })
-      .finally(() => {
-        console.log("getPatient user complete");
-      });
   };
 
   //Update Paitient
@@ -99,9 +90,6 @@ export const PatientProvider = ({
         console.error(error);
         dispatch(updatePatientError());
       })
-      .finally(() => {
-        console.log("updatePatient user complete");
-      });
   };
 
   //Delete Patient
@@ -116,9 +104,6 @@ export const PatientProvider = ({
       .catch((error) => {
         dispatch(deletePatientSuccess(error.data));
       })
-      .finally(() => {
-        console.log("delete user complete");
-      });
   };
   return (
     <PatientStateContext.Provider value={state}>
