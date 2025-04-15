@@ -67,7 +67,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     }
     if (isSuccess) {
       const role = getRole(token);
-      //getCurrentUser(response.result.accessToken)
+      getCurrentUser(token)
       console.log("this is the " + role);
       if (role === "provider") {
         router.push("/provider-dashboard");
@@ -77,9 +77,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-
-    // fetchUser();
-  }, [isPending, isError, router]);
+  }, [isPending, isError, router, isSuccess]);
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
