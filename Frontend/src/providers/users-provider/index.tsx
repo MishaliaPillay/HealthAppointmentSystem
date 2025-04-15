@@ -106,12 +106,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const getCurrentUser = async (): Promise<IUser | null> => {
     try {
       dispatch(getCurrentUserPending());
-
+      debugger
       const endpoint = `Session/GetCurrentLoginInformations`;
       // const token = sessionStorage.getItem("jwt")?.trim();
 
       console.log("Trying to get the current user");
-
+      debugger
       const response = await axios.get(endpoint);
 
       if (response.data?.result?.user) {
