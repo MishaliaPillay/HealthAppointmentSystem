@@ -3,7 +3,7 @@ import { createContext } from "react";
 
 export interface ILocation {
   id?: string;
-  address: String;
+  address: string;
   state: string; // state is the region nor secrtion according to google maps
   postalCode: number;
   country: string;
