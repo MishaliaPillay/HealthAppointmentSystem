@@ -12,8 +12,8 @@ using healthap.EntityFrameworkCore;
 namespace healthap.Migrations
 {
     [DbContext(typeof(healthapDbContext))]
-    [Migration("20250412224418_MappingDBContextEntities")]
-    partial class MappingDBContextEntities
+    [Migration("20250414180617_AddedSpecialityTable")]
+    partial class AddedSpecialityTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1921,6 +1921,27 @@ namespace healthap.Migrations
                     b.ToTable("AbpTenants");
                 });
 
+            modelBuilder.Entity("healthap.MultiTenancy.speciality.Speciality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SpecialtyName")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("Specialities");
+                });
+
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
                 {
                     b.HasBaseType("Abp.Application.Features.FeatureSetting");
@@ -2206,6 +2227,17 @@ namespace healthap.Migrations
                     b.Navigation("Edition");
 
                     b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("healthap.MultiTenancy.speciality.Speciality", b =>
+                {
+                    b.HasOne("healthap.Domain.Persons.Provider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

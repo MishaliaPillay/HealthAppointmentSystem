@@ -20,14 +20,14 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import styles from "./login-page.module.css";
-import { IAuth, ILoginResquest } from "@/providers/auth-provider/models";
-import { useAuthActions } from "@/providers/auth-provider";
+import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
+import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { signInError, signInSuccess } from "@/providers/auth-provider/actions";
 import { useRouter } from "next/navigation";
+import { getRole } from "@/utils/decoder";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -39,82 +39,47 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuthActions();
-  const [userType, setUserType] = useState<"patient" | "doctor">("patient");
+  const { isSuccess, isError, isPending } = useAuthState();
+  const [role, setrole] = useState<"PATIENT" | "PROVIDER">("PATIENT");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
-  const routeDashboard = () => {
-    // const token=sessionStorage.getItem("jwt")
-    // try {
-    //   debugger
-    //   if (!token || token.split(".").length !== 3) {
-    //     console.error("Invalid token format");
-    //     router.push("/");
-    //     return;
-    //   }
-    //   // Splitting token to get payload
-    //   const [, payload] = token.split(".");
-    //   // Decoding Base64 string
-    //   const decodedPayload = JSON.parse(atob(payload));
-    //   console.log(decodedPayload);
-    //   // Extracting role from payload
-    //   const { role } = decodedPayload;
-    //   console.log("this is the role from payload"+role)
-
-    //   // Redirect based on role
-    //   if (role === "provider") {
-    //     router.push("/provider-dashboard");
-    //   } else if (role === "patient") {
-    //     router.push("/patient-dashboard");
-    //   } else {
-    //     router.push("/");
-    //   }
-    // } catch (error) {
-    //   console.error("Error decoding token:", error);
-    //   router.push("/"); //if decoding fails
-    // }
-    router.push("/patient-dashboard");
-  };
-
-  const onFinishLogin = async (values: ILoginResquest) => {
-    setLoading(true);
-    try {
-      await signIn(values);
-      if (signInSuccess == true) {
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+  const onFinishLogin = async (values: ISignInRequest) => {
+    if (isPending) {
+      setLoading(true);
+    }
+    const response = await signIn(values);
+    if (isSuccess) {
+      const role = getRole(response.result);
+      console.log("this is the "+role)
+      if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else if (role === "patient") {
+        router.push("/patient-dashboard");
+      } else {
+        router.push("/");
       }
-    } catch (error) {
-      if (signInError == true) {
-        console.error("Signup error:", error);
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-    } finally {
-      setLoading(false);
+    }
+    if (isError) {
+      toast.error("Your signup was unsuccessful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
-
   const onFinishSignup = async (values: IAuth) => {
-    setLoading(true);
+    if (isPending) {
+      setLoading(true);
+    }
     try {
       const authPayload: IAuth =
-        userType === "patient"
+        role === "PATIENT"
           ? {
               ...values,
               role: "PATIENT",
@@ -124,35 +89,13 @@ export default function LoginSignup({ className }: LoginSignupProps) {
               role: "PROVIDER",
             };
       await signUp(authPayload);
-      if (signInSuccess == true) {
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        //switch to login tab when successful signup
+      if (isSuccess) {
         setActiveTab("login");
-        console.log("Signup success:", authPayload);
       }
     } catch (error) {
-      if (signInError == true) {
+      if (isError) {
         console.error("Signup error:", error);
-        toast.success("Your signup was successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -189,8 +132,8 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     "Urology",
   ];
 
-  const handleUserTypeChange = (e: RadioChangeEvent) => {
-    setUserType(e.target.value);
+  const handleroleChange = (e: RadioChangeEvent) => {
+    setrole(e.target.value);
   };
   const loginForm = (
     <Form
@@ -273,7 +216,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           type="primary"
           htmlType="submit"
           className={styles.submitButton}
-          onClick={routeDashboard}
         >
           Log In
         </Button>
@@ -288,19 +230,19 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       size="large"
       layout="vertical"
       className={styles.form}
-      initialValues={{ userType: "patient" }}
+      initialValues={{ role: "PATIENT" }}
     >
       {/* User Type Selection - Moved to the top */}
       <Form.Item
-        name="userType"
+        name="role"
         label="I am a:"
         rules={[
           { required: true, message: "Please select your account type!" },
         ]}
       >
-        <Radio.Group onChange={handleUserTypeChange} value={userType}>
-          <Radio value="patient">Patient</Radio>
-          <Radio value="doctor">Doctor</Radio>
+        <Radio.Group onChange={handleroleChange} value={role}>
+          <Radio value="PATIENT">Patient</Radio>
+          <Radio value="PROVIDER">Medical Practioner</Radio>
         </Radio.Group>
       </Form.Item>
 
@@ -366,7 +308,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       </Form.Item>
 
       {/* Patient-Specific Fields */}
-      {userType === "patient" && (
+      {role === "PATIENT" && (
         <>
           <Form.Item
             name="dateOfBirth"
@@ -378,8 +320,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
               placeholder="Date of Birth"
               style={{ width: "100%" }}
               onChange={(date) => {
-                const formattedDate = dayjs(date).toISOString(); // Format as ISO 8601
-                console.log(formattedDate); // Output: "1990-07-15T08:30:00.000Z"
+                dayjs(date).toISOString(); // Format as ISO 8601
               }}
             />
           </Form.Item>
@@ -432,8 +373,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             <Select
               placeholder="Please select your prefferedContactMethod"
               onChange={(value) => {
-                const numericValue = Number(value);
-                console.log(numericValue);
+                Number(value);
               }}
             >
               <Option value={1}>Email</Option>
@@ -443,7 +383,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </>
       )}
 
-      {userType === "doctor" && (
+      {role === "PROVIDER" && (
         <>
           <Form.Item
             name="biography"
@@ -554,7 +494,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   ];
 
   return (
-    <Spin spinning={Loading} tip="Please hold on we are are signing you up...">
+    <Spin spinning={Loading} tip="Please Hold on...">
       <div className={`${styles.formCard} ${className || ""}`}>
         <Title level={2} className={styles.title}>
           {activeTab === "login" ? "Welcome Back!" : "Create Account"}

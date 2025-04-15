@@ -1,11 +1,23 @@
 "use client";
 
-import { Typography, Row, Col, Card, Button, Progress } from "antd";
+import { Typography, Row, Col, Card, Button, Progress, Modal } from "antd";
 import styles from "./patientdash.module.css";
+import BookingModule from "../../components/booking/booking";
+import { useState } from "react";
 
 const { Title, Text } = Typography;
 
 export default function Dashboard() {
+  const [showBookingModal, setShowBookingModal] = useState(false);
+
+  const handleOpenBookingModal = () => {
+    setShowBookingModal(true);
+  };
+
+  const handleCloseBookingModal = () => {
+    setShowBookingModal(false);
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
@@ -17,7 +29,12 @@ export default function Dashboard() {
         <Col xs={24} md={12}>
           <Card title="Quick Actions" variant="outlined">
             <div className={styles.quickActions}>
-              <Button type="primary" size="large" block>
+              <Button
+                type="primary"
+                size="large"
+                block
+                onClick={handleOpenBookingModal}
+              >
                 Book New Appointment
               </Button>
               <Button size="large" block>
@@ -70,6 +87,17 @@ export default function Dashboard() {
           />
         </div>
       </Card>
+
+      {/* Use Ant Design Modal directly */}
+      <Modal
+        title="Book an Appointment"
+        open={showBookingModal}
+        onCancel={handleCloseBookingModal}
+        width={800}
+        footer={null}
+      >
+        <BookingModule showButton={false} onClose={handleCloseBookingModal} />
+      </Modal>
     </div>
   );
 }
