@@ -54,11 +54,6 @@ export const signInSuccess = createAction<IAuthStateContext, string>(
     token: token,
   })
 );
-// export const signInSuccess = createAction<IAuthStateContext, string>(
-//   AuthActionEnums.signInSuccess,
-//   () => ({isPending: false,isSuccess:true,isError: false})
-// );
-
 export const signInError = createAction<IAuthStateContext>(
   AuthActionEnums.signInError,
   () => ({ isPending: false, isSuccess: false, isError: true })

@@ -37,9 +37,9 @@ export const decodeToken = (accessToken: string): IDecodedToken => {
   return jwtDecode(accessToken);
 };
 
-export const getRole = (loginObj): string => {
-  if (loginObj) {
-    const decoded = decodeToken(loginObj.accessToken);
+export const getRole = (accessToken: string): string => {
+  if (accessToken) {
+    const decoded = decodeToken(accessToken);
     return `${decoded[AbpTokenProperies.role]}`.toLocaleLowerCase();
   }
   return "provider";

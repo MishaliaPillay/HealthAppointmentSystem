@@ -21,7 +21,7 @@ import {
   deleteUserError,
   deleteUserPending,
 } from "./actions";
-
+import axios from "axios";
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
@@ -101,32 +101,41 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         console.error(error);
       });
   };
-
-  // Create a new User
-
   //getCurrentUser
-  const getCurrentUser = async () => {
-    dispatch(getCurrentUserPending());
-    const endpoint = `user/current`;
-    const token = sessionStorage.getItem("jwt")?.trim();
-    await instance
-      .get(endpoint, { headers: { Authorization: `${token}` } })
-      .then((response) => {
-        console.log("gettingusers");
-        //dispatch(getCurrentUser(response.data.data));
-        console.log("get currnet user response"+response.data.data);
-        dispatch(getCurrentUserSuccess());
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(getCurrentUserError());
-        return null; // Return null instead of nothing
-      })
-      .finally(() => {
-        //isPending=false
-        console.log("Done trying to process your getUser request");
-      });
-  };
+ const getCurrentUser = (token: string): Promise<IUser | null> => {
+   dispatch(getCurrentUserPending());
+   const endpoint =
+     "https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations";
+   console.log("Trying to get the current user");
+   return axios
+     .get(endpoint, {
+       headers: {
+         Authorization: `Bearer ${token} `,
+       },
+     })
+     .then((response) => {
+       if (response) {
+         console.log(
+           "this is the response from get current user",
+           response.data.result.user
+         );
+         dispatch(getCurrentUserSuccess(response.data.result.user));
+         return response.data.result.user;
+       } else {
+         console.warn("No user data found in response");
+         dispatch(getCurrentUserError());
+         return null;
+       }
+     })
+     .catch((error) => {
+       console.error("Error fetching current user:", error);
+       dispatch(getCurrentUserError());
+       return null;
+     })
+     .finally(() => {
+       console.log("Done trying to process your getUser request");
+     });
+ };
 
   return (
     <UserStateContext.Provider value={state}>

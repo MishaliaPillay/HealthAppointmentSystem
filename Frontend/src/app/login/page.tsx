@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import styles from "./login-page.module.css";
 import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
+import { useUserActions } from "@/providers/users-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -34,32 +35,24 @@ const { Option } = Select;
 interface LoginSignupProps {
   className?: string; //if we want to style
 }
-
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuthActions();
   const { isSuccess, isError, isPending } = useAuthState();
-  const [role, setrole] = useState<"PATIENT" | "PROVIDER">("PATIENT");
+  const [role, setrole] = useState<"patient" | "provider">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
+  const { getCurrentUser } = useUserActions();
 
-  const onFinishLogin = async (values: ISignInRequest) => {
+  useEffect(() => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) {
+      console.log("there is no token", token);
+    }
     if (isPending) {
       setLoading(true);
-    }
-    const response = await signIn(values);
-    if (isSuccess) {
-      const role = getRole(response.result);
-      console.log("this is the "+role)
-      if (role === "provider") {
-        router.push("/provider-dashboard");
-      } else if (role === "patient") {
-        router.push("/patient-dashboard");
-      } else {
-        router.push("/");
-      }
     }
     if (isError) {
       toast.error("Your signup was unsuccessful!", {
@@ -72,21 +65,38 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         progress: undefined,
       });
     }
+    if (isSuccess) {
+      const role = getRole(token);
+      getCurrentUser(token)
+      console.log("this is the " + role);
+      if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else if (role === "patient") {
+        router.push("/patient-dashboard");
+      } else {
+        router.push("/");
+      }
+    }
+  }, [isPending, isError, router, isSuccess,getCurrentUser]);
+
+  const onFinishLogin = async (values: ISignInRequest) => {
+    await signIn(values);
   };
+
   const onFinishSignup = async (values: IAuth) => {
     if (isPending) {
       setLoading(true);
     }
     try {
       const authPayload: IAuth =
-        role === "PATIENT"
+        role === "patient"
           ? {
               ...values,
-              role: "PATIENT",
+              role: "patient",
             }
           : {
               ...values,
-              role: "PROVIDER",
+              role: "provider",
             };
       await signUp(authPayload);
       if (isSuccess) {
@@ -230,7 +240,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       size="large"
       layout="vertical"
       className={styles.form}
-      initialValues={{ role: "PATIENT" }}
+      initialValues={{ role: "patient" }}
     >
       {/* User Type Selection - Moved to the top */}
       <Form.Item
@@ -308,7 +318,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       </Form.Item>
 
       {/* Patient-Specific Fields */}
-      {role === "PATIENT" && (
+      {role === "patient" && (
         <>
           <Form.Item
             name="dateOfBirth"
@@ -383,7 +393,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </>
       )}
 
-      {role === "PROVIDER" && (
+      {role === "provider" && (
         <>
           <Form.Item
             name="biography"

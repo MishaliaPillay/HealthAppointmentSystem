@@ -12,13 +12,16 @@ import {
 } from "antd";
 import styles from "./providerdashdash.module.css";
 const { Title, Text } = Typography;
+import { useUserState } from "../../providers/users-provider";
 
 export default function ProviderDashboard() {
+  const { user } = useUserState();
+
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, Dr. Johnson!</Title>
-        <Text>You have 5 appointments scheduled today</Text>
+        <Title level={3}>Welcome back,{user?.id}</Title>
+        <Text>You have appointments scheduled today</Text>
       </Card>
 
       <Row gutter={[24, 24]} className={styles.rowSpacing}>
