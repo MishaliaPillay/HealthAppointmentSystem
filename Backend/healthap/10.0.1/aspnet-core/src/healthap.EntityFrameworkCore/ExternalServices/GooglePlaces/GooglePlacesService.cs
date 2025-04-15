@@ -40,7 +40,9 @@ namespace healthap.ExternalServices.GooglePlaces
 
                 // Limit the number of results to avoid DB overload
                 var maxResults = 2;
-
+                City = ExtractAddressComponent(result.AddressComponents, "locality")
+    ?? ExtractAddressComponent(result.AddressComponents, "sublocality")
+    ?? ExtractAddressComponent(result.AddressComponents, "administrative_area_level_2")
                 return placesResponse.Results
                     .Take(maxResults)
                     .Select(p => new Institution
@@ -134,13 +136,13 @@ namespace healthap.ExternalServices.GooglePlaces
             return "Medical Facility";
         }
 
-      
-            Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
-{
-                return SearchHealthcareLocationsAsync(query, region);
-            }
 
-       
+        Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
+        {
+            return SearchHealthcareLocationsAsync(query, region);
+        }
+
+
     }
 
     // Response models for Google Places API

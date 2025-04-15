@@ -1,59 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using NuGet.Protocol.Core.Types;
+using Abp.Dependency;
+using Abp.Domain.Repositories;
+using healthap.Domain.Institution;
+using healthap.ExternalServices.GooglePlaces;
 
 namespace healthap.EntityFrameworkCore.Seed
 {
-    public async Task SeedInstitutionsFromGoogleBySuburbAsync()
+    public class InstitutionDataSeeder : ITransientDependency
     {
-        var suburbs = new List<string>
-    {
-        "Sandton",
-        "Lenasia",
-        "Midrand",
-        "Soweto",
-        "Centurion",
-        "Pretoria",
-        "Durban",
-        "Cape Town",
-        "East London",
-        "Polokwane"
-        // Add more as needed
-    };
+        private readonly IRepository<Institution, int> _repository;
+        private readonly IGooglePlacesService _googlePlacesService;
 
-        var typesWithKeywords = new Dictionary<string, string>
-    {
-        { "Hospital", "hospital" },
-        { "Doctor's Office", "doctor" },
-        { "Dental Clinic", "dentist" },
-        { "Healthcare Facility", "clinic" }
-    };
-
-        foreach (var suburb in suburbs)
+        public InstitutionDataSeeder(
+            IRepository<Institution, int> repository,
+            IGooglePlacesService googlePlacesService)
         {
-            foreach (var (facilityType, keyword) in typesWithKeywords)
+            _repository = repository;
+            _googlePlacesService = googlePlacesService;
+        }
+
+        public async Task SeedInstitutionsFromGoogleBySuburbAsync()
+        {
+            var suburbs = new List<string>
             {
-                var query = $"{keyword} in {suburb}, South Africa";
-                var institutions = await _googlePlacesService.SearchHealthcareInstitutionsAsync(query);
+                "Sandton", "Lenasia", "Midrand", "Soweto", "Centurion",
+                "Pretoria", "Durban", "Cape Town", "East London", "Polokwane"
+            };
 
-                var match = institutions.FirstOrDefault(i =>
-                    i.FacilityType == facilityType &&
-                    i.City?.Equals(suburb, StringComparison.OrdinalIgnoreCase) == true
-                );
+            var typesWithKeywords = new Dictionary<string, string>
+            {
+                { "Hospital", "hospital" },
+                { "Doctor's Office", "doctor" },
+                { "Dental Clinic", "dentist" },
+                { "Healthcare Facility", "clinic" }
+            };
 
-                if (match != null)
+            foreach (var suburb in suburbs)
+            {
+                foreach (var (facilityType, keyword) in typesWithKeywords)
                 {
-                    var exists = await Repository.FirstOrDefaultAsync(i => i.PlaceId == match.PlaceId);
-                    if (exists == null)
+                    var query = $"{keyword} in {suburb}, South Africa";
+                    var institutions = await _googlePlacesService.SearchHealthcareInstitutionsAsync(query);
+
+                    var match = institutions.FirstOrDefault(i =>
+                        i.FacilityType == facilityType &&
+                        i.City?.Equals(suburb, StringComparison.OrdinalIgnoreCase) == true
+                    );
+
+                    if (match != null)
                     {
-                        await Repository.InsertAsync(match);
+                        var exists = await _repository.FirstOrDefaultAsync(i => i.PlaceId == match.PlaceId);
+                        if (exists == null)
+                        {
+                            await _repository.InsertAsync(match);
+                        }
                     }
                 }
             }
         }
     }
-
 }
