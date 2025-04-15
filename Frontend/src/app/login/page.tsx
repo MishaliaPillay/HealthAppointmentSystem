@@ -67,7 +67,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     }
     if (isSuccess) {
       const role = getRole(token);
-      getCurrentUser(token)
       console.log("this is the " + role);
       if (role === "provider") {
         router.push("/provider-dashboard");
@@ -77,10 +76,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isPending, isError, router, isSuccess,getCurrentUser]);
+  }, [isPending, isError, router, isSuccess]);
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
+       const token = sessionStorage.getItem("jwt");
+         getCurrentUser(token);
   };
 
   const onFinishSignup = async (values: IAuth) => {
