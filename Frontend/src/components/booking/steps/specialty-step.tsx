@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Card, Typography } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { Specialty } from "../types";
@@ -16,11 +16,21 @@ export const SpecialtyStep: React.FC<SpecialtyStepProps> = ({
   onSelect,
 }) => {
   const { styles } = useStyles();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Add General specialty if it doesn't exist
   const allSpecialties = specialties.some((s) => s.name === "General")
     ? specialties
     : [{ id: "general", name: "General" }, ...specialties];
+
+  // Filter specialties based on search term
+  const filteredSpecialties = allSpecialties.filter((specialty) =>
+    specialty.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <div>
@@ -29,6 +39,8 @@ export const SpecialtyStep: React.FC<SpecialtyStepProps> = ({
         placeholder="Search specialties..."
         prefix={<SearchOutlined />}
         style={{ marginBottom: 16 }}
+        value={searchTerm}
+        onChange={handleSearchChange}
       />
       <div
         style={{
@@ -37,7 +49,7 @@ export const SpecialtyStep: React.FC<SpecialtyStepProps> = ({
           gap: 12,
         }}
       >
-        {allSpecialties.map((specialty) => (
+        {filteredSpecialties.map((specialty) => (
           <Card
             key={specialty.id}
             hoverable
@@ -50,6 +62,11 @@ export const SpecialtyStep: React.FC<SpecialtyStepProps> = ({
           </Card>
         ))}
       </div>
+      {filteredSpecialties.length === 0 && (
+        <Typography.Text type="secondary">
+          No specialties match your search.
+        </Typography.Text>
+      )}
     </div>
   );
 };
