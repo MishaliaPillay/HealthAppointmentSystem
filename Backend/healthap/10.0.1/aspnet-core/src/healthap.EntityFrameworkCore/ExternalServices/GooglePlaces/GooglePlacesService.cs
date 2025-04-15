@@ -20,7 +20,6 @@ namespace healthap.ExternalServices.GooglePlaces
             _httpClient = httpClientFactory.CreateClient("GooglePlaces");
             _apiKey = configuration["GooglePlaces:ApiKey"];
         }
-
         public async Task<List<Institution>> SearchHealthcareLocationsAsync(string query, string region = "za")
         {
             try
@@ -38,21 +37,19 @@ namespace healthap.ExternalServices.GooglePlaces
                 var content = await response.Content.ReadAsStringAsync();
                 var placesResponse = JsonConvert.DeserializeObject<PlacesSearchResponse>(content);
 
-                // Limit the number of results to avoid DB overload
                 var maxResults = 2;
-                City = ExtractAddressComponent(result.AddressComponents, "locality")
-    ?? ExtractAddressComponent(result.AddressComponents, "sublocality")
-    ?? ExtractAddressComponent(result.AddressComponents, "administrative_area_level_2")
+
                 return placesResponse.Results
                     .Take(maxResults)
                     .Select(p => new Institution
                     {
                         PlaceId = p.PlaceId,
                         Address = p.FormattedAddress,
-                        // Parse out components from formatted address
-                        City = ExtractCity(p.FormattedAddress),
+                        City = ExtractAddressComponent(p.AddressComponents, "locality")
+                            ?? ExtractAddressComponent(p.AddressComponents, "sublocality")
+                            ?? ExtractAddressComponent(p.AddressComponents, "administrative_area_level_2"),
                         State = ExtractState(p.FormattedAddress),
-                        Country = "South Africa", // Default since we're filtering by region=za
+                        Country = "South Africa",
                         FacilityType = DetermineFacilityType(p.Types),
                         Description = p.Name,
                         Latitude = p.Geometry.Location.Lat,
@@ -63,10 +60,11 @@ namespace healthap.ExternalServices.GooglePlaces
             }
             catch (Exception ex)
             {
-                // Log exception
+                // Log the exception (can be expanded)
                 return new List<Institution>();
             }
         }
+
 
         public async Task<Institution> GetPlaceDetailsAsync(string placeId)
         {
