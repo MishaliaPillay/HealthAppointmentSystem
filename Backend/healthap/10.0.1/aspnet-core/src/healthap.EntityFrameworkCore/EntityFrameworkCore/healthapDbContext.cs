@@ -5,6 +5,7 @@ using healthap.Domain.Appointments;
 using healthap.Domain.Location;
 using healthap.Domain.Persons;
 using healthap.MultiTenancy;
+using healthap.MultiTenancy.speciality;
 using Microsoft.EntityFrameworkCore;
 
 namespace healthap.EntityFrameworkCore;
@@ -16,6 +17,8 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
     public DbSet<Provider> Providers { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Location> Location { get; set; }
+
+    public DbSet<Speciality> Specialities { get; set; }
     public DbSet<ProviderAvailabilty> ProviderAvailabilities { get; set; }
 
     public healthapDbContext(DbContextOptions<healthapDbContext> options)
