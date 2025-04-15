@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("This is the token:" + response.data);
         const token = response.data.result.accessToken;
         if (token) {
-          console.log("session This where token is stored");
+          console.log("session This where token is stored"+token);
           sessionStorage.setItem("jwt", token);
         }
         dispatch(signInSuccess(response.data));
