@@ -77,7 +77,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isPending, isError, router, isSuccess]);
+  }, [isPending, isError, router, isSuccess,getCurrentUser]);
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
