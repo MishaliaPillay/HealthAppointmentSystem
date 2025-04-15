@@ -28,8 +28,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signInError, signInSuccess } from "@/providers/auth-provider/actions";
 import { useRouter } from "next/navigation";
+import {jwtDecode} from "jwt-decode";
 const { Title } = Typography;
 const { Option } = Select;
+
 
 interface LoginSignupProps {
   className?: string; //if we want to style
@@ -44,37 +46,66 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
-  const routeDashboard = () => {
-    const token=sessionStorage.getItem("jwt")
-    try {
-      debugger
-      if (!token || token.split(".").length !== 3) {
-        console.error("Invalid token format");
-        router.push("/");
-        return;
-      }
-      // Splitting token to get payload
-      const [, payload] = token.split(".");
-      // Decoding Base64 string
-      const decodedPayload = JSON.parse(atob(payload));
-      console.log(decodedPayload);
-      // Extracting role from payload
-      const { role } = decodedPayload;
-      console.log("this is the role from payload"+role)
+  // const routeDashboard = () => {
+  //   const token=sessionStorage.getItem("jwt")
+  //   try {
+  //     debugger
+  //     if (!token || token.split(".").length !== 3) {
+  //       console.error("Invalid token format");
+  //       router.push("/");
+  //       return;
+  //     }
+  //     // Splitting token to get payload
+  //     const [, payload] = token.split(".");
+  //     // Decoding Base64 string
+  //     const decodedPayload = JSON.parse(atob(payload));
+  //     console.log(decodedPayload);
+  //     // Extracting role from payload
+  //     const { role } = decodedPayload;
+  //     console.log("this is the role from payload"+role)
 
-      // Redirect based on role
-      if (role === "provider") {
-        router.push("/provider-dashboard");
-      } else if (role === "patient") {
-        router.push("/patient-dashboard");
-      } else {
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      router.push("/"); //if decoding fails
+  //     // Redirect based on role
+  //     if (role === "provider") {
+  //       router.push("/provider-dashboard");
+  //     } else if (role === "patient") {
+  //       router.push("/patient-dashboard");
+  //     } else {
+  //       router.push("/");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error decoding token:", error);
+  //     router.push("/"); //if decoding fails
+  //   }
+  // };
+const routeDashboard = () => {
+  const token = sessionStorage.getItem("jwt");
+  try {
+    if (!token) {
+      console.error("No token found");
+      router.push("/");
+      return;
     }
-  };
+    // decoding the jwt token
+    const decodedTokenPayload = jwtDecode(token);
+    console.log("The token", decodedTokenPayload);
+
+    //Destructuring the token payload in order to get the role from the claim
+    const roleClaim = decodedTokenPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role"];
+    console.log("Role from payload:", roleClaim);
+
+    // Redirect based on role
+    if (roleClaim === "PROVIDER") {
+      router.push("/provider-dashboard");
+    } else if (roleClaim === "PATIENT") {
+      router.push("/patient-dashboard");
+    } else {
+      router.push("/");
+    }
+  } catch (error) {
+    console.error("Decoding token error:", error);
+    router.push("/");
+  }
+};
 
   const onFinishLogin = async (values: ILoginResquest) => {
     setLoading(true);
