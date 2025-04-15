@@ -41,7 +41,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuthActions();
-  const [role, setrole] = useState<"patient" | "doctor">("patient");
+  const [role, setrole] = useState<"patient" | "PROVIDER">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
@@ -329,8 +329,8 @@ const routeDashboard = () => {
         ]}
       >
         <Radio.Group onChange={handleroleChange} value={role}>
-          <Radio value="patient">Patient</Radio>
-          <Radio value="doctor">Doctor</Radio>
+          <Radio value="PATIENT">Patient</Radio>
+          <Radio value="PROVIDER">Medical Practioner</Radio>
         </Radio.Group>
       </Form.Item>
 
@@ -473,7 +473,7 @@ const routeDashboard = () => {
         </>
       )}
 
-      {role === "doctor" && (
+      {role === "PROVIDER" && (
         <>
           <Form.Item
             name="biography"
