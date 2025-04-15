@@ -12,13 +12,42 @@ import {
 } from "antd";
 import styles from "./providerdashdash.module.css";
 const { Title, Text } = Typography;
+import { useEffect, useState } from "react";
+import { useUserActions } from "../../providers/users-provider";
+import { useUserState } from "../../providers/users-provider";
 
 export default function ProviderDashboard() {
+    const { getCurrentUser} = useUserActions();
+    const {user,isSuccess,isError} = useUserState();
+    const [token, setToken] = useState(undefined);
+
+    useEffect(() => {
+      const storedToken = sessionStorage.getItem("jwt");
+      if (storedToken) {
+        setToken(storedToken);
+        console.log("This the token on mount:", storedToken);
+      }
+    }, []);
+    useEffect(() => {
+      if (!token) return;
+      console.log("there is no token", token)
+      if (getCurrentUser(token) == null) {
+        console.log("Got user")
+      }
+      if (isError) {
+
+      }
+      if (isSuccess) { 
+        }
+      // };
+      // fetchUser();
+    }, []);
+
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, Dr. Johnson!</Title>
-        <Text>You have 5 appointments scheduled today</Text>
+        <Title level={3}>Welcome back,{user.Biography}</Title>
+        <Text>You have appointments scheduled today</Text>
       </Card>
 
       <Row gutter={[24, 24]} className={styles.rowSpacing}>

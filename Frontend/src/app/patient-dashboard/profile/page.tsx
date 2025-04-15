@@ -2,47 +2,8 @@
 
 import { Typography, Form, Input, Button, Card, Avatar, Row, Col } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { getCurrentUserError } from "@/providers/users-provider/actions";
-import { useUserActions } from "../../../providers/users-provider";
-import { useUserState } from "../../../providers/users-provider";
-import { isPending } from "@reduxjs/toolkit";
-import { IUser } from "@/providers/users-provider/models";
-import { getuid } from "process";
-import { error } from 'console';
 const { Title } = Typography;
-
 export default function ProfilePage() {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [Loader, setLoader] = useState(true);
-  const { getCurrentUser, getUser } = useUserActions();
-  const { isPending } = useUserState();
-  const [token, setToken] = useState(undefined);
-
-  useEffect(() => {
-    //setToken(sessionStorage.getItem("jwtToken"));
-    const storedToken=sessionStorage.getItem("jwt");
-    if(storedToken){
-      setToken(storedToken)
-        console.log("This the token on mount:",storedToken);
-    }
-  }, []);
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) return;
-      try{
-        const user = await getCurrentUser();
-        if (user) {
-          console.log("effect current userobj", user);
-          getUser(user.id);
-        }
-      }catch(error){
-        console.error("fetching user error",error)
-      }
-    };
-    fetchUser();
-  }, [token]);
-
   return (
     <div>
       <Title level={2}>Profile</Title>
