@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using healthap.Domain.Institution;
 using healthap.ExternalServices.GooglePlaces;
 
@@ -13,13 +14,16 @@ namespace healthap.EntityFrameworkCore.Seed
     {
         private readonly IRepository<Institution, int> _repository;
         private readonly IGooglePlacesService _googlePlacesService;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public InstitutionDataSeeder(
             IRepository<Institution, int> repository,
-            IGooglePlacesService googlePlacesService)
+            IGooglePlacesService googlePlacesService,
+            IUnitOfWorkManager unitOfWorkManager)
         {
             _repository = repository;
             _googlePlacesService = googlePlacesService;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         public async Task SeedInstitutionsFromGoogleBySuburbAsync()
@@ -60,6 +64,16 @@ namespace healthap.EntityFrameworkCore.Seed
                     }
                 }
             }
+
+            await _unitOfWorkManager.Current.SaveChangesAsync();
         }
     }
 }
+
+
+
+
+
+
+
+

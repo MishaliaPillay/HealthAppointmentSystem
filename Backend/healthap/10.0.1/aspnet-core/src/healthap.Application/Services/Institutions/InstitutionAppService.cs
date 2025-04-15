@@ -86,6 +86,7 @@ namespace healthap.Services.Institutions
         public async Task SeedFromGoogleAsync()
         {
             await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }
