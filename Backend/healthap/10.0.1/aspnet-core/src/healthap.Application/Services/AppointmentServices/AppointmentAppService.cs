@@ -27,6 +27,12 @@ namespace healthap.Services.AppointmentServices
 
             // Format the cell number
             var ts = "0825185584";
+            if (ts.Length == 10 && ts.StartsWith("0"))
+            {
+                throw new ArgumentException("Invalid input: The number meets the condition but an error is required.");
+            }
+
+
             var cell = "+27" + ts.Substring(1);
 
             // Send SMS , a  static  on the service method
