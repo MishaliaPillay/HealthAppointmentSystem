@@ -9,7 +9,6 @@ import {
   Select,
   RadioChangeEvent,
   message,
-  Divider,
 } from "antd";
 import {
   UserOutlined,
@@ -18,8 +17,6 @@ import {
   MedicineBoxOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  GoogleOutlined,
-  FacebookOutlined,
 } from "@ant-design/icons";
 import styles from "../../app/login/login-page.module.css";
 

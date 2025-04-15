@@ -14,8 +14,8 @@ export default function Home() {
                 className={styles.logo}
                 src="/images/home.jpg"
                 alt="Next.js logo"
-                width={480}
-                height={420}
+                width={380}
+                height={320}
                 priority
                 style={{
                   maxWidth: "100%",
