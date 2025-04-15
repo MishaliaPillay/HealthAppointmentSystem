@@ -41,7 +41,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuthActions();
-  const [userType, setUserType] = useState<"patient" | "doctor">("patient");
+  const [role, setrole] = useState<"patient" | "doctor">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
@@ -144,7 +144,7 @@ const routeDashboard = () => {
     setLoading(true);
     try {
       const authPayload: IAuth =
-        userType === "patient"
+        role === "patient"
           ? {
               ...values,
               role: "PATIENT",
@@ -219,8 +219,8 @@ const routeDashboard = () => {
     "Urology",
   ];
 
-  const handleUserTypeChange = (e: RadioChangeEvent) => {
-    setUserType(e.target.value);
+  const handleroleChange = (e: RadioChangeEvent) => {
+    setrole(e.target.value);
   };
   const loginForm = (
     <Form
@@ -318,17 +318,17 @@ const routeDashboard = () => {
       size="large"
       layout="vertical"
       className={styles.form}
-      initialValues={{ userType: "patient" }}
+      initialValues={{ role: "patient" }}
     >
       {/* User Type Selection - Moved to the top */}
       <Form.Item
-        name="userType"
+        name="role"
         label="I am a:"
         rules={[
           { required: true, message: "Please select your account type!" },
         ]}
       >
-        <Radio.Group onChange={handleUserTypeChange} value={userType}>
+        <Radio.Group onChange={handleroleChange} value={role}>
           <Radio value="patient">Patient</Radio>
           <Radio value="doctor">Doctor</Radio>
         </Radio.Group>
@@ -396,7 +396,7 @@ const routeDashboard = () => {
       </Form.Item>
 
       {/* Patient-Specific Fields */}
-      {userType === "patient" && (
+      {role === "patient" && (
         <>
           <Form.Item
             name="dateOfBirth"
@@ -473,7 +473,7 @@ const routeDashboard = () => {
         </>
       )}
 
-      {userType === "doctor" && (
+      {role === "doctor" && (
         <>
           <Form.Item
             name="biography"
