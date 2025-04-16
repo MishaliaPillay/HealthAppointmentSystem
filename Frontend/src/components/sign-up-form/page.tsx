@@ -42,15 +42,17 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
     setLoading(false);
   };
 
-  // ✅ This will handle routing after signup success
   useEffect(() => {
+    console.log("Signup was suzmlmlzssssssmsssccessful!", { isSuccess });
+
     if (isSuccess === true) {
-      console.log("Signup was successful!");
-      router.push("/");
-      onSignupSuccess?.();
+      console.log("Signup was successful!", { isSuccess });
+      setTimeout(() => {
+        router.push("/patient-dashboard");
+        onSignupSuccess?.();
+      }, 1000);
     }
   }, [isSuccess, router, onSignupSuccess]);
-
 
   return (
     <Form
@@ -61,7 +63,6 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
       className={styles.form}
       initialValues={{ role: "patient" }}
     >
-     
       <Form.Item
         name="role"
         label="I am a:"
@@ -257,7 +258,8 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
         <Button
           type="primary"
           htmlType="submit"
-          className={styles.submitButton}loading={loading}
+          className={styles.submitButton}
+          loading={loading}
         >
           Sign Up
         </Button>

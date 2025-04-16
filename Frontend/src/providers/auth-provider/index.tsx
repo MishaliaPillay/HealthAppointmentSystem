@@ -18,15 +18,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
- 
+
     const endpoint =
       Auth.role == "PATIENT"
         ? `https://localhost:44311/api/services/app/Patient/Create`
         : `https://localhost:44311/api/services/app/Provider/Create`;
     await axios
       .post<IAuth>(endpoint, Auth)
-      .then((response) => {
-        dispatch(signUpSuccess(response.data));
+      .then((authPayload) => {
+        console.log("ndnsc", authPayload);
+        dispatch(signUpSuccess(authPayload));
+        console.log("tot");
       })
       .catch((error) => {
         console.error(error);
