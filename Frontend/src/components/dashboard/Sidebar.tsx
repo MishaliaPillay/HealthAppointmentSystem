@@ -54,10 +54,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     },
 
     {
-      key: "help",
+      key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,
       label: (
-        <Link href="/help">Help</Link>
+        <Link href="/patient-dashboard/help">Help</Link>
       ),
     },
     {
