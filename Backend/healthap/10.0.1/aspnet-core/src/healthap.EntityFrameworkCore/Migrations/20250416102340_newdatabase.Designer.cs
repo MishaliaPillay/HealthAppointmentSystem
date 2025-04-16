@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using healthap.EntityFrameworkCore;
 
@@ -11,9 +12,11 @@ using healthap.EntityFrameworkCore;
 namespace healthap.Migrations
 {
     [DbContext(typeof(healthapDbContext))]
-    partial class healthapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250416102340_newdatabase")]
+    partial class newdatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1680,7 +1683,7 @@ namespace healthap.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("ProviderAvailabilty");
+                    b.ToTable("ProviderAvailabilities");
                 });
 
             modelBuilder.Entity("healthap.Domain.Institution.Institution", b =>
@@ -1918,9 +1921,6 @@ namespace healthap.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qualification")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Speciality")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -2235,7 +2235,7 @@ namespace healthap.Migrations
             modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
-                        .WithMany("ProviderAvailabilty")
+                        .WithMany("Availabilities")
                         .HasForeignKey("ProviderId");
 
                     b.Navigation("Provider");
@@ -2394,7 +2394,7 @@ namespace healthap.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("ProviderAvailabilty");
+                    b.Navigation("Availabilities");
                 });
 #pragma warning restore 612, 618
         }
