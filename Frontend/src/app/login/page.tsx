@@ -49,6 +49,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
     if (!token) {
+      console.log("token part", token);
+    }
+    if (true) {
       console.log("there is no token", token);
     }
     if (isPending) {
@@ -76,10 +79,11 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isPending, isError, router, isSuccess]);
+  }, [isPending, isError, isSuccess, router]);
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
+    console.log("This is the success in the login button", isSuccess);
     const token = sessionStorage.getItem("jwt");
     getCurrentUser(token);
   };
