@@ -5,7 +5,7 @@ import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import dayjs from "dayjs";
 import styles from "../../app/page.module.css";
-
+import { useRouter } from "next/navigation";
 const { Option } = Select;
 
 interface SignupFormProps {
@@ -16,7 +16,7 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const { signUp } = useAuthActions();
   const { isSuccess } = useAuthState();
-
+  const router = useRouter();
   const medicalSpecialties = [
     "Cardiology",
     "Dermatology",
@@ -58,8 +58,9 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
     };
 
     await signUp(formattedValues);
-    if (isSuccess) {
+    if (isSuccess) {   router.push("/");
       onSignupSuccess?.();
+   
     }
   };
 
@@ -231,20 +232,7 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
           >
             <Input placeholder="Max Appointments Per Day" type="number" />
           </Form.Item>
-          <Form.Item
-            name="specialty"
-            rules={[
-              { required: true, message: "Please select your specialty!" },
-            ]}
-          >
-            <Select placeholder="Select your specialty">
-              {medicalSpecialties.map((specialty) => (
-                <Option key={specialty} value={specialty}>
-                  {specialty}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+
           <Form.Item
             name="qualification"
             rules={[
