@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ConfigProvider } from "antd";import { AuthProvider } from "@/providers/auth-provider";
+import { ConfigProvider } from "antd";
+import { AuthProvider } from "@/providers/auth-provider";
 import { ProviderProvider } from "../providers/providerMedicPrac-provider";
 import { PatientProvider } from "../providers/paitient-provider";
 import { UserProvider } from "../providers/users-provider";
@@ -33,17 +34,18 @@ export default function RootLayout({
 }>) {
   return (
     <ConfigProvider theme={HealthColors}>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <AuthProvider>
-          <ProviderProvider>
-            <PatientProvider>
-              <UserProvider>{children}</UserProvider>
-            </PatientProvider>
-          </ProviderProvider>
-        </AuthProvider>
-        </body>
-      </html>
+      {" "}
+      <AuthProvider>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <ProviderProvider>
+              <PatientProvider>
+                <UserProvider>{children}</UserProvider>
+              </PatientProvider>
+            </ProviderProvider>
+          </body>
+        </html>{" "}
+      </AuthProvider>
     </ConfigProvider>
   );
 }

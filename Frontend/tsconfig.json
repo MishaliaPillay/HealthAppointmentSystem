@@ -23,6 +23,7 @@
     "strict": false,
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
+    "types": ["vitest/globals"],
     "target": "ESNext",
     "baseUrl": ".",
     "paths": {

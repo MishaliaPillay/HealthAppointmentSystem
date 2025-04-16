@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useEffect, useState } from "react";
 import {
   Form,
@@ -22,13 +23,13 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./login-page.module.css";
-import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
-import { useAuthActions, useAuthState } from "@/providers/auth-provider";
-import { useUserActions } from "@/providers/users-provider";
+import { IAuth, ISignInRequest } from "../../providers/auth-provider/models";
+import { useAuthActions, useAuthState } from "../../providers/auth-provider";
+import { useUserActions } from "../../providers/users-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-import { getRole } from "@/utils/decoder";
+import { getRole } from "../../utils/decoder";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -80,8 +81,8 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
-       const token = sessionStorage.getItem("jwt");
-         getCurrentUser(token);
+    const token = sessionStorage.getItem("jwt");
+    getCurrentUser(token);
   };
 
   const onFinishSignup = async (values: IAuth) => {
