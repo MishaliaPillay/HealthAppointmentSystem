@@ -49,7 +49,7 @@
     "**/*.stories.d.ts",
     "**/__tests__/**"
   ],
-  "include": ["src", "typings", ".next/types/**/*.ts"],
+  "include": ["src", "typings", ".next/types/**/*.ts", "jest.setup.ts"],
   "rootDir": "src",
   "typeRoots": ["typings", "node_modules/@types", "models"]
 }
