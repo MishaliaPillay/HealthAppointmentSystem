@@ -6,7 +6,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-
+import NotificationPopup, { Notification } from "../notification/page";
 import Link from "next/link";
 import type { MenuProps } from "antd";
 
@@ -30,11 +30,21 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
     },
   ];
 
+  const notifications: Notification[] = [
+    {
+      id: "1",
+      title: "Appointment Reminder",
+      message: "Your appointment is scheduled for tomorrow",
+      time: "2 hours ago",
+      read: false,
+      severity: "info"
+    }
+  ];
+
   return (
     <AntHeader
       style={{
         padding: "0 20px",
-
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -47,12 +57,15 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         style={{ color: "white" }}
       />
 
-      <Dropdown menu={{ items }} placement="bottomRight">
-        <Space style={{ cursor: "pointer", color: "white" }}>
-          <UserOutlined />
-          <span className="hidden sm:inline">John Doe</span>
-        </Space>
-      </Dropdown>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <NotificationPopup notifications={notifications} />
+        <Dropdown menu={{ items }} placement="bottomRight">
+          <Space style={{ cursor: "pointer", color: "white" }}>
+            <UserOutlined />
+            <span className="hidden sm:inline">John Doe</span>
+          </Space>
+        </Dropdown>
+      </div>
     </AntHeader>
   );
 };
