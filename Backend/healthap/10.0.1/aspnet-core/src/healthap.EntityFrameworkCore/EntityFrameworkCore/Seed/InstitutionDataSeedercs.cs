@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
-using Abp.Domain.Uow; // Add this
+using Abp.Domain.Uow; 
 using healthap.Domain.Institution;
 using healthap.ExternalServices.GooglePlaces;
 
@@ -29,43 +29,70 @@ namespace healthap.EntityFrameworkCore.Seed
         public async Task SeedInstitutionsFromGoogleBySuburbAsync()
         {
             var suburbs = new List<string>
-            {
-                "Sandton", "Lenasia", "Midrand", "Soweto", "Centurion",
-                "Pretoria", "Durban", "Cape Town", "East London", "Polokwane"
-            };
+    {
+        "Sandton", "Lenasia", "Midrand", "Soweto", "Centurion",
+        "Pretoria", "Durban", "Cape Town", "East London", "Polokwane"
+    };
 
             var typesWithKeywords = new Dictionary<string, string>
-            {
-                { "Hospital", "hospital" },
-                { "Doctor's Office", "doctor" },
-                { "Dental Clinic", "dentist" },
-                { "Healthcare Facility", "clinic" }
-            };
+    {
+        { "Hospital", "hospital" },
+        { "Doctor's Office", "doctor" },
+        { "Dental Clinic", "dentist" },
+        { "Healthcare Facility", "clinic" }
+    };
 
             foreach (var suburb in suburbs)
             {
                 foreach (var (facilityType, keyword) in typesWithKeywords)
                 {
-                    var query = $"{keyword} in {suburb}, South Africa";
-                    var institutions = await _googlePlacesService.SearchHealthcareInstitutionsAsync(query);
-
-                    var match = institutions.FirstOrDefault(i =>
-                        i.FacilityType == facilityType &&
-                        i.City?.Equals(suburb, StringComparison.OrdinalIgnoreCase) == true
-                    );
-
-                    if (match != null)
+                    try
                     {
-                        var exists = await _repository.FirstOrDefaultAsync(i => i.PlaceId == match.PlaceId);
-                        if (exists == null)
+                        using (var uow = _unitOfWorkManager.Begin())
                         {
-                            await _repository.InsertAsync(match);
+                            var query = $"{keyword} in {suburb}, South Africa";
+                            var placeResults = await _googlePlacesService.SearchHealthcareInstitutionsAsync(query);
+
+                            foreach (var place in placeResults)
+                            {
+
+                                var existingInstitution = await _repository.FirstOrDefaultAsync(i => i.PlaceId == place.PlaceId);
+                                if (existingInstitution == null)
+                                {
+                                    // Mapping Google Places data to Institution entity
+                                    var institution = new Institution
+                                    {
+                                        PlaceId = place.PlaceId,
+                                        Address = place.Address,
+                                        City = place.City ?? suburb,
+                                        State = place.State,
+                                        PostalCode = place.PostalCode,
+                                        Country = "South Africa",
+                                        FacilityType = facilityType,
+                                        Description = place.Description,
+                                        Latitude = place.Latitude,
+                                        Longitude = place.Longitude,
+                                        GoogleMapsUrl = place.GoogleMapsUrl
+                                  
+                                    };
+
+                                    await _repository.InsertAsync(institution);
+                                }
+                            }
+
+                            await uow.CompleteAsync();
                         }
+
+                        //  delay to avoid hitting API rate limits
+                        await Task.Delay(1000);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error seeding {facilityType} in {suburb}: {ex.Message}");
+
                     }
                 }
             }
-
-            await _unitOfWorkManager.Current.SaveChangesAsync();
         }
     }
 }

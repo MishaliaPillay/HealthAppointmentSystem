@@ -13,6 +13,7 @@ using System.Linq.Dynamic.Core;
 using Abp.Authorization;
 using healthap.Authorization;
 using healthap.EntityFrameworkCore.Seed;
+using System;
 
 namespace healthap.Services.Institutions
 {
@@ -83,10 +84,26 @@ namespace healthap.Services.Institutions
             await Repository.InsertAsync(institution);
         }
 
+        //public async Task SeedFromGoogleAsync()
+        //{
+        //    await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
+        //    await CurrentUnitOfWork.SaveChangesAsync();
+        //}
+
         public async Task SeedFromGoogleAsync()
         {
-            await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
-            await CurrentUnitOfWork.SaveChangesAsync();
+            try
+            {
+                Logger.Info("Starting institution seeding from Google Places...");
+                await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
+
+                Logger.Info("Completed institution seeding from Google Places");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error during institution seeding from Google Places", ex);
+                throw;
+            }
         }
     }
 }

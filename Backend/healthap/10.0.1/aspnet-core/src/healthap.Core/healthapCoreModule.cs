@@ -8,16 +8,9 @@ using Abp.Zero.Configuration;
 using healthap.Authorization.Roles;
 using healthap.Authorization.Users;
 using healthap.Configuration;
-using healthap.Domain.Location;
 using healthap.Localization;
 using healthap.MultiTenancy;
 using healthap.Timing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using Polly.Extensions.Http;
-using System;
-using System.Net.Http;
 
 namespace healthap;
 
@@ -59,52 +52,5 @@ public class healthapCoreModule : AbpModule
         IocManager.Resolve<AppTimes>().StartupTime = Clock.Now;
     }
 
-    // Add this to configure location-related services
-    public void ConfigureServices(IServiceCollection services)
-    {
-        // Get configuration
-        var configuration = IocManager.Resolve<IConfiguration>();
-
-        // Add distributed memory cache for development/testing
-        // In production, consider using Redis or other distributed cache
-        services.AddDistributedMemoryCache(options =>
-        {
-            options.SizeLimit = 1024 * 1024 * 50; // 50 MB cache limit
-        });
-        
-        // Register HttpClientFactory with resilience policies
-        services.AddHttpClient("GeolocationApi")
-            .AddPolicyHandler(GetRetryPolicy())
-            .AddPolicyHandler(GetCircuitBreakerPolicy())
-            .ConfigureHttpClient(client =>
-            {
-                // Set timeout from configuration or default to 5 seconds
-                int timeoutSeconds = 5;
-                if (int.TryParse(configuration["GeolocationApi:TimeoutSeconds"], out int configTimeout) && configTimeout > 0)
-                {
-                    timeoutSeconds = configTimeout;
-                }
-                client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
-            });
-        
-        // Register the geolocation service
-        services.AddTransient<IGeolocationService, GeolocationService>();
-    }
-    
-    // Retry policy for transient HTTP errors
-    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-    {
-        return HttpPolicyExtensions
-            .HandleTransientHttpError() // HttpRequestException, 5XX, and 408 status codes
-            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests) // 429 status code
-            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-    }
-    
-    // Circuit breaker policy to prevent overwhelming a failing service
-    private static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
-    {
-        return HttpPolicyExtensions
-            .HandleTransientHttpError()
-            .CircuitBreakerAsync(5, TimeSpan.FromMinutes(1));
-    }
+  
 }
