@@ -1,11 +1,15 @@
-﻿using Abp.AspNetCore;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Abp.AspNetCore;
 using Abp.AspNetCore.Mvc.Antiforgery;
 using Abp.AspNetCore.SignalR.Hubs;
 using Abp.Castle.Logging.Log4Net;
 using Abp.Extensions;
+using Castle.Facilities.Logging;
 using healthap.Configuration;
 using healthap.Identity;
-using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,10 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace healthap.Web.Host.Startup
 {
@@ -47,6 +47,7 @@ namespace healthap.Web.Host.Startup
             AuthConfigurer.Configure(services, _appConfiguration);
 
             services.AddSignalR();
+            services.AddHttpClient("GooglePlaces");
 
             // Configure CORS for angular2 UI
             services.AddCors(

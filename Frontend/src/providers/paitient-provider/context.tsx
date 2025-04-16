@@ -1,3 +1,4 @@
+"use client"
 import { IPatient, IPatientRegisteration } from "./models";
 import { createContext } from "react";
 

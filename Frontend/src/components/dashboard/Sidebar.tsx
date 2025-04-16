@@ -1,6 +1,6 @@
 "use client";
-
 import { Layout, Menu, Avatar } from "antd";
+
 import {
   DashboardOutlined,
   CalendarOutlined,
@@ -11,7 +11,8 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MenuProps } from "antd";
-
+import { useAuthActions } from "@/providers/auth-provider";
+import { useRouter } from "next/navigation";
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -20,6 +21,15 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+  const router = useRouter();
+  const { signOut} = useAuthActions();
+
+  function signOutUser(): void {
+    signOut()
+    router.push("/");
+  }
+  
+
   const pathname = usePathname();
 
   const menuItems: MenuProps["items"] = [
@@ -52,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: () => console.log("logout clicked"),
+      onClick: () => signOutUser(),
     },
   ];
 
@@ -98,3 +108,5 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 };
 
 export default Sidebar;
+
+

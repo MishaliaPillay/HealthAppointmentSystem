@@ -18,17 +18,19 @@ namespace healthap.Services.AppointmentServices
 
             var createdAppointment = base.CreateAsync(input);
 
-            //whatsapp service , a static method
-         
-            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage($"Good day, your appointment is sucessfully submited for the date {input.AppointmentDate} and the time{input.AppointmentTime}.");
+            string formattedDate = input.AppointmentDate.ToString("yyyy-MM-dd"); 
+            string formattedTime = input.AppointmentTime.ToString("hh:mm tt");
+
+            string message = $"Good day, your appointment is successfully submitted for the date {formattedDate} and the time {formattedTime}.";
+            //send whatsApp message of the Appointment
+            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
 
             // Format the cell number
             var ts = "0825185584";
             var cell = "+27" + ts.Substring(1);
 
-            // Send SMS , a  static method
-            Services.NotificaServices.SmsService.SendMessage(cell, $"Good day, your appointment is sucessfully submited for the date {input.AppointmentDate} and the time{input.AppointmentTime}.");
-
+            // Send SMS , a  static  on the service method
+            Services.NotificaServices.SmsService.SendMessage(cell, message);
             return createdAppointment;
         }
     }

@@ -1,8 +1,10 @@
-﻿using Abp.EntityFrameworkCore.Configuration;
+﻿using Abp.Dependency;
+using Abp.EntityFrameworkCore.Configuration;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
 using healthap.EntityFrameworkCore.Seed;
+using healthap.ExternalServices.GooglePlaces;
 
 namespace healthap.EntityFrameworkCore;
 
@@ -37,6 +39,7 @@ public class healthapEntityFrameworkModule : AbpModule
     public override void Initialize()
     {
         IocManager.RegisterAssemblyByConvention(typeof(healthapEntityFrameworkModule).GetAssembly());
+        IocManager.Register<IGooglePlacesService, GooglePlacesService>(DependencyLifeStyle.Transient);
     }
 
     public override void PostInitialize()

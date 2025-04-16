@@ -1,3 +1,4 @@
+"use client"
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
 import { IProvider } from "./models";
 import {
@@ -44,9 +45,6 @@ export const ProviderProvider = ({
         console.error(error);
         dispatch(registerProviderError());
       })
-      .finally(() => {
-        console.log("Register user complete");
-      });
   };
 
   //Get All Providers
@@ -62,9 +60,6 @@ export const ProviderProvider = ({
         console.error(error);
         dispatch(getProvidersError());
       })
-      .finally(() => {
-        console.log("getProviders user complete");
-      });
   };
 
   //Get Provider
@@ -80,9 +75,6 @@ export const ProviderProvider = ({
         console.error(error);
         dispatch(getProviderError());
       })
-      .finally(() => {
-        console.log("getProvider user complete");
-      });
   };
 
   //Update Provider
@@ -98,9 +90,6 @@ export const ProviderProvider = ({
         console.error(error);
         dispatch(updateProviderError());
       })
-      .finally(() => {
-        console.log("updateProvider user complete");
-      });
   };
 
   //Delete Provider
@@ -115,9 +104,6 @@ export const ProviderProvider = ({
       .catch((error) => {
         dispatch(deleteProviderSuccess(error.data));
       })
-      .finally(() => {
-        console.log("delete user complete");
-      });
   };
 
   return (
