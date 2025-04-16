@@ -1,5 +1,5 @@
-import React from "react";
-import { Typography, Avatar, Button } from "antd";
+import React, { useState } from "react";
+import { Typography, Avatar, Button, Input } from "antd";
 import {
   EnvironmentOutlined,
   CalendarOutlined,
@@ -10,6 +10,7 @@ import { Doctor, Specialty, Facility, TimeSlot } from "../types";
 import { useStyles } from "../styles";
 
 const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 interface TimeStepProps {
   doctor: Doctor | null;
@@ -20,6 +21,9 @@ interface TimeStepProps {
   selectedTimeSlot: TimeSlot | null;
   onSelect: (timeSlot: TimeSlot) => void;
   onBack: () => void;
+  // These props are now optional since we'll handle state internally
+  appointmentReason?: string;
+  onReasonChange?: (reason: string) => void;
 }
 
 export const TimeStep: React.FC<TimeStepProps> = ({
@@ -31,8 +35,21 @@ export const TimeStep: React.FC<TimeStepProps> = ({
   selectedTimeSlot,
   onSelect,
   onBack,
+  // We'll still accept these from parent if provided
+  appointmentReason: externalAppointmentReason,
+  onReasonChange,
 }) => {
   const { styles } = useStyles();
+
+  // Internal state for the appointment reason
+  const [internalAppointmentReason, setInternalAppointmentReason] =
+    useState("");
+
+  // Use either the external value (if provided) or the internal state
+  const appointmentReason =
+    externalAppointmentReason !== undefined
+      ? externalAppointmentReason
+      : internalAppointmentReason;
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "";
@@ -44,12 +61,23 @@ export const TimeStep: React.FC<TimeStepProps> = ({
     });
   };
 
+  const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+
+    // Update internal state
+    setInternalAppointmentReason(value);
+
+    // Also call external handler if provided
+    if (onReasonChange) {
+      onReasonChange(value);
+    }
+  };
+
   return (
     <div>
       <div className={styles.backButton} onClick={onBack}>
         <LeftOutlined /> Back to Dates
       </div>
-
       <div className={styles.summaryCard}>
         <Title level={5}>Appointment Summary</Title>
         <div
@@ -69,14 +97,26 @@ export const TimeStep: React.FC<TimeStepProps> = ({
           <EnvironmentOutlined style={{ marginRight: 8 }} />
           <Text>{facility?.name}</Text>
         </div>
-        <div>
+        <div style={{ marginBottom: 16 }}>
           <CalendarOutlined style={{ marginRight: 8 }} />
           <Text>{formatDate(date)}</Text>
         </div>
+
+        <div>
+          <Text strong>Reason for appointment</Text>
+          <div style={{ marginTop: 8 }}>
+            <TextArea
+              placeholder="Please describe the reason for your appointment (500 characters max)"
+              maxLength={500}
+              rows={4}
+              value={appointmentReason}
+              onChange={handleReasonChange}
+              showCount
+            />
+          </div>
+        </div>
       </div>
-
       <Title level={4}>Select a Time</Title>
-
       {timeSlots.length > 0 ? (
         <div className={styles.timeSlotGrid}>
           {timeSlots.map((slot) => (

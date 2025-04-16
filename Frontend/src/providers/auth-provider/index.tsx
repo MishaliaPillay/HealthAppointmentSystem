@@ -1,6 +1,6 @@
 "use client";
-import { getAxiosInstace } from "../../utils/axiosInstance";
-import { IAuth, ILoginResquest } from "./models";
+//import { getAxiosInstace } from "../../utils/axiosInstance";
+import { IAuth, ISignInResponse, ISignInRequest } from "./models";
 import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
 import { AuthReducer } from "./reducer";
 import { useContext, useReducer } from "react";
@@ -12,62 +12,57 @@ import {
   signUpPending,
   signUpSuccess,
 } from "./actions";
-
+import axios from "axios";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
-  const instance = getAxiosInstace();
-
-
+  //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
+ 
     const endpoint =
-      Auth.role == "PATIENT" ? `register/Patient` : `resigter:Provider`;
-    await instance
+      Auth.role == "PATIENT"
+        ? `https://localhost:44311/api/services/app/Patient/Create`
+        : `https://localhost:44311/api/services/app/Provider/Create`;
+    await axios
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
         dispatch(signUpSuccess(response.data));
-        console.log("Signup was successfull");
       })
       .catch((error) => {
         console.error(error);
-        console.log("Sign up was unsuccessfull");
       });
   };
-  const signIn = async (LoginResquest: ILoginResquest): Promise<void> => {
+  const signIn = async (
+    SignInRequest: ISignInRequest
+  ): Promise<ISignInResponse> => {
     dispatch(signInPending());
-    const endpoint = "Auths/login";
-    await instance
-      .post(endpoint, LoginResquest)
+    const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
+    return axios
+      .post(endpoint, SignInRequest)
       .then((response) => {
-        // console.log("Response", response.data);
-        const token = response.data.token;
+        const token = response.data.result.accessToken;
         if (token) {
-          console.log("session This where token is stored");
           sessionStorage.setItem("jwt", token);
+          dispatch(signInSuccess(token));
+          return token;
+        } else {
+          throw new Error("There is no response");
         }
-        dispatch(signInSuccess(response.data));
-        console.log(response.data);
-        return response.data;
       })
       .catch((error) => {
         console.error(
-          "Error during login:",
+          "Error during signIn:",
           error.response?.data?.message || error
         );
         dispatch(signInError());
         throw error;
-      })
-      .finally(() => {
-        //isPending=false
-        console.log("Done trying to process your signIn request");
       });
   };
   const signOut = () => {
     dispatch(signInPending());
-    sessionStorage.removeItem("jwt"); 
-    if(sessionStorage.length===0){
-        dispatch(signOutSuccess());
-        console.log("The session Storage empty")
+    sessionStorage.removeItem("jwt");
+    if (sessionStorage.length === 0) {
+      dispatch(signOutSuccess());
     }
     dispatch(signInError);
   };

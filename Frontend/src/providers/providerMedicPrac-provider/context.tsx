@@ -1,3 +1,4 @@
+"use client"
 import { IProvider, IProviderRegisteration } from "./models";
 import { createContext } from "react";
 

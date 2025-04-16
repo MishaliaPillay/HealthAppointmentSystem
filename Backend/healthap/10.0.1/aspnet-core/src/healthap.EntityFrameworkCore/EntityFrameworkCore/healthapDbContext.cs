@@ -5,8 +5,8 @@ using healthap.Domain.Appointments;
 using healthap.Domain.Institution;
 using healthap.Domain.Persons;
 using healthap.MultiTenancy;
+using healthap.MultiTenancy.speciality;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace healthap.EntityFrameworkCore;
 
@@ -16,16 +16,15 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Provider> Providers { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
-
     public DbSet<ProviderAvailabilty> ProviderAvailabilities { get; set; }
     public DbSet<Institution> Institutions { get; set; }
     public DbSet<ProviderLocation> ProviderLocations { get; set; }
+
     public healthapDbContext(DbContextOptions<healthapDbContext> options)
         : base(options)
     {
     }
 
-   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -62,6 +61,5 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
 
             entity.Property(e => e.Specialization).HasMaxLength(200);
         });
-
     }
 }
