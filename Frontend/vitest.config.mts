@@ -2,8 +2,18 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    environment: "jsdom", // Ensure you're using jsdom for testing
-    globals: true, // Use global test methods like describe, test
-    setupFiles: "./vitest.setup.ts", // Path to the setup file
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts", // if you have one
+    coverage: {
+      reporter: ["text", "json", "html"], // view in terminal, json file, and HTML report
+      exclude: [
+        "node_modules/",
+        "test/",
+        "tests/",
+        "**/*.test.tsx",
+        "**/*.test.ts",
+      ], // adjust as needed
+    },
   },
 });
