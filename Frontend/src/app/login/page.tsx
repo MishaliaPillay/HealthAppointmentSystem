@@ -80,8 +80,8 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
   const onFinishLogin = async (values: ISignInRequest) => {
     await signIn(values);
-       const token = sessionStorage.getItem("jwt");
-         getCurrentUser(token);
+    const token = sessionStorage.getItem("jwt");
+    getCurrentUser(token);
   };
 
   const onFinishSignup = async (values: IAuth) => {
@@ -253,7 +253,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       >
         <Radio.Group onChange={handleroleChange} value={role}>
           <Radio value="PATIENT">Patient</Radio>
-          <Radio value="PROVIDER">Medical Practioner</Radio>
+          <Radio value="PROVIDER">Medical practitioner</Radio>
         </Radio.Group>
       </Form.Item>
 
@@ -377,12 +377,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
             rules={[
               {
                 required: true,
-                message: "Please select your prefferedContactMethod",
+                message: "Please select your preferred ContactMethod",
               },
             ]}
           >
             <Select
-              placeholder="Please select your prefferedContactMethod"
+              placeholder="Please select your preferred ContactMethod"
               onChange={(value) => {
                 Number(value);
               }}
