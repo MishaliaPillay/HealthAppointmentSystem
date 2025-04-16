@@ -12,20 +12,24 @@ export default function Home() {
             <div className="blurred-image-wrapper">
               <Image
                 className={styles.logo}
-                src="/images/logo.jpg"
+                src="/images/home.jpg"
                 alt="Next.js logo"
-                width={480}
-                height={420}
+                width={380}
+                height={320}
                 priority
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                }}
               />
             </div>
-            <h1 className={styles.brandTitle}>Welcome to our platform</h1>
+            <h1 className={styles.brandTitle}>Welcome </h1>
             <p className={styles.brandDescription}>
-              Join thousands of users who trust our secure and easy-to-use
-              platform.
+              Your secure gateway to smarter healthcare. Easily connect with
+              providers, manage appointments, and stay in control of your health
+              — all in one place.
             </p>
           </div>
-
           <div className={styles.formSide}>
             <LoginPage />
           </div>
