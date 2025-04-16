@@ -20,6 +20,7 @@ namespace healthap.ExternalServices.GooglePlaces
             _httpClient = httpClientFactory.CreateClient("GooglePlaces");
             _apiKey = configuration["GooglePlaces:ApiKey"];
         }
+
         public async Task<List<Institution>> SearchHealthcareLocationsAsync(string query, string region = "za")
         {
             try
@@ -37,6 +38,7 @@ namespace healthap.ExternalServices.GooglePlaces
                 var content = await response.Content.ReadAsStringAsync();
                 var placesResponse = JsonConvert.DeserializeObject<PlacesSearchResponse>(content);
 
+                // Limit the number of results to avoid DB overload
                 var maxResults = 2;
 
                 return placesResponse.Results
@@ -45,11 +47,10 @@ namespace healthap.ExternalServices.GooglePlaces
                     {
                         PlaceId = p.PlaceId,
                         Address = p.FormattedAddress,
-                        City = ExtractAddressComponent(p.AddressComponents, "locality")
-                            ?? ExtractAddressComponent(p.AddressComponents, "sublocality")
-                            ?? ExtractAddressComponent(p.AddressComponents, "administrative_area_level_2"),
+                        // Parse out components from formatted address
+                        City = ExtractCity(p.FormattedAddress),
                         State = ExtractState(p.FormattedAddress),
-                        Country = "South Africa",
+                        Country = "South Africa", // Default since we're filtering by region=za
                         FacilityType = DetermineFacilityType(p.Types),
                         Description = p.Name,
                         Latitude = p.Geometry.Location.Lat,
@@ -60,11 +61,10 @@ namespace healthap.ExternalServices.GooglePlaces
             }
             catch (Exception ex)
             {
-                // Log the exception (can be expanded)
+                // Log exception
                 return new List<Institution>();
             }
         }
-
 
         public async Task<Institution> GetPlaceDetailsAsync(string placeId)
         {
@@ -134,13 +134,13 @@ namespace healthap.ExternalServices.GooglePlaces
             return "Medical Facility";
         }
 
+      
+            Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
+{
+                return SearchHealthcareLocationsAsync(query, region);
+            }
 
-        Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
-        {
-            return SearchHealthcareLocationsAsync(query, region);
-        }
-
-
+       
     }
 
     // Response models for Google Places API

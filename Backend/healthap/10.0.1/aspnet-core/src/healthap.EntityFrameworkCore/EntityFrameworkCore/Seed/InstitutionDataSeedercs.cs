@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
-using Abp.Domain.Uow;
+using Abp.Domain.Uow; // Add this
 using healthap.Domain.Institution;
 using healthap.ExternalServices.GooglePlaces;
 
@@ -69,11 +69,3 @@ namespace healthap.EntityFrameworkCore.Seed
         }
     }
 }
-
-
-
-
-
-
-
-
