@@ -14,13 +14,16 @@ using healthap.Authorization.Roles;
 using healthap.Authorization.Users;
 using healthap.Roles.Dto;
 using healthap.Users.Dto;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace healthap.Users;
 
@@ -64,6 +67,10 @@ public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUser
         await _userManager.InitializeOptionsAsync(AbpSession.TenantId);
 
         CheckErrors(await _userManager.CreateAsync(user, input.Password));
+        if (input.EmailAddress == user.EmailAddress)
+        {
+
+        }
 
         if (input.RoleNames != null)
         {
@@ -244,6 +251,18 @@ public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUser
         }
 
         return true;
+    }
+    [AbpAllowAnonymous]
+    public async Task<CheckUserExistsResultDto> CheckUserExistsAsync(CheckUserExistDto input)
+    {
+        var emailExists = await _userManager.FindByEmailAsync(input.EmailAddress) != null;
+        var usernameExists = await _userManager.FindByNameAsync(input.UserName) != null;
+
+        return new CheckUserExistsResultDto
+        {
+            EmailExists = emailExists,
+            UserNameExists = usernameExists,
+        };
     }
 }
 
