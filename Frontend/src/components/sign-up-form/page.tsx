@@ -1,11 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
+import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
-import dayjs from "dayjs";
+
 import styles from "../../app/page.module.css";
-import { useRouter } from "next/navigation";
+
 const { Option } = Select;
 
 interface SignupFormProps {
@@ -14,55 +17,40 @@ interface SignupFormProps {
 
 export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
+  const [loading, setLoading] = useState(false);
+
   const { signUp } = useAuthActions();
   const { isSuccess } = useAuthState();
   const router = useRouter();
-  const medicalSpecialties = [
-    "Cardiology",
-    "Dermatology",
-    "Endocrinology",
-    "Family Medicine",
-    "Gastroenterology",
-    "Hematology",
-    "Infectious Disease",
-    "Internal Medicine",
-    "Nephrology",
-    "Neurology",
-    "Obstetrics and Gynecology",
-    "Oncology",
-    "Ophthalmology",
-    "Orthopedics",
-    "Otolaryngology",
-    "Pediatrics",
-    "Psychiatry",
-    "Pulmonology",
-    "Radiology",
-    "Rheumatology",
-    "Surgery",
-    "Urology",
-  ];
 
   const handleroleChange = (e: any) => {
     setrole(e.target.value.toLowerCase());
   };
 
   const onFinishSignup = async (values: IAuth) => {
-    // Format the date to ISO if provided
+    setLoading(true);
     const formattedValues = {
       ...values,
       dateOfBirth: values.dateOfBirth
         ? dayjs(values.dateOfBirth).toDate()
         : undefined,
-
       role: role,
     };
 
     await signUp(formattedValues);
-    if (isSuccess) {   router.push("/");
-      onSignupSuccess?.();
-   
-    }
+    // Do NOT check isSuccess here – it will update *after* state change
+    setLoading(false);
   };
+
+  // ✅ This will handle routing after signup success
+  useEffect(() => {
+    if (isSuccess === true) {
+      console.log("Signup was successful!");
+      router.push("/");
+      onSignupSuccess?.();
+    }
+  }, [isSuccess, router, onSignupSuccess]);
+
 
   return (
     <Form
@@ -73,6 +61,7 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
       className={styles.form}
       initialValues={{ role: "patient" }}
     >
+     
       <Form.Item
         name="role"
         label="I am a:"
@@ -268,7 +257,7 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
         <Button
           type="primary"
           htmlType="submit"
-          className={styles.submitButton}
+          className={styles.submitButton}loading={loading}
         >
           Sign Up
         </Button>
