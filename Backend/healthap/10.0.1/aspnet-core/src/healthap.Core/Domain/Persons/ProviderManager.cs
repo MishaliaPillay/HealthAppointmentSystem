@@ -102,9 +102,8 @@ namespace healthap.Domain.Persons
 
         public async Task<Provider?> GetProviderByUserIdWithDetailsAsync(long userId)
         {
-            return await _providerRepository
-                .GetAllIncluding(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty)
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var queryProvider = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty);
+                return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
     }
