@@ -25,10 +25,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         : `https://localhost:44311/api/services/app/Provider/Create`;
     await axios
       .post<IAuth>(endpoint, Auth)
-      .then((authPayload) => {
-        console.log("ndnsc", authPayload);
-        dispatch(signUpSuccess(authPayload));
-        console.log("tot");
+      .then((response) => {
+        console.log("ndnsc");
+        dispatch(signUpSuccess(response.data));
+        console.log();
       })
       .catch((error) => {
         console.error(error);

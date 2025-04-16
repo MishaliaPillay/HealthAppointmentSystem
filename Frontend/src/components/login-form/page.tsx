@@ -14,15 +14,20 @@ import styles from "../../app/page.module.css";
 
 interface LoginFormProps {
   onLoginSuccess?: () => void;
+  onBeforeSubmit?: () => void;
 }
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm({
+  onLoginSuccess,
+  onBeforeSubmit,
+}: LoginFormProps) {
   const [password, setPassword] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
   const { signIn } = useAuthActions();
   const { getCurrentUser } = useUserActions();
 
   const onFinishLogin = async (values: ISignInRequest) => {
+    onBeforeSubmit?.();
     await signIn(values);
     const token = sessionStorage.getItem("jwt");
     getCurrentUser(token);

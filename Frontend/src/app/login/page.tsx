@@ -15,21 +15,39 @@ export default function LoginSignup() {
   const [activeTab, setActiveTab] = useState("login");
   const [loading, setLoading] = useState(false);
   const { isSuccess, isError, isPending } = useAuthState();
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const router = useRouter();
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
+
     if (isPending) setLoading(true);
+
     if (isError) {
-      toast.error("Your signup was unsuccessful!");
+      toast.error("Your authentication was unsuccessful!");
+      setLoading(false);
     }
+
     if (isSuccess) {
       const role = getRole(token);
-      if (role === "provider") router.push("/provider-dashboard");
-      else if (role === "patient") router.push("/patient-dashboard");
-      else router.push("/");
+
+      if (authMode === "signup") {
+        // Don't redirect, just switch tab
+        setActiveTab("login");
+      } else {
+        // Login success → redirect to dashboard
+        if (role === "provider") {
+          router.push("/provider-dashboard");
+        } else if (role === "patient") {
+          router.push("/patient-dashboard");
+        } else {
+          router.push("/");
+        }
+      }
+
+      setLoading(false);
     }
-  }, [isPending, isError, isSuccess, router]);
+  }, [isPending, isError, isSuccess, router, authMode]);
 
   return (
     <Spin spinning={loading} tip="Please hold on...">
@@ -52,13 +70,15 @@ export default function LoginSignup() {
             {
               key: "login",
               label: "Login",
-              children: <LoginForm />,
+              children: (
+                <LoginForm onBeforeSubmit={() => setAuthMode("login")} />
+              ),
             },
             {
               key: "signup",
               label: "Sign Up",
               children: (
-                <SignupForm onSignupSuccess={() => setActiveTab("login")} />
+                <SignupForm onBeforeSubmit={() => setAuthMode("signup")} />
               ),
             },
           ]}

@@ -13,9 +13,13 @@ const { Option } = Select;
 
 interface SignupFormProps {
   onSignupSuccess?: () => void;
+  onBeforeSubmit?: () => void;
 }
 
-export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
+export default function SignupForm({
+  onSignupSuccess,
+  onBeforeSubmit,
+}: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +32,7 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
   };
 
   const onFinishSignup = async (values: IAuth) => {
+    onBeforeSubmit?.();
     setLoading(true);
     const formattedValues = {
       ...values,
@@ -41,18 +46,6 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
     // Do NOT check isSuccess here – it will update *after* state change
     setLoading(false);
   };
-
-  useEffect(() => {
-    console.log("Signup was suzmlmlzssssssmsssccessful!", { isSuccess });
-
-    if (isSuccess === true) {
-      console.log("Signup was successful!", { isSuccess });
-      setTimeout(() => {
-        router.push("/patient-dashboard");
-        onSignupSuccess?.();
-      }, 1000);
-    }
-  }, [isSuccess, router, onSignupSuccess]);
 
   return (
     <Form
