@@ -100,7 +100,14 @@ namespace healthap.Domain.Persons
         }
         public IQueryable<Patient> GetAllPaitentsAsync()
         {
-             return _patientRepository.GetAllIncluding(p => p.User);
+            return _patientRepository.GetAllIncluding(p => p.User);
+        }
+
+        public async Task<Patient?> GetPatientByUserIdWithDetailsAsync(long userId)
+        {
+            var queryPatient = await _patientRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
+
+                return await queryPatient.FirstOrDefaultAsync(p => p.UserId == userId);
         }
     }
 }
