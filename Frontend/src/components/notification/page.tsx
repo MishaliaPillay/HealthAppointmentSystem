@@ -16,7 +16,7 @@ export interface Notification {
 
 interface NotificationPopupProps {
   // Notifications to display
-  notifications: Notification[]
+  notifications: Notification[] //
   // Optional customization
   title?: string
   emptyMessage?: string
@@ -24,9 +24,9 @@ interface NotificationPopupProps {
   onMarkAllAsRead?: () => void
   onNotificationClick?: (notification: Notification) => void
 }
-
+// In this function I have to call the API to get the notifications and then set the state with the notifications
 export default function NotificationPopup({
-  notifications = [],
+  notifications = [], // here add that logic 
   title = "Notifications",
   emptyMessage = "No notifications",
   onMarkAllAsRead,

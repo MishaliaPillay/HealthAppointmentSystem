@@ -16,8 +16,6 @@ import { DoctorStep } from "./steps/doctor-step";
 import { DateStep } from "./steps/date-step";
 import { TimeStep } from "./steps/time-step";
 import DoctorProfileModal from "./booking-doctor-info";
-// import { useNotification } from "@/hooks/useNotification";
-import { info } from "console";
 
 interface BookingModuleProps {
   showButton?: boolean;
@@ -110,8 +108,9 @@ export const BookingModule: React.FC<BookingModuleProps> = ({
   const handleDoctorSelect = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
     setCurrentStep(3);
-    info(`Selected Dr. ${doctor.name} - ${SPECIALTIES.find(s => s.id === doctor.specialty)?.name}`, {
-      autoClose: 3000
+    message.info({
+      content: `Selected Dr. ${doctor.name} - ${SPECIALTIES.find(s => s.id === doctor.specialty)?.name}`,
+      duration: 3
     });
   };
 
