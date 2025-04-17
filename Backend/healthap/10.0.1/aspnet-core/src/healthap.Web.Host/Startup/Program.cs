@@ -16,7 +16,9 @@ namespace healthap.Web.Host.Startup
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                   webBuilder
+                        .UseStartup<Startup>()
+                        .UseUrls("http://0.0.0.0:80");
                 })
                 .UseCastleWindsor(IocManager.Instance.IocContainer);
     }
