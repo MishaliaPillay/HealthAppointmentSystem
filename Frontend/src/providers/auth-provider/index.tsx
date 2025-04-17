@@ -11,6 +11,9 @@ import {
   signOutSuccess,
   signUpPending,
   signUpSuccess,
+  userCheckPending,
+  userCheckError,
+  userCheckSuccess,
 } from "./actions";
 import axios from "axios";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -71,7 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthStateContext.Provider value={state}>
-      <AuthActionContext.Provider value={{ signIn, signUp, signOut }}>
+      <AuthActionContext.Provider
+        value={{ signIn, signUp, signOut, userExists }}
+      >
         {children}
       </AuthActionContext.Provider>
     </AuthStateContext.Provider>

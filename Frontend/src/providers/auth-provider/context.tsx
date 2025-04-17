@@ -1,6 +1,12 @@
 "use client";
 import { createContext } from "react";
-import { ISignInRequest, IAuth, ISignInResponse } from "./models";
+import {
+  ISignInRequest,
+  IAuth,
+  ISignInResponse,
+  IUserExists,
+  IUserCheck,
+} from "./models";
 
 // Context shape interface
 export interface IAuthStateContext {
@@ -16,6 +22,7 @@ export interface IAuthActionContext {
   signIn: (SignInRequest: ISignInRequest) => Promise<ISignInResponse>;
   signUp: (Auth: IAuth) => Promise<void>;
   signOut: () => void;
+  userExists: (UserCheck: IUserCheck) => Promise<IUserExists>;
 }
 
 // Initial state with default values
