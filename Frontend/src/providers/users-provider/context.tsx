@@ -1,13 +1,12 @@
 "use client";
 import { createContext } from "react";
-import { IPatient, IUser } from "./models";
+import { IUser } from "./models";
 
 // Context shape interface
 export interface IUserStateContext {
   isPending: boolean;
   isSuccess: boolean;
   isError: boolean;
-  currentPatient?: IPatient;
   currentUser?: IUser; // Changed for naming consistency
   user?: IUser;
   users?: IUser[]; // Array of users
@@ -22,7 +21,6 @@ export interface IUserActionContext {
   updateUser: (user: IUser) => void; // Update an existing user
   deleteUser: (id: string) => void; // Delete a user
   //getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
-  getCurrentPatient: (token:string) => Promise<IPatient>; // Fixed camelCase name
 }
 
 // Initial state with default values

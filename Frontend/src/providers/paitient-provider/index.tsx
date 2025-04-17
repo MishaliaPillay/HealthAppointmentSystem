@@ -1,14 +1,18 @@
-"use client"
+"use client";
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
-import { IPatient } from "./models";
+import { IPatient, IPatientRegisteration } from "./models";
 import {
   INITIAL_STATE,
   PatientActionContext,
   PatientStateContext,
 } from "./context";
 import { PatientReducer } from "./reducer";
+import axios from "axios";
 import { useContext, useReducer } from "react";
 import {
+  getCurrentPatientPending,
+  getCurrentPatientSuccess,
+  getCurrentPatientError,
   registerPatientPending,
   registerPatientError,
   registerPatientSuccess,
@@ -31,9 +35,39 @@ export const PatientProvider = ({
 }) => {
   const [state, dispatch] = useReducer(PatientReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
+  // Get current patient
+  const getCurrentPatient = async (
+    userId: number
+  ): // userId: number
+  Promise<IPatient | null> => {
+    dispatch(getCurrentPatientPending());
+    const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?id=${userId}`;
+    // const endpoint =
+    //   "https://localhost:44311/api/services/app/Patient/GetCurrentPatient";
+
+    return axios
+      .get(endpoint)
+      .then((response) => {
+        debugger;
+        if (response?.data?.result) {
+          debugger;
+          dispatch(getCurrentPatientSuccess(response.data.result));
+          return response.data.result;
+        } else {
+          console.warn("No patient data found in response");
+          dispatch(getCurrentPatientError());
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current patient:", error);
+        dispatch(getCurrentPatientError());
+        return null;
+      });
+  };
 
   //Register the patient
-  const registerPatient = async (Patient: IPatient) => {
+  const registerPatient = async (Patient: IPatientRegisteration) => {
     dispatch(registerPatientPending());
     const endpoint = `/Patient/Create`;
     await instance
@@ -44,13 +78,13 @@ export const PatientProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(registerPatientError());
-      })
+      });
   };
 
   //Get All Patients
   const getPatients = async () => {
     dispatch(getPatientsPending());
-    const endpoint =  `/Provider/GetAll`;
+    const endpoint = `/Provider/GetAll`;
     await instance
       .post(endpoint)
       .then((response) => {
@@ -59,7 +93,7 @@ export const PatientProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getPatientsError());
-      })
+      });
   };
 
   //Get Patient
@@ -74,7 +108,7 @@ export const PatientProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getPatientError());
-      })
+      });
   };
 
   //Update Paitient
@@ -89,7 +123,7 @@ export const PatientProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(updatePatientError());
-      })
+      });
   };
 
   //Delete Patient
@@ -103,12 +137,13 @@ export const PatientProvider = ({
       })
       .catch((error) => {
         dispatch(deletePatientSuccess(error.data));
-      })
+      });
   };
   return (
     <PatientStateContext.Provider value={state}>
       <PatientActionContext.Provider
         value={{
+          getCurrentPatient,
           registerPatient,
           getPatients,
           getPatient,

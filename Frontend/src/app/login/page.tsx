@@ -24,8 +24,6 @@ import dayjs from "dayjs";
 import styles from "./login-page.module.css";
 import {
   IAuth,
-  ISignInRequest,
-  ISignInResponse,
 } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
@@ -33,7 +31,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { getRole } from "@/utils/decoder";
 import { useUserActions } from "@/providers/users-provider";
-import { constrainedMemory } from "process";
+import {
+  usePatientActions
+} from "@/providers/paitient-provider";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -49,9 +49,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
-  const { getCurrentUser, getCurrentPatient } = useUserActions();
-  
-  const token = sessionStorage.getItem("jwt");
+  const { getCurrentUser } = useUserActions();
+  const { getCurrentPatient } = usePatientActions();
+  const token = sessionStorage.getItem("jwt")|| "";
   useEffect(() => {
     if (isPending) {
       setLoading(true);
@@ -77,10 +77,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isSuccess, isError, isPending]);
+  }, [isSuccess, isError, isPending,router,token]);
 
   const onFinishLogin = async (values) => {
-    debugger;
     try {
       const response = await signIn(values);
       console.log("this is sign in response:", response);
@@ -92,9 +91,8 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
       if (token) {
         const res = await getCurrentUser(token);
-
         if (res) {
-          await getCurrentPatient(token);
+          await getCurrentPatient(res.id);
           console.log("My response", res);
         }
       }

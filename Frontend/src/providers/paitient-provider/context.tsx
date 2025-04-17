@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { IPatient, IPatientRegisteration } from "./models";
 import { createContext } from "react";
 
@@ -7,9 +7,10 @@ export interface IPatientStateContext {
   isPending: boolean;
   isSuccess: boolean;
   isError: boolean;
+  currentPatient?: IPatient;
   errorMessage?: string;
-  Patient?: IPatient;
-  Patients?: IPatient[]; // Array of Patients
+  patient?: IPatient;
+  patients?: IPatient[]; // Array of Patients
 }
 
 // Actions that will be performed on Patientss
@@ -19,12 +20,14 @@ export interface IPatientActionContext {
   registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
   updatePatient: (Patient: IPatient) => void;
   deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
+  getCurrentPatient: (userId:number) => Promise<IPatient>; // Fixed camelCase name
 }
 // Initial state with default values
 export const INITIAL_STATE: IPatientStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
+  patients: [],
 };
 
 // Create the state context and the action context

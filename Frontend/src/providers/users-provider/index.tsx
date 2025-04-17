@@ -1,6 +1,6 @@
 "use client";
 import { getAxiosInstace } from "../../utils/axiosInstance";
-import { IPatient, IUser } from "./models";
+import { IUser } from "./models";
 import { INITIAL_STATE, UserActionContext, UserStateContext } from "./context";
 import { UserReducer } from "./reducer";
 import { useContext, useReducer } from "react";
@@ -11,9 +11,6 @@ import {
   getCurrentUserPending,
   getCurrentUserSuccess,
   getCurrentUserError,
-  getCurrentPatientPending,
-  getCurrentPatientSuccess,
-  getCurrentPatientError,
   createUserSuccess,
   createUserError,
   createUserPending,
@@ -25,7 +22,6 @@ import {
   deleteUserPending,
 } from "./actions";
 import axios from "axios";
-
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
@@ -52,35 +48,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       .catch((error) => {
         console.error("Error fetching current user:", error);
         dispatch(getCurrentUserError());
-        return null;
-      });
-  };
-
-  // Get current patient
-  const getCurrentPatient = async (token: string): // userId: number
-  Promise<IPatient | null> => {
-    dispatch(getCurrentPatientPending());
-    //const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?input=${userId}`;
-    const endpoint =
-      "https://localhost:44311/api/services/app/Patient/GetCurrentPatient";
-
-    return axios
-      .get(endpoint, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        if (response?.data?.result) {
-          dispatch(getCurrentPatientSuccess(response.data.result));
-          return response.data.result;
-        } else {
-          console.warn("No patient data found in response");
-          dispatch(getCurrentPatientError());
-          return null;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching current patient:", error);
-        dispatch(getCurrentPatientError());
         return null;
       });
   };
@@ -168,7 +135,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     <UserStateContext.Provider value={state}>
       <UserActionContext.Provider
         value={{
-          getCurrentPatient,
           getUsers,
           createUser,
           updateUser,

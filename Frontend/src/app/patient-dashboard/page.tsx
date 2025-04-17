@@ -1,75 +1,57 @@
 "use client";
-import {
-  Typography,
-  Row,
-  Col,
-  Card,
-  Button,
-  Progress,
-  Modal,
-  Spin,
-} from "antd";
+import { Typography, Modal} from "antd";
 import styles from "./patientdash.module.css";
 import BookingModule from "../../components/booking/booking";
 import { useState, useEffect } from "react";
-import { User } from '@/interfaces/types';
 import {
-  useUserState,
-  useUserActions,
-} from "../../providers/users-provider/index";
+  usePatientActions,
+  usePatientState,
+} from "@/providers/paitient-provider";
+import Card from "antd/es/card/Card";
 
-const { Title, Text } = Typography;
+
+const { Title } = Typography;
 
 export default function Dashboard() {
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
 
-  const { currentPatient, user, isPending, isError, isSuccess } =
-    useUserState();
-  const { getCurrentUser, getCurrentPatient } = useUserActions();
+  const { isPending, isError, isSuccess, currentPatient } = usePatientState();
 
-  const handleOpenBookingModal = () => {
-    setShowBookingModal(true);
-  };
+  const { getCurrentPatient } = usePatientActions();
 
   const handleCloseBookingModal = () => {
     setShowBookingModal(false);
   };
- const token = sessionStorage.getItem("jwt");
+
   useEffect(() => {
     if (isPending) {
       setLoading(true);
     }
     if (isError) {
-   
+      setLoading(false);
     }
-
-    // if (isSuccess || user.id) {
-    //   // console.log("when does it get here!!!");
-    //   //  getCurrentPatient(user.id);
-    //   getCurrentPatient()
-    // }
-
-    if (isSuccess || token) {
-      // console.log("when does it get here!!!");
-      //  getCurrentPatient(user.id);
-      getCurrentPatient(token);
+    if (isSuccess) {
+      setLoading(false);
     }
-  }, []);
+    if (currentPatient === undefined) {
+      getCurrentPatient(19);
+    }
+  }, [isError, isPending, isSuccess, getCurrentPatient,currentPatient]);
 
-  // isSuccess, isPending, isError, getCurrentPatient(user.id), user.id;
-  if (loading || isPending) {
-    return <Spin spinning tip="Loading patient data..." />;
-  }
+  // if (loading || isPending) {
+  //   return <Spin spinning tip="Loading patient data..." />;
+  // }
 
-  if (isError || !currentPatient) {
-    return <p>Failed to load patient data. Please try again.</p>;
-  }
+  // if (isError || !getCurrentPatient()) {
+  //   return <p>Failed to load patient data. Please try again.</p>;
+  // }
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, {user.currentPatient.title}!</Title>
+        <Title level={3}>Welcome back, {currentPatient?.dateOfBirth}!</Title>
+
         {/* <Text>
           Your next appointment is with Dr.{" "}
           {currentPatient.appointments?.[0]?.doctorName || "TBD"}

@@ -8,6 +8,10 @@ export enum PatientActionEnums {
   getPatientsSuccess = "GET_PATIENTS_SUCCESS",
   getPatientsError = "GET_PATIENTS_ERROR",
 
+  getCurrentPatientPending = "GET_CURRENTPATIENT_PENDING",
+  getCurrentPatientSuccess = "GET_CURRENTPATIENT_SUCCESS",
+  getCurrentPatientError = "GET_CURRENTPATIENT_ERROR",
+
   getPatientPending = "GET_PATIENT_PENDING",
   getPatientSuccess = "GET_PATIENT_SUCCESS",
   getPatientError = "GET_PATIENT_ERROR",
@@ -24,6 +28,29 @@ export enum PatientActionEnums {
   deletePatientSuccess = "DELETE_PATIENT_SUCCESS",
   deletePatientError = "DELETE_PATIENT_ERROR",
 }
+// Get Current Patient actions
+export const getCurrentPatientPending = createAction<IPatientStateContext>(
+  PatientActionEnums.getCurrentPatientPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
+
+export const getCurrentPatientSuccess = createAction<
+  IPatientStateContext,
+  IPatient
+>(
+  PatientActionEnums.getCurrentPatientSuccess, // Fixed incorrect enum
+  (currentPatient: IPatient) => ({
+    isPending: false,
+    isSuccess: true,
+    isError: false,
+    currentPatient,
+  })
+);
+
+export const getCurrentPatientError = createAction<IPatientStateContext>(
+  PatientActionEnums.getCurrentPatientError, // Fixed incorrect enum
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
 
 //Get All Paitients
 //Multiple Paitients

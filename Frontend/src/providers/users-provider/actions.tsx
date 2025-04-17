@@ -1,5 +1,5 @@
 "use client";
-import { IUser, IPatient } from "./models";
+import { IUser} from "./models";
 import { IUserStateContext } from "./context";
 import { createAction } from "redux-actions";
 
@@ -16,10 +16,6 @@ export enum UserActionEnums {
   getCurrentUserPending = "GET_CURRENTUSER_PENDING",
   getCurrentUserSuccess = "GET_CURRENTUSER_SUCCESS",
   getCurrentUserError = "GET_CURRENTUSER_ERROR",
-
-  getCurrentPatientPending = "GET_CURRENTPATIENT_PENDING",
-  getCurrentPatientSuccess = "GET_CURRENTPATIENT_SUCCESS",
-  getCurrentPatientError = "GET_CURRENTPATIENT_ERROR",
 
   createUserPending = "CREATE_USER_PENDING",
   createUserSuccess = "CREATE_USER_SUCCESS",
@@ -97,29 +93,6 @@ export const getCurrentUserError = createAction<IUserStateContext>(
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-// Get Current Patient actions
-export const getCurrentPatientPending = createAction<IUserStateContext>(
-  UserActionEnums.getCurrentPatientPending,
-  () => ({ isPending: true, isSuccess: false, isError: false })
-);
-
-export const getCurrentPatientSuccess = createAction<
-  IUserStateContext,
-  IPatient
->(
-  UserActionEnums.getCurrentPatientSuccess, // Fixed incorrect enum
-  (currentPatient: IPatient) => ({
-    isPending: false,
-    isSuccess: true,
-    isError: false,
-    currentPatient,
-  })
-);
-
-export const getCurrentPatientError = createAction<IUserStateContext>(
-  UserActionEnums.getCurrentPatientError, // Fixed incorrect enum
-  () => ({ isPending: false, isSuccess: false, isError: true })
-);
 
 // Create User Actions
 export const createUserPending = createAction<IUserStateContext>(

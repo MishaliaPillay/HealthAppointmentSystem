@@ -46,19 +46,6 @@ export const UserReducer = handleActions<
       ...state,
       ...(action.payload ?? {}),
     }),
-
-    [UserActionEnums.getCurrentPatientPending]: (state, action) => ({
-      ...state,
-      ...(action.payload ?? {}),
-    }),
-    [UserActionEnums.getCurrentPatientSuccess]: (state, action) => ({
-      ...state,
-      ...(action.payload ?? {}),
-    }),
-    [UserActionEnums.getCurrentPatientError]: (state, action) => ({
-      ...state,
-      ...(action.payload ?? {}),
-    }),
   },
   INITIAL_STATE
 );

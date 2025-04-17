@@ -1,5 +1,6 @@
 "use client";
-import { IAppointment } from "../appointment-provider/context";
+
+import { IPatient } from "../paitient-provider/models";
 
 // User object interface
 export interface IUser {
@@ -8,8 +9,8 @@ export interface IUser {
   surname: string;
   emailAddress: string;
   userName: string;
-  currentPatient: IPatient
-  currentProvider:IProvider
+  currentPatient?: IPatient; // Made optional if user isn't a patient
+  currentProvider?: IProvider; // Made optional if user isn't a provider
 }
 
 // Provider object interface
@@ -24,17 +25,3 @@ export interface IProvider {
 }
 
 // Patient object interface
-export interface IPatient {
-  user: IUser;
-  title: string;
-  phoneNumber: string;
-  dateOfBirth: string; // Use ISO 8601 format string
-  address: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-  preferredContactMethod?: number;
-  appointments?: IAppointment[]; // Array of appointments
-  id?: string; // UUID type
-}

@@ -43,13 +43,13 @@ export default function RootLayout({
             </PatientProvider>
           </ProviderProvider>
         </AuthProvider> */}
-          <UserProvider>
-            <AuthProvider>
+          <AuthProvider>
+            <UserProvider>
               <ProviderProvider>
                 <PatientProvider>{children}</PatientProvider>
               </ProviderProvider>
-            </AuthProvider>
-          </UserProvider>
+            </UserProvider>
+          </AuthProvider>
         </body>
       </html>
     </ConfigProvider>

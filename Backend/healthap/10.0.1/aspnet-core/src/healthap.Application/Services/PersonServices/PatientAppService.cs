@@ -8,6 +8,7 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using AutoMapper;
+using healthap.Authorization.Users;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,12 @@ namespace healthap.Services.PersonServices
     {
         private readonly PatientManager _patientManager;
         private readonly IMapper _mapper;
+        private readonly IRepository<Patient, Guid> _repository;
 
         public PatientAppService(IRepository<Patient, Guid> repository, PatientManager patientManager, IMapper mapper) : base(repository)
         {
             _patientManager = patientManager;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -74,19 +77,20 @@ namespace healthap.Services.PersonServices
                 _mapper.Map<List<PatientResponseDto>>(patients)
             );
         }
-                public async Task<PatientResponseDto> GetCurrentPatientAsync()
+                public async Task<PatientResponseDto> GetCurrentPatientAsync(long id)
         {
-            
+
             // Check if user is logged in
-            var currentUserId = AbpSession.UserId;
+            //var currentUserId = AbpSession.UserId;
             //if (!currentUserId.HasValue)
             //{
             //    throw new AbpAuthorizationException("You must be logged in to access patient information.");
             //}
+            var queryPatient = await _repository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
 
+ 
             // Get the provider by the input user ID
-            var patient = await _patientManager.GetPatientByUserIdWithDetailsAsync(currentUserId);
-
+            var patient = await queryPatient.FirstOrDefaultAsync(p => p.UserId == id);
             // Check if patient exists
             if (patient == null)
             {
