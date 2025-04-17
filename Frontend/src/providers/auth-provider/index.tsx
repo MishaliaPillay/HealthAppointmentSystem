@@ -1,12 +1,6 @@
 "use client";
 //import { getAxiosInstace } from "../../utils/axiosInstance";
-import {
-  IAuth,
-  ISignInResponse,
-  ISignInRequest,
-  IUserCheck,
-  IUserExists,
-} from "./models";
+import { IAuth, ISignInResponse, ISignInRequest } from "./models";
 import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
 import { AuthReducer } from "./reducer";
 import { useContext, useReducer } from "react";
@@ -15,11 +9,9 @@ import {
   signInPending,
   signInSuccess,
   signOutSuccess,
+  
   signUpPending,
   signUpSuccess,
-  userCheckError,
-  userCheckPending,
-  userCheckSuccess,
 } from "./actions";
 import axios from "axios";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -77,29 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     dispatch(signInError);
   };
-  const userExists = async (UserCheck: IUserCheck): Promise<IUserExists> => {
-    dispatch(userCheckPending());
-
-    const endpoint =
-      "https://localhost:44311/api/services/app/User/CheckUserExists";
-    return axios
-      .post<IUserExists>(endpoint, UserCheck)
-      .then((response) => {
-        dispatch(userCheckSuccess());
-        return response.data;
-      })
-      .catch((error) => {
-        console.error("Error during userExists check:", error);
-        dispatch(userCheckError());
-        throw error;
-      });
-  };
 
   return (
     <AuthStateContext.Provider value={state}>
-      <AuthActionContext.Provider
-        value={{ signIn, signUp, signOut, userExists }}
-      >
+      <AuthActionContext.Provider value={{ signIn, signUp, signOut }}>
         {children}
       </AuthActionContext.Provider>
     </AuthStateContext.Provider>

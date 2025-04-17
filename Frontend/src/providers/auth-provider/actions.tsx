@@ -17,10 +17,6 @@ export enum AuthActionEnums {
   signOutPending = "SIGN_OUT_PENDING",
   signOutSuccess = "SIGN_OUT_SUCCESS",
   signOutError = "SIGN_OUT_ERROR",
-
-  userCheckPending = "USER_CHECK_PENDING",
-  userCheckSuccess = "USER_CHECK_SUCCESS",
-  userCheckError = "USER_CHECK_ERROR",
 }
 //SIGN UP ACTIONS
 export const signUpPending = createAction<IAuthStateContext>(
@@ -80,23 +76,5 @@ export const signOutSuccess = createAction<IAuthStateContext>(
 
 export const signOutError = createAction<IAuthStateContext>(
   AuthActionEnums.signOutError,
-  () => ({ isPending: false, isSuccess: false, isError: true })
-);
-export const userCheckPending = createAction<IAuthStateContext>(
-  AuthActionEnums.userCheckPending,
-  () => ({ isPending: true, isSuccess: false, isError: false })
-);
-
-export const userCheckSuccess = createAction<IAuthStateContext>(
-  AuthActionEnums.userCheckSuccess,
-  () => ({
-    isPending: false,
-    isSuccess: true,
-    isError: false,
-  })
-);
-
-export const userCheckError = createAction<IAuthStateContext>(
-  AuthActionEnums.userCheckError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
