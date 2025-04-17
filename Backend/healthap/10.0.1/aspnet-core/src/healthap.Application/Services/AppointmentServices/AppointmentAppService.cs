@@ -68,29 +68,50 @@ namespace healthap.Services.AppointmentServices
         }
 
 
-        public override Task<AppointmentDto> CreateAsync(AppointmentDto input)
+        public override async Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
+            try
+            {
+                // Get patient and provider entities
+                var patient = await _patientRepository.GetAsync(input.PatientId);
+                var provider = await _providerRepository.GetAsync(input.ProviderId);
 
-            var createdAppointment = base.CreateAsync(input);
+                // Create appointment entity
+                var appointment = ObjectMapper.Map<Appointment>(input);
 
+                // Set relationships
+                appointment.Patient = patient;
+                appointment.Provider = provider;
 
-            //string formattedDate = input.AppointmentDate.ToString("yyyy-MM-dd");
-            //string formattedTime = input.AppointmentTime.ToString("hh:mm tt");
+                // Insert into database
+                await Repository.InsertAsync(appointment);
+                await CurrentUnitOfWork.SaveChangesAsync();
 
-            //string message = $"Good day, your appointment is successfully submitted for the date {formattedDate} and the time {formattedTime}.";
-            ////send whatsApp message of the Appointment
-            //Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
+                // Map back to DTO
+                var result = ObjectMapper.Map<AppointmentDto>(appointment);
 
-            //// Format the cell number
-            //var ts = "0825185584";
-            //var cell = "+27" + ts.Substring(1);
+                //string formattedDate = input.AppointmentDate.ToString("yyyy-MM-dd");
+                //string formattedTime = input.AppointmentTime.ToString("hh:mm tt");
 
-            //// Send SMS , a  static  on the service method
-            //Services.NotificaServices.SmsService.SendMessage(cell, message);
+                //string message = $"Good day, your appointment is successfully submitted for the date {formattedDate} and the time {formattedTime}.";
+                ////send whatsApp message of the Appointment
+                //Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
 
+                //// Format the cell number
+                //var ts = "0825185584";
+                //var cell = "+27" + ts.Substring(1);
 
-            return createdAppointment;
+                //// Send SMS , a  static  on the service method
+                //Services.NotificaServices.SmsService.SendMessage(cell, message);
 
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                Logger.Error("Error creating appointment", ex);
+                throw;
+            }
         }
     }
 }
