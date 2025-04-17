@@ -1,3 +1,4 @@
+"use client";
 import { getAxiosInstace } from "@/utils/axiosInstance";
 import { useContext, useReducer } from "react";
 import { LocationReducer } from "./reducer";
@@ -7,6 +8,9 @@ import {
   LocationStateContext,
 } from "./context";
 import {
+  getAllPlacesError,
+  getAllPlacesPending,
+  getAllPlacesSuccess,
   getPlacesByDescriptionError,
   getPlacesByDescriptionPending,
   getPlacesByDescriptionSuccess,
@@ -51,12 +55,34 @@ export const LocationProvider = ({
         dispatch(getPlacesByStateError());
       });
   };
+
+  const getAllPlaces = async () => {
+    dispatch(getAllPlacesPending());
+    const endpoint = `/Institution/GetAll`;
+    await instance
+      .get(endpoint)
+      .then((response) => {
+        // console.log(response);
+        console.log("Response data:", response?.data?.result?.items);
+        // if (response.data && response.data.length > 0) {
+        //   console.log("Data received!");
+        // } else {
+        //   console.log(" No data returned.");
+        // }
+        dispatch(getAllPlacesSuccess(response?.data?.result?.items));
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(getAllPlacesError());
+      });
+  };
   return (
     <LocationStateContext.Provider value={state}>
       <LocationActionContext.Provider
         value={{
           getPlacesByDescription,
           getPlacesByState,
+          getAllPlaces,
         }}
       >
         {children}

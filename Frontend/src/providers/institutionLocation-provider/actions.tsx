@@ -12,10 +12,16 @@ export enum LocationActionEnums {
   getPlacesByStatePending = "Get_PLACESBYSTATE_PENDING",
   getPlacesByStateSuccess = "Get_PLACESBYSTATE_SUCCESS",
   getPlacesByStateError = "Get_PLACESBYSATATE_ERROR",
+
+  //For get all
+  getAllPlacesPending = "Get_ALLPLACES_PENDING",
+  getAllPlacesSuccess = "Get__ALLPLACES_SUCCESS",
+  getAllPlacesError = "Get__ALLPLACES_ERROR",
 }
 
 // get places by description Actions
 //get places  by description  Pending
+
 export const getPlacesByDescriptionPending =
   createAction<ILocationStateContext>(
     LocationActionEnums.getPlacesByDescriptionPending,
@@ -63,5 +69,27 @@ export const getPlacesByStateSuccess = createAction<
 //get places by description  is Failed
 export const getPlacesByStateError = createAction<ILocationStateContext>(
   LocationActionEnums.getPlacesByStateSuccess,
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
+
+export const getAllPlacesPending = createAction<ILocationStateContext>(
+  LocationActionEnums.getAllPlacesPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
+
+//get places by description  success
+export const getAllPlacesSuccess = createAction<
+  ILocationStateContext,
+  ILocation[]
+>(LocationActionEnums.getAllPlacesSuccess, (locations: ILocation) => ({
+  isPending: false,
+  isSuccess: true,
+  isError: false,
+  locations,
+}));
+
+//get places by description  is Failed
+export const getAllPlacesError = createAction<ILocationStateContext>(
+  LocationActionEnums.getAllPlacesError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );

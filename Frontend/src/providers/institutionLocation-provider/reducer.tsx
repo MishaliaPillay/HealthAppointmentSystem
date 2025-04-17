@@ -37,6 +37,21 @@ export const LocationReducer = handleActions<
       ...state,
       ...action.payload,
     }),
+
+    //get places by state
+    [LocationActionEnums.getAllPlacesPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [LocationActionEnums.getAllPlacesSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+
+    [LocationActionEnums.getAllPlacesError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
   },
   INITIAL_STATE
 );

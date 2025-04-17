@@ -32,6 +32,7 @@ export const INITIAL_STATE: ILocationStateContext = {
 export interface ILocationActionContext {
   getPlacesByDescription: (description: string) => void; // check the method properly
   getPlacesByState: (state: string) => void;
+  getAllPlaces: () => void;
 }
 
 export const LocationStateContext =
