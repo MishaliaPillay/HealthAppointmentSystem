@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
 import {
-  UserOutlined,
   LockOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -11,6 +10,7 @@ import {
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
 
+import { StoreValue } from "antd/es/form/interface";
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
 import { useCheckuserActions } from "@/providers/check-user-provider";
@@ -46,17 +46,14 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     .some(({ errors }) => errors.length > 0);
 
   const isButtonDisabled = loading || hasErrors;
-
-  const validateEmailExists = async (_: any, value: string) => {
+  const validateEmailExists = (value: StoreValue): Promise<void> => {
     if (!value) return Promise.resolve();
 
-    // This will ensure we debounce the userExists function
     return new Promise<void>((resolve, reject) => {
-      // The debounced version of userExists
       const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
-            emailAddress: value,
+            emailAddress: value as string,
             userName: "",
           });
           if (result.result.emailExists) {
@@ -67,23 +64,21 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         } catch (err) {
           reject("Error validating email");
         }
-      }, 500); // Delay set to 500ms
+      }, 500);
 
-      // Call the debounced function immediately (doesn't wait for user input)
       debouncedUserExists();
     });
   };
 
-  const validateUsernameExists = async (_: any, value: string) => {
+  const validateUsernameExists = (value: StoreValue): Promise<void> => {
     if (!value) return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
-      // The debounced version of userExists for username
       const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
             emailAddress: "",
-            userName: value,
+            userName: value as string,
           });
           if (result.result.userNameExists) {
             reject("Username already exists");
@@ -93,9 +88,8 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         } catch (err) {
           reject("Error validating username");
         }
-      }, 500); // Delay set to 500ms
+      }, 500);
 
-      // Call the debounced function immediately
       debouncedUserExists();
     });
   };
