@@ -36,53 +36,97 @@ export default function SignupForm({
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
 
-  const values = form.getFieldsValue();
-  const isFormFilled =
-    values.emailAddress && values.userName && values.password;
-  const hasAgreedToTerms = values.agreeToTerms;
+  const hasErrors = form
+    .getFieldsError()
+    .some(({ errors }) => errors.length > 0);
 
   const isButtonDisabled =
-    loading ||
-    !isFormFilled ||
-    !!emailError ||
-    !!usernameError ||
-    !hasAgreedToTerms;
+    loading || hasErrors || !!emailError || !!usernameError;
 
-  const checkUserExists = debounce(async (values: IUserCheck) => {
-    try {
-      const result = await userExists(values);
-      if (values.emailAddress && result.result.emailExists) {
-        setEmailError("Email already exists");
-      } else {
-        setEmailError(null);
-      }
+  // const checkUserExists = debounce(async (values: IUserCheck) => {
+  //   try {
+  //     const result = await userExists(values);
+  //     if (values.emailAddress && result.result.emailExists) {
+  //       setEmailError("Email already exists");
+  //     } else {
+  //       setEmailError(null);
+  //     }
 
-      if (values.userName && result.result.userNameExists) {
-        setUsernameError("Username already exists");
-      } else {
-        setUsernameError(null);
-      }
-    } catch (error) {
-      console.error("Validation check failed:", error);
-    }
-  }, 600);
+  //     if (values.userName && result.result.userNameExists) {
+  //       setUsernameError("Username already exists");
+  //     } else {
+  //       setUsernameError(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Validation check failed:", error);
+  //   }
+  // }, 600);
+  let debounceEmailTimer: ReturnType<typeof setTimeout>;
+  let debounceUsernameTimer: ReturnType<typeof setTimeout>;
+
+  const validateEmailExists = async (_: any, value: string) => {
+    if (!value) return Promise.resolve();
+
+    // Debounce manually
+    return new Promise<void>((resolve, reject) => {
+      clearTimeout(debounceEmailTimer);
+      debounceEmailTimer = setTimeout(async () => {
+        try {
+          const result = await userExists({
+            emailAddress: value,
+            userName: "",
+          });
+          if (result.result.emailExists) {
+            reject("Email already exists");
+          } else {
+            resolve();
+          }
+        } catch (err) {
+          reject("Error validating email");
+        }
+      }, 500);
+    });
+  };
+
+  const validateUsernameExists = async (_: any, value: string) => {
+    if (!value) return Promise.resolve();
+
+    return new Promise<void>((resolve, reject) => {
+      clearTimeout(debounceUsernameTimer);
+      debounceUsernameTimer = setTimeout(async () => {
+        try {
+          const result = await userExists({
+            emailAddress: "",
+            userName: value,
+          });
+          if (result.result.userNameExists) {
+            reject("Username already exists");
+          } else {
+            resolve();
+          }
+        } catch (err) {
+          reject("Error validating username");
+        }
+      }, 500);
+    });
+  };
 
   // AntD Form onChange hook
-  const handleFieldChange = (_: any, allFields: any) => {
-    const emailAddress = allFields.find(
-      (f: any) => f.name[0] === "emailAddress"
-    )?.value;
-    const userName = allFields.find(
-      (f: any) => f.name[0] === "userName"
-    )?.value;
+  // const handleFieldChange = (_: any, allFields: any) => {
+  //   const emailAddress = allFields.find(
+  //     (f: any) => f.name[0] === "emailAddress"
+  //   )?.value;
+  //   const userName = allFields.find(
+  //     (f: any) => f.name[0] === "userName"
+  //   )?.value;
 
-    if (emailAddress || userName) {
-      checkUserExists({
-        emailAddress: emailAddress || "",
-        userName: userName || "",
-      });
-    }
-  };
+  //   if (emailAddress || userName) {
+  //     checkUserExists({
+  //       emailAddress: emailAddress || "",
+  //       userName: userName || "",
+  //     });
+  //   }
+  // };
   const handleroleChange = (e: any) => {
     setrole(e.target.value.toLowerCase());
   };
@@ -108,7 +152,6 @@ export default function SignupForm({
       form={form}
       name="signup"
       onFinish={onFinishSignup}
-      onFieldsChange={handleFieldChange}
       size="large"
       layout="vertical"
       className={styles.form}
@@ -154,17 +197,6 @@ export default function SignupForm({
       </Form.Item>
 
       <Form.Item
-        name="emailAddress"
-        validateStatus={emailError ? "error" : ""}
-        help={emailError || ""}
-        rules={[
-          { required: true, message: "Please input your email!" },
-          { type: "email", message: "Please enter a valid email!" },
-        ]}
-      >
-        <Input placeholder="Email" />
-      </Form.Item>
-      <Form.Item
         name="phoneNumber"
         rules={[{ required: true, message: "Please input your phone number!" }]}
       >
@@ -172,10 +204,24 @@ export default function SignupForm({
       </Form.Item>
 
       <Form.Item
+        name="emailAddress"
+        validateTrigger="onBlur"
+        rules={[
+          { required: true, message: "Please input your email!" },
+          { type: "email", message: "Please enter a valid email!" },
+          { validator: validateEmailExists },
+        ]}
+      >
+        <Input placeholder="Email" />
+      </Form.Item>
+
+      <Form.Item
         name="userName"
-        validateStatus={usernameError ? "error" : ""}
-        help={usernameError || ""}
-        rules={[{ required: true, message: "Please input your username!" }]}
+        validateTrigger="onBlur"
+        rules={[
+          { required: true, message: "Please input your username!" },
+          { validator: validateUsernameExists },
+        ]}
       >
         <Input placeholder="Username" />
       </Form.Item>
