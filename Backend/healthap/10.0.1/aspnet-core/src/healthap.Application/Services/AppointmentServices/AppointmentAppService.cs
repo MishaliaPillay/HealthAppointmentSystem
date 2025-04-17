@@ -27,58 +27,6 @@ namespace healthap.Services.AppointmentServices
             _providerRepository = providerRepository;
         }
 
-        public async Task<List<AppointmentDto>> GetMyAppointmentsAsync()
-        {
-            var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to view your appointments.");
-            }
-
-            // Get current user's patient or provider record
-            var patient = await _patientRepository.GetAll()
-                .FirstOrDefaultAsync(p => p.UserId == currentUserId.Value);
-
-            var provider = await _providerRepository.GetAll()
-                .FirstOrDefaultAsync(p => p.UserId == currentUserId.Value);
-
-            // Use direct database query to get appointments
-            List<AppointmentDto> result = new List<AppointmentDto>();
-
-            if (patient != null)
-            {
-                // Direct SQL query or LINQ if EF Core has mapped the relationship
-                var appointments = Repository.GetAllList();
-
-                // Here we would directly use SQL or join with patient table
-                // But since we don't have direct access, we'll need another solution
-
-                // For now, return all appointments and add the patient ID
-                result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
-                foreach (var dto in result)
-                {
-                    dto.PatientId = patient.Id;
-                }
-            }
-            else if (provider != null)
-            {
-                // Similar approach for provider
-                var appointments = Repository.GetAllList();
-
-                result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
-                foreach (var dto in result)
-                {
-                    dto.ProviderId = provider.Id;
-                }
-            }
-            else
-            {
-                throw new AbpAuthorizationException("You don't have a patient or provider profile.");
-            }
-
-            return result;
-        }
-
         public override Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
 
