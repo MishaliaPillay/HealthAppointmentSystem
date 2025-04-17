@@ -22,18 +22,14 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./login-page.module.css";
-import {
-  IAuth,
-} from "@/providers/auth-provider/models";
+import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { getRole } from "@/utils/decoder";
 import { useUserActions } from "@/providers/users-provider";
-import {
-  usePatientActions
-} from "@/providers/paitient-provider";
+import { usePatientActions } from "@/providers/paitient-provider";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -51,7 +47,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const router = useRouter();
   const { getCurrentUser } = useUserActions();
   const { getCurrentPatient } = usePatientActions();
-  const token = sessionStorage.getItem("jwt")|| "";
+  const token = sessionStorage.getItem("jwt") || "";
   useEffect(() => {
     if (isPending) {
       setLoading(true);
@@ -77,28 +73,18 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isSuccess, isError, isPending,router,token]);
+  }, [isSuccess, isError, isPending, router, token]);
 
-  const onFinishLogin = async (values) => {
-    try {
-      const response = await signIn(values);
-      console.log("this is sign in response:", response);
-      if (response === null) {
-        console.error("Access token missing in response:", response);
-        return;
-      }
-      console.log("this is sign in response222222:", response);
-
-      if (token) {
-        const res = await getCurrentUser(token);
-        if (res) {
-          await getCurrentPatient(res.id);
-          console.log("My response", res);
-        }
-      }
-    } catch (error) {
-      console.error("Error during login process:", error);
-    }
+  const onFinishLogin = async (values: ISignInRequest) => {
+    await signIn(values)
+      .then(async (access) => {
+        await getCurrentUser(access.result.accessToken)
+          .then(async (user) => {
+            await getCurrentPatient(user.id);
+          })
+          .catch((err) => console.log("Error Current User : ", err));
+      })
+      .catch((err) => console.log("Sign in Error", err));
   };
 
   const onFinishSignup = async (values: IAuth) => {

@@ -1,5 +1,5 @@
 "use client";
-import { Typography, Modal} from "antd";
+import { Typography, Modal } from "antd";
 import styles from "./patientdash.module.css";
 import BookingModule from "../../components/booking/booking";
 import { useState, useEffect } from "react";
@@ -7,8 +7,10 @@ import {
   usePatientActions,
   usePatientState,
 } from "@/providers/paitient-provider";
-import Card from "antd/es/card/Card";
 
+import { useUserActions } from "@/providers/users-provider";
+
+import Card from "antd/es/card/Card";
 
 const { Title } = Typography;
 
@@ -17,6 +19,7 @@ export default function Dashboard() {
   const [Loading, setLoading] = useState(false);
 
   const { isPending, isError, isSuccess, currentPatient } = usePatientState();
+  const { getCurrentUser } = useUserActions();
 
   const { getCurrentPatient } = usePatientActions();
 
@@ -28,16 +31,30 @@ export default function Dashboard() {
     if (isPending) {
       setLoading(true);
     }
+
     if (isError) {
       setLoading(false);
     }
+
     if (isSuccess) {
       setLoading(false);
     }
+
     if (currentPatient === undefined) {
-      getCurrentPatient(19);
+      fetchPatientOnReload();
     }
-  }, [isError, isPending, isSuccess, getCurrentPatient,currentPatient]);
+  }, [isError, isPending, isSuccess, currentPatient]);
+
+  const fetchPatientOnReload = async () => {
+    const token = sessionStorage.getItem("jwt");
+    if (token) {
+      await getCurrentUser(token)
+        .then(async (user) => {
+          await getCurrentPatient(user.id);
+        })
+        .catch((err) => console.log("Error Current User : ", err));
+    }
+  };
 
   // if (loading || isPending) {
   //   return <Spin spinning tip="Loading patient data..." />;
@@ -50,7 +67,7 @@ export default function Dashboard() {
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, {currentPatient?.dateOfBirth}!</Title>
+        <Title level={3}>Welcome back, {currentPatient?.user.name}!</Title>
 
         {/* <Text>
           Your next appointment is with Dr.{" "}

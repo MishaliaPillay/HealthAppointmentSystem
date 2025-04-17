@@ -36,21 +36,19 @@ export const PatientProvider = ({
   const [state, dispatch] = useReducer(PatientReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
   // Get current patient
+
   const getCurrentPatient = async (
     userId: number
-  ): // userId: number
-  Promise<IPatient | null> => {
+  ): Promise<IPatient | null> => {
+    //loader
     dispatch(getCurrentPatientPending());
+
     const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?id=${userId}`;
-    // const endpoint =
-    //   "https://localhost:44311/api/services/app/Patient/GetCurrentPatient";
 
     return axios
       .get(endpoint)
       .then((response) => {
-        debugger;
         if (response?.data?.result) {
-          debugger;
           dispatch(getCurrentPatientSuccess(response.data.result));
           return response.data.result;
         } else {

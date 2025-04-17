@@ -9,18 +9,21 @@ import {
   signInPending,
   signInSuccess,
   signOutSuccess,
+  signOutError,
   signUpPending,
   signUpSuccess,
 } from "./actions";
 import axios from "axios";
 import { useRouter } from "next/dist/client/components/navigation";
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
-   const router = useRouter();
+  const router = useRouter();
+
   //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
- 
+
     const endpoint =
       Auth.role == "PATIENT"
         ? `https://localhost:44311/api/services/app/Patient/Create`
@@ -34,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error(error);
       });
   };
+
   const signIn = async (
     SignInRequest: ISignInRequest
   ): Promise<ISignInResponse> => {
@@ -46,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (token) {
           sessionStorage.setItem("jwt", token);
           dispatch(signInSuccess(token));
-          return token;
+          return response.data;
         } else {
           throw new Error("There is no response");
         }
@@ -60,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       });
   };
+
   const signOut = () => {
     dispatch(signInPending());
     sessionStorage.removeItem("jwt");
@@ -67,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch(signOutSuccess());
       router.push("/");
     }
-    dispatch(signInError);
+    dispatch(signOutError);
   };
 
   return (
