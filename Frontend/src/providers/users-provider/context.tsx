@@ -1,14 +1,16 @@
 "use client";
 import { createContext } from "react";
-import { IUser } from "./models";
+import { IPatient, IUser } from "./models";
 
 // Context shape interface
 export interface IUserStateContext {
   isPending: boolean;
   isSuccess: boolean;
   isError: boolean;
+  currentPatient?: IPatient;
   user?: IUser;
   users?: IUser[]; // Array of Users
+
 }
 
 // User action context interface
@@ -19,6 +21,7 @@ export interface IUserActionContext {
   createUser: (user: IUser) => void; // Create a new User
   updateUser: (user: IUser) => void; // Update existing User
   deleteUser: (id: string) => void; // Delete a user
+  getCurrentPatient:(userid:number)=>Promise<IPatient>;
 }
 
 // Initial state with default values

@@ -9,15 +9,37 @@ import {
   Avatar,
   Badge,
   Tag,
+  Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
 const { Title, Text } = Typography;
 import { useUserState } from "../../providers/users-provider";
+const [Loading, setLoading] = useState(false);
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ProviderDashboard() {
-  const { user } = useUserState();
+  const { user, currentPatient, isPending, isSuccess, isError } = useUserState();  
+  
+  useEffect(() => {
+    if (!) {
+      console.log("token part", );
+    }
+    if (true) {
+      console.log("there is no token", );
+    }
+    if (isPending) {
+      setLoading(true);
+    }
+    if (isError) {
+      <p>Current CurrentPatient not found</p>;
+    }
+    if (isSuccess) {
+    }
+  }, [isPending, isError, isSuccess]);
 
   return (
+    <Spin spinning={Loading} tip="Loading hold on">
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
         <Title level={3}>Welcome back</Title>
@@ -145,7 +167,8 @@ export default function ProviderDashboard() {
           </Card>
         </Col>
       </Row>
-    </div>
+      </div>
+      </Spin>
   );
 }
 

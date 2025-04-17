@@ -45,7 +45,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
   const { getCurrentUser } = useUserActions();
-
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
     if (!token) {
@@ -86,6 +85,8 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     console.log("This is the success in the login button", isSuccess);
     const token = sessionStorage.getItem("jwt");
     getCurrentUser(token);
+    
+    console.log("current user info,");
   };
 
   const onFinishSignup = async (values: IAuth) => {
