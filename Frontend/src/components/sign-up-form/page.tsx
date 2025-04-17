@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import debounce from "lodash.debounce";
 
-import { IAuth } from "@/providers/auth-provider/models";
+import { IAuth, IUserCheck } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 
 import styles from "../../app/page.module.css";
@@ -27,6 +28,46 @@ export default function SignupForm({
   const { isSuccess } = useAuthState();
   const router = useRouter();
 
+  const { userExists } = useAuthActions();
+
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  const checkUserExists = debounce(async (values: IUserCheck) => {
+    try {
+      const result = await userExists(values);
+      if (values.emailAddress && result.result.emailExists) {
+        setEmailError("Email already exists");
+      } else {
+        setEmailError(null);
+      }
+
+      if (values.userName && result.result.userNameExists) {
+        setUsernameError("Username already exists");
+      } else {
+        setUsernameError(null);
+      }
+    } catch (error) {
+      console.error("Validation check failed:", error);
+    }
+  }, 500);
+
+  // AntD Form onChange hook
+  const handleFieldChange = (_: any, allFields: any) => {
+    const emailAddress = allFields.find(
+      (f: any) => f.name[0] === "emailAddress"
+    )?.value;
+    const userName = allFields.find(
+      (f: any) => f.name[0] === "userName"
+    )?.value;
+
+    if (emailAddress || userName) {
+      checkUserExists({
+        emailAddress: emailAddress || "",
+        userName: userName || "",
+      });
+    }
+  };
   const handleroleChange = (e: any) => {
     setrole(e.target.value.toLowerCase());
   };
@@ -51,6 +92,7 @@ export default function SignupForm({
     <Form
       name="signup"
       onFinish={onFinishSignup}
+      onFieldsChange={handleFieldChange}
       size="large"
       layout="vertical"
       className={styles.form}
@@ -97,6 +139,8 @@ export default function SignupForm({
 
       <Form.Item
         name="emailAddress"
+        validateStatus={emailError ? "error" : ""}
+        help={emailError || ""}
         rules={[
           { required: true, message: "Please input your email!" },
           { type: "email", message: "Please enter a valid email!" },
@@ -104,7 +148,6 @@ export default function SignupForm({
       >
         <Input placeholder="Email" />
       </Form.Item>
-
       <Form.Item
         name="phoneNumber"
         rules={[{ required: true, message: "Please input your phone number!" }]}
@@ -114,6 +157,8 @@ export default function SignupForm({
 
       <Form.Item
         name="userName"
+        validateStatus={usernameError ? "error" : ""}
+        help={usernameError || ""}
         rules={[{ required: true, message: "Please input your username!" }]}
       >
         <Input placeholder="Username" />

@@ -1,6 +1,12 @@
 "use client";
 //import { getAxiosInstace } from "../../utils/axiosInstance";
-import { IAuth, ISignInResponse, ISignInRequest } from "./models";
+import {
+  IAuth,
+  ISignInResponse,
+  ISignInRequest,
+  IUserCheck,
+  IUserExists,
+} from "./models";
 import { INITIAL_STATE, AuthActionContext, AuthStateContext } from "./context";
 import { AuthReducer } from "./reducer";
 import { useContext, useReducer } from "react";
@@ -11,8 +17,8 @@ import {
   signOutSuccess,
   signUpPending,
   signUpSuccess,
-  userCheckPending,
   userCheckError,
+  userCheckPending,
   userCheckSuccess,
 } from "./actions";
 import axios from "axios";
@@ -70,6 +76,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch(signOutSuccess());
     }
     dispatch(signInError);
+  };
+  const userExists = async (UserCheck: IUserCheck): Promise<IUserExists> => {
+    dispatch(userCheckPending());
+
+    const endpoint =
+      "https://localhost:44311/api/services/app/User/CheckUserExists";
+    return axios
+      .post<IUserExists>(endpoint, UserCheck)
+      .then((response) => {
+        dispatch(userCheckSuccess());
+        return response.data;
+      })
+      .catch((error) => {
+        console.error("Error during userExists check:", error);
+        dispatch(userCheckError());
+        throw error;
+      });
   };
 
   return (

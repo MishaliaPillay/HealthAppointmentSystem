@@ -29,6 +29,18 @@ export const AuthReducer = handleActions<IAuthStateContext, IAuthStateContext>(
       ...state,
       ...action.payload,
     }),
+    [AuthActionEnums.userCheckPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [AuthActionEnums.userCheckSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [AuthActionEnums.userCheckError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
   },
   INITIAL_STATE
 );
