@@ -2,15 +2,13 @@
 import { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
 import { useRouter } from "next/navigation";
-import dayjs from "dayjs";
 import debounce from "lodash.debounce";
+import dayjs from "dayjs";
+
 import { IUserCheck } from "@/providers/check-user-provider/models";
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
-import {
-  useCheckuserActions,
-  useCheckuserState,
-} from "@/providers/check-user-provider";
+import { useCheckuserActions } from "@/providers/check-user-provider";
 
 import styles from "../../app/page.module.css";
 
@@ -21,27 +19,20 @@ interface SignupFormProps {
   onBeforeSubmit?: () => void;
 }
 
-export default function SignupForm({
-  onSignupSuccess,
-  onBeforeSubmit,
-}: SignupFormProps) {
+export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuthActions();
-  const { isSuccess } = useCheckuserState();
+
   const [form] = Form.useForm();
 
   const { userExists } = useCheckuserActions();
-
-  const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
 
   const hasErrors = form
     .getFieldsError()
     .some(({ errors }) => errors.length > 0);
 
-  const isButtonDisabled =
-    loading || hasErrors || !!emailError || !!usernameError;
+  const isButtonDisabled = loading || hasErrors;
 
   // const checkUserExists = debounce(async (values: IUserCheck) => {
   //   try {
@@ -61,16 +52,16 @@ export default function SignupForm({
   //     console.error("Validation check failed:", error);
   //   }
   // }, 600);
-  let debounceEmailTimer: ReturnType<typeof setTimeout>;
+
   let debounceUsernameTimer: ReturnType<typeof setTimeout>;
 
   const validateEmailExists = async (_: any, value: string) => {
     if (!value) return Promise.resolve();
 
-    // Debounce manually
+    // This will ensure we debounce the userExists function
     return new Promise<void>((resolve, reject) => {
-      clearTimeout(debounceEmailTimer);
-      debounceEmailTimer = setTimeout(async () => {
+      // The debounced version of userExists
+      const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
             emailAddress: value,
@@ -84,7 +75,10 @@ export default function SignupForm({
         } catch (err) {
           reject("Error validating email");
         }
-      }, 500);
+      }, 500); // Delay set to 500ms
+
+      // Call the debounced function immediately (doesn't wait for user input)
+      debouncedUserExists();
     });
   };
 
@@ -92,8 +86,8 @@ export default function SignupForm({
     if (!value) return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
-      clearTimeout(debounceUsernameTimer);
-      debounceUsernameTimer = setTimeout(async () => {
+      // The debounced version of userExists for username
+      const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
             emailAddress: "",
@@ -107,7 +101,10 @@ export default function SignupForm({
         } catch (err) {
           reject("Error validating username");
         }
-      }, 500);
+      }, 500); // Delay set to 500ms
+
+      // Call the debounced function immediately
+      debouncedUserExists();
     });
   };
 

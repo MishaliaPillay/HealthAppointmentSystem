@@ -67,10 +67,6 @@ public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUser
         await _userManager.InitializeOptionsAsync(AbpSession.TenantId);
 
         CheckErrors(await _userManager.CreateAsync(user, input.Password));
-        if (input.EmailAddress == user.EmailAddress)
-        {
-
-        }
 
         if (input.RoleNames != null)
         {
