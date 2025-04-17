@@ -4,9 +4,13 @@ import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import debounce from "lodash.debounce";
-
-import { IAuth, IUserCheck } from "@/providers/auth-provider/models";
-import { useAuthActions, useAuthState } from "@/providers/auth-provider";
+import { IUserCheck } from "@/providers/check-user-provider/models";
+import { IAuth } from "@/providers/auth-provider/models";
+import { useAuthActions } from "@/providers/auth-provider";
+import {
+  useCheckuserActions,
+  useCheckuserState,
+} from "@/providers/check-user-provider";
 
 import styles from "../../app/page.module.css";
 
@@ -25,10 +29,10 @@ export default function SignupForm({
   const [loading, setLoading] = useState(false);
 
   const { signUp } = useAuthActions();
-  const { isSuccess } = useAuthState();
-  const router = useRouter();
+  const { isSuccess } = useCheckuserState();
+  // const router = useRouter();
 
-  const { userExists } = useAuthActions();
+  const { userExists } = useCheckuserActions();
 
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
