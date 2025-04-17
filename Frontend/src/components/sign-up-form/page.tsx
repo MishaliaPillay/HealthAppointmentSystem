@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
+import {
+  UserOutlined,
+  LockOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
@@ -21,12 +27,20 @@ interface SignupFormProps {
 export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
   const { signUp } = useAuthActions();
 
   const [form] = Form.useForm();
 
   const { userExists } = useCheckuserActions();
-
+  const passwordChecks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    specialChar: /[@$!%*?&]/.test(password),
+  };
   const hasErrors = form
     .getFieldsError()
     .some(({ errors }) => errors.length > 0);
@@ -192,7 +206,57 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           { min: 8, message: "Password must be at least 8 characters!" },
         ]}
       >
-        <Input.Password placeholder="Password" />
+        <div style={{ position: "relative" }}>
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Password"
+            size="large"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setShowTooltip(e.target.value.length > 0);
+            }}
+            onBlur={() => setShowTooltip(false)}
+          />
+          {showTooltip && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                background: "#fff",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                width: "100%",
+                zIndex: 10,
+              }}
+            >
+              <p>Password must contain:</p>
+              {Object.entries(passwordChecks).map(([key, valid]) => (
+                <p
+                  key={key}
+                  style={{ color: valid ? "green" : "red", marginBottom: 4 }}
+                >
+                  {valid ? (
+                    <CheckCircleOutlined style={{ color: "green" }} />
+                  ) : (
+                    <CloseCircleOutlined style={{ color: "red" }} />
+                  )}{" "}
+                  {
+                    {
+                      length: "At least 8 characters",
+                      lowercase: "At least one lowercase letter",
+                      uppercase: "At least one uppercase letter",
+                      number: "At least one number",
+                      specialChar: "At least one special character (!@#$%^&*)",
+                    }[key]
+                  }
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
       </Form.Item>
 
       {role === "patient" && (
