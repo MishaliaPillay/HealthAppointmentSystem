@@ -1,11 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
-import { useRouter } from "next/navigation";
+
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
 
-import { IUserCheck } from "@/providers/check-user-provider/models";
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
 import { useCheckuserActions } from "@/providers/check-user-provider";
@@ -33,27 +32,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     .some(({ errors }) => errors.length > 0);
 
   const isButtonDisabled = loading || hasErrors;
-
-  // const checkUserExists = debounce(async (values: IUserCheck) => {
-  //   try {
-  //     const result = await userExists(values);
-  //     if (values.emailAddress && result.result.emailExists) {
-  //       setEmailError("Email already exists");
-  //     } else {
-  //       setEmailError(null);
-  //     }
-
-  //     if (values.userName && result.result.userNameExists) {
-  //       setUsernameError("Username already exists");
-  //     } else {
-  //       setUsernameError(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Validation check failed:", error);
-  //   }
-  // }, 600);
-
-  let debounceUsernameTimer: ReturnType<typeof setTimeout>;
 
   const validateEmailExists = async (_: any, value: string) => {
     if (!value) return Promise.resolve();
@@ -108,22 +86,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     });
   };
 
-  // AntD Form onChange hook
-  // const handleFieldChange = (_: any, allFields: any) => {
-  //   const emailAddress = allFields.find(
-  //     (f: any) => f.name[0] === "emailAddress"
-  //   )?.value;
-  //   const userName = allFields.find(
-  //     (f: any) => f.name[0] === "userName"
-  //   )?.value;
-
-  //   if (emailAddress || userName) {
-  //     checkUserExists({
-  //       emailAddress: emailAddress || "",
-  //       userName: userName || "",
-  //     });
-  //   }
-  // };
   const handleroleChange = (e: any) => {
     setrole(e.target.value.toLowerCase());
   };
@@ -140,7 +102,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     };
 
     await signUp(formattedValues);
-    // Do NOT check isSuccess here – it will update *after* state change
+
     setLoading(false);
   };
 
