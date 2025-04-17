@@ -9,7 +9,7 @@ import {
 
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
-
+import { RadioChangeEvent } from "antd";
 import { StoreValue } from "antd/es/form/interface";
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
@@ -61,7 +61,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           } else {
             resolve();
           }
-        } catch (err) {
+        } catch {
           reject("Error validating email");
         }
       }, 500);
@@ -85,7 +85,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           } else {
             resolve();
           }
-        } catch (err) {
+        } catch {
           reject("Error validating username");
         }
       }, 500);
@@ -94,10 +94,9 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     });
   };
 
-  const handleroleChange = (e: any) => {
+  const handleroleChange = (e: RadioChangeEvent) => {
     setrole(e.target.value.toLowerCase());
   };
-
   const onFinishSignup = async (values: IAuth) => {
     onBeforeSubmit?.();
     setLoading(true);
