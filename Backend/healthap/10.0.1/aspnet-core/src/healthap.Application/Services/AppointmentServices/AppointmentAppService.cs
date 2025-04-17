@@ -29,75 +29,68 @@ namespace healthap.Services.AppointmentServices
 
         public async Task<List<AppointmentDto>> GetMyAppointmentsAsync()
         {
+            // Get current user ID
             var currentUserId = AbpSession.UserId;
             if (!currentUserId.HasValue)
             {
                 throw new AbpAuthorizationException("You must be logged in to view your appointments.");
             }
 
-            // Get current user's patient or provider record
+            // Find if user is a patient or provider
             var patient = await _patientRepository.GetAll()
                 .FirstOrDefaultAsync(p => p.UserId == currentUserId.Value);
 
             var provider = await _providerRepository.GetAll()
                 .FirstOrDefaultAsync(p => p.UserId == currentUserId.Value);
 
-            // Use direct database query to get appointments
-            List<AppointmentDto> result = new List<AppointmentDto>();
+            // Explicitly set type to IQueryable<Appointment> to avoid type conflict
+            IQueryable<Appointment> query = Repository.GetAll()
+                .Include(a => a.Patient)
+                .Include(a => a.Provider);
 
             if (patient != null)
             {
-                // Direct SQL query or LINQ if EF Core has mapped the relationship
-                var appointments = Repository.GetAllList();
-
-                // Here we would directly use SQL or join with patient table
-                // But since we don't have direct access, we'll need another solution
-
-                // For now, return all appointments and add the patient ID
-                result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
-                foreach (var dto in result)
-                {
-                    dto.PatientId = patient.Id;
-                }
+                // Filter by patient ID
+                query = query.Where(a => a.Patient.Id == patient.Id);
             }
             else if (provider != null)
             {
-                // Similar approach for provider
-                var appointments = Repository.GetAllList();
-
-                result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
-                foreach (var dto in result)
-                {
-                    dto.ProviderId = provider.Id;
-                }
+                // Filter by provider ID
+                query = query.Where(a => a.Provider.Id == provider.Id);
             }
             else
             {
                 throw new AbpAuthorizationException("You don't have a patient or provider profile.");
             }
 
-            return result;
+            var appointments = await query.ToListAsync();
+            return ObjectMapper.Map<List<AppointmentDto>>(appointments);
         }
+
 
         public override Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
 
             var createdAppointment = base.CreateAsync(input);
 
-            string formattedDate = input.AppointmentDate.ToString("yyyy-MM-dd");
-            string formattedTime = input.AppointmentTime.ToString("hh:mm tt");
 
-            string message = $"Good day, your appointment is successfully submitted for the date {formattedDate} and the time {formattedTime}.";
-            //send whatsApp message of the Appointment
-            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
+            //string formattedDate = input.AppointmentDate.ToString("yyyy-MM-dd");
+            //string formattedTime = input.AppointmentTime.ToString("hh:mm tt");
 
-            // Format the cell number
-            var ts = "0825185584";
-            var cell = "+27" + ts.Substring(1);
+            //string message = $"Good day, your appointment is successfully submitted for the date {formattedDate} and the time {formattedTime}.";
+            ////send whatsApp message of the Appointment
+            //Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
 
-            // Send SMS , a  static  on the service method
-            Services.NotificaServices.SmsService.SendMessage(cell, message);
+            //// Format the cell number
+            //var ts = "0825185584";
+            //var cell = "+27" + ts.Substring(1);
+
+            //// Send SMS , a  static  on the service method
+            //Services.NotificaServices.SmsService.SendMessage(cell, message);
+
+
             return createdAppointment;
+
         }
     }
 }

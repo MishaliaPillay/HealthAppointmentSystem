@@ -14,7 +14,7 @@ namespace healthap.Services.AppointmentServices.Dtos
         public TimeSpan AppointmentTime { get; set; }
 
         public string Purpose { get; set; }
-        public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
+        public  ReflistAppointStatus? AppointmentStatus { get; set; }
 
         // Add these properties for use in your service
         public Guid PatientId { get; set; }
