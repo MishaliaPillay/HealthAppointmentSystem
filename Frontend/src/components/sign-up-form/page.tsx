@@ -27,15 +27,26 @@ export default function SignupForm({
 }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
-
   const { signUp } = useAuthActions();
   const { isSuccess } = useCheckuserState();
-  // const router = useRouter();
+  const [form] = Form.useForm();
 
   const { userExists } = useCheckuserActions();
 
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+
+  const values = form.getFieldsValue();
+  const isFormFilled =
+    values.emailAddress && values.userName && values.password;
+  const hasAgreedToTerms = values.agreeToTerms;
+
+  const isButtonDisabled =
+    loading ||
+    !isFormFilled ||
+    !!emailError ||
+    !!usernameError ||
+    !hasAgreedToTerms;
 
   const checkUserExists = debounce(async (values: IUserCheck) => {
     try {
@@ -54,7 +65,7 @@ export default function SignupForm({
     } catch (error) {
       console.error("Validation check failed:", error);
     }
-  }, 500);
+  }, 600);
 
   // AntD Form onChange hook
   const handleFieldChange = (_: any, allFields: any) => {
@@ -94,6 +105,7 @@ export default function SignupForm({
 
   return (
     <Form
+      form={form}
       name="signup"
       onFinish={onFinishSignup}
       onFieldsChange={handleFieldChange}
@@ -302,6 +314,7 @@ export default function SignupForm({
           htmlType="submit"
           className={styles.submitButton}
           loading={loading}
+          disabled={isButtonDisabled}
         >
           Sign Up
         </Button>
