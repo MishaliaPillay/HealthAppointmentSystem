@@ -8,20 +8,21 @@ export interface IUserStateContext {
   isSuccess: boolean;
   isError: boolean;
   currentPatient?: IPatient;
+  currentUser?: IUser; // Changed for naming consistency
   user?: IUser;
-  users?: IUser[]; // Array of Users
-
+  users?: IUser[]; // Array of users
 }
 
 // User action context interface
 export interface IUserActionContext {
-  getCurrentUser: (token:string) => Promise<IUser>;
-  getUsers: () => void; // Fetch all Users
-  getUser: (id: string) => void; // Fetch a single User
-  createUser: (user: IUser) => void; // Create a new User
-  updateUser: (user: IUser) => void; // Update existing User
+  getCurrentUser: (token: string) => Promise<IUser>;
+  getUsers: () => void; // Fetch all users
+  getUser: (id: string) => void; // Fetch a single user
+  createUser: (user: IUser) => void; // Create a new user
+  updateUser: (user: IUser) => void; // Update an existing user
   deleteUser: (id: string) => void; // Delete a user
-  getCurrentPatient:(userid:number)=>Promise<IPatient>;
+  //getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
+  getCurrentPatient: (token:string) => Promise<IPatient>; // Fixed camelCase name
 }
 
 // Initial state with default values

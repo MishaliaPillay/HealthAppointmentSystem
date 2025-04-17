@@ -1,12 +1,10 @@
 "use client";
-import { IUser } from "./models";
+import { IUser, IPatient } from "./models";
 import { IUserStateContext } from "./context";
 import { createAction } from "redux-actions";
-import { IPatient } from "./models";
-//make enums defining the actions that can be dispatched
 
+// Define enums for Redux actions
 export enum UserActionEnums {
-  // define 3 states for each action (pending , success, error)
   getUsersPending = "GET_USERS_PENDING",
   getUsersSuccess = "GET_USERS_SUCCESS",
   getUsersError = "GET_USERS_ERROR",
@@ -36,32 +34,28 @@ export enum UserActionEnums {
   deleteUserError = "DELETE_USER_ERROR",
 }
 
-//Get Users actions
+// Get Users actions
 export const getUsersPending = createAction<IUserStateContext>(
   UserActionEnums.getUsersPending,
-
   () => ({ isPending: true, isSuccess: false, isError: false })
 );
 
 export const getUsersSuccess = createAction<IUserStateContext, IUser[]>(
   UserActionEnums.getUsersSuccess,
-
-  (user: IUser[]) => ({
+  (users: IUser[]) => ({
     isPending: false,
     isSuccess: true,
     isError: false,
-    user,
+    users,
   })
 );
 
-
 export const getUsersError = createAction<IUserStateContext>(
   UserActionEnums.getUsersError,
-  
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-//Get User actions
+// Get User actions
 export const getUserPending = createAction<IUserStateContext>(
   UserActionEnums.getUserPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
@@ -81,15 +75,15 @@ export const getUserError = createAction<IUserStateContext>(
   UserActionEnums.getUserError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-//Get User actions
-//Get CurrentUser actions
+
+// Get Current User actions
 export const getCurrentUserPending = createAction<IUserStateContext>(
-  UserActionEnums.getUserPending,
+  UserActionEnums.getCurrentUserPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
 );
 
 export const getCurrentUserSuccess = createAction<IUserStateContext, IUser>(
-  UserActionEnums.getUserSuccess,
+  UserActionEnums.getCurrentUserSuccess,
   (user: IUser) => ({
     isPending: false,
     isSuccess: true,
@@ -99,17 +93,21 @@ export const getCurrentUserSuccess = createAction<IUserStateContext, IUser>(
 );
 
 export const getCurrentUserError = createAction<IUserStateContext>(
-  UserActionEnums.getCurrentPatientError,
+  UserActionEnums.getCurrentUserError, // Fixed incorrect enum
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-//Get Current Patient
+
+// Get Current Patient actions
 export const getCurrentPatientPending = createAction<IUserStateContext>(
   UserActionEnums.getCurrentPatientPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
 );
 
-export const getCurrentPatientSuccess = createAction<IUserStateContext, IUser>(
-  UserActionEnums.getCurrentPatientPending,
+export const getCurrentPatientSuccess = createAction<
+  IUserStateContext,
+  IPatient
+>(
+  UserActionEnums.getCurrentPatientSuccess, // Fixed incorrect enum
   (currentPatient: IPatient) => ({
     isPending: false,
     isSuccess: true,
@@ -119,11 +117,11 @@ export const getCurrentPatientSuccess = createAction<IUserStateContext, IUser>(
 );
 
 export const getCurrentPatientError = createAction<IUserStateContext>(
-  UserActionEnums.getUserError,
+  UserActionEnums.getCurrentPatientError, // Fixed incorrect enum
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-//Create User Actions
+// Create User Actions
 export const createUserPending = createAction<IUserStateContext>(
   UserActionEnums.createUserPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
@@ -143,7 +141,8 @@ export const createUserError = createAction<IUserStateContext>(
   UserActionEnums.createUserError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-//Update User Actions
+
+// Update User Actions
 export const updateUserPending = createAction<IUserStateContext>(
   UserActionEnums.updateUserPending,
   () => ({ isPending: true, isSuccess: false, isError: false })
@@ -151,11 +150,12 @@ export const updateUserPending = createAction<IUserStateContext>(
 
 export const updateUserSuccess = createAction<IUserStateContext, IUser>(
   UserActionEnums.updateUserSuccess,
-  (User: IUser) => ({
+  (user: IUser) => ({
+    // Fixed incorrect property name
     isPending: false,
     isSuccess: true,
     isError: false,
-    User,
+    user,
   })
 );
 
@@ -163,7 +163,8 @@ export const updateUserError = createAction<IUserStateContext>(
   UserActionEnums.updateUserError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-//Delete User Actions
+
+// Delete User Actions
 export const deleteUserPending = createAction<IUserStateContext>(
   UserActionEnums.deleteUserPending,
   () => ({ isPending: true, isSuccess: false, isError: false })

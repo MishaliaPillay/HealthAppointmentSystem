@@ -1,14 +1,32 @@
 "use client";
-
-import { Typography, Row, Col, Card, Button, Progress, Modal } from "antd";
+import {
+  Typography,
+  Row,
+  Col,
+  Card,
+  Button,
+  Progress,
+  Modal,
+  Spin,
+} from "antd";
 import styles from "./patientdash.module.css";
 import BookingModule from "../../components/booking/booking";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { User } from '@/interfaces/types';
+import {
+  useUserState,
+  useUserActions,
+} from "../../providers/users-provider/index";
 
 const { Title, Text } = Typography;
 
 export default function Dashboard() {
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { currentPatient, user, isPending, isError, isSuccess } =
+    useUserState();
+  const { getCurrentUser, getCurrentPatient } = useUserActions();
 
   const handleOpenBookingModal = () => {
     setShowBookingModal(true);
@@ -17,15 +35,48 @@ export default function Dashboard() {
   const handleCloseBookingModal = () => {
     setShowBookingModal(false);
   };
+ const token = sessionStorage.getItem("jwt");
+  useEffect(() => {
+    if (isPending) {
+      setLoading(true);
+    }
+    if (isError) {
+   
+    }
+
+    // if (isSuccess || user.id) {
+    //   // console.log("when does it get here!!!");
+    //   //  getCurrentPatient(user.id);
+    //   getCurrentPatient()
+    // }
+
+    if (isSuccess || token) {
+      // console.log("when does it get here!!!");
+      //  getCurrentPatient(user.id);
+      getCurrentPatient(token);
+    }
+  }, []);
+
+  // isSuccess, isPending, isError, getCurrentPatient(user.id), user.id;
+  if (loading || isPending) {
+    return <Spin spinning tip="Loading patient data..." />;
+  }
+
+  if (isError || !currentPatient) {
+    return <p>Failed to load patient data. Please try again.</p>;
+  }
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, John!</Title>
-        <Text>Your next appointment is in 2 days with Dr. Sarah Johnson</Text>
+        <Title level={3}>Welcome back, {user.currentPatient.title}!</Title>
+        {/* <Text>
+          Your next appointment is with Dr.{" "}
+          {currentPatient.appointments?.[0]?.doctorName || "TBD"}
+        </Text>  */}
       </Card>
 
-      <Row gutter={[24, 24]} className={styles.rowSpacing}>
+      {/* <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
           <Card title="Quick Actions" variant="outlined">
             <div className={styles.quickActions}>
@@ -38,7 +89,7 @@ export default function Dashboard() {
                 Book New Appointment
               </Button>
               <Button size="large" block>
-                Update profile
+                Update Profile
               </Button>
             </div>
           </Card>
@@ -47,9 +98,20 @@ export default function Dashboard() {
           <Card title="Health Stats" variant="outlined">
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>
-                <Text>Recent Appointments: 3</Text>
+                <Text>
+                  Recent Appointments:{" "}
+                  {currentPatient.appointments?.length || 0}
+                </Text>
               </div>
-              <Progress percent={75} strokeColor="#52c41a" showInfo={false} />
+              <Progress
+                percent={
+                  (currentPatient.appointments?.length /
+                    currentPatient.MaxAppointmentsPerDay) *
+                    100 || 0
+                }
+                strokeColor="#52c41a"
+                showInfo={false}
+              />
             </div>
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>
@@ -59,36 +121,29 @@ export default function Dashboard() {
             </div>
           </Card>
         </Col>
-      </Row>
-
+      </Row> */}
+      {/* 
       <Card
         title="Upcoming Appointments"
         className={styles.upcomingCard}
         variant="outlined"
       >
         <div className={styles.appointmentList}>
-          <AppointmentCard
-            id="1"
-            doctorInitials="SJ"
-            doctorName="Dr. Sarah Johnson"
-            specialty="Cardiologist"
-            date="Friday, Apr 11, 2025"
-            time="10:30 AM"
-            status="confirmed"
-          />
-          <AppointmentCard
-            id="2"
-            doctorInitials="MP"
-            doctorName="Dr. Michael Peterson"
-            specialty="Dermatologist"
-            date="Monday, Apr 14, 2025"
-            time="2:00 PM"
-            status="pending"
-          />
+          {currentPatient.appointments?.map((appointment) => (
+            <AppointmentCard
+              key={appointment.id}
+              doctorInitials={appointment.doctorInitials}
+              doctorName={appointment.doctorName}
+              specialty={appointment.specialty}
+              date={appointment.date}
+              time={appointment.time}
+              status={appointment.status}
+            />
+          )) || <Text>No upcoming appointments.</Text>}
         </div>
-      </Card>
+      </Card> */}
 
-      {/* Use Ant Design Modal directly */}
+      {/* Booking Modal */}
       <Modal
         title="Book an Appointment"
         open={showBookingModal}
@@ -101,47 +156,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-interface AppointmentCardProps {
-  id: string;
-  doctorInitials: string;
-  doctorName: string;
-  specialty: string;
-  date: string;
-  time: string;
-  status: "confirmed" | "pending" | "cancelled";
-}
-
-const AppointmentCard: React.FC<AppointmentCardProps> = ({
-  doctorInitials,
-  doctorName,
-  specialty,
-  date,
-  time,
-  status,
-}) => {
-  return (
-    <div className={styles.appointmentCard}>
-      <div className={styles.appointmentInfo}>
-        <div className={styles.initialsCircle}>{doctorInitials}</div>
-        <div>
-          <div className={styles.doctorName}>{doctorName}</div>
-          <div className={styles.details}>
-            {specialty} • {date} • {time}
-          </div>
-        </div>
-      </div>
-      <div>
-        {status === "confirmed" && (
-          <span className={styles.statusConfirmed}>Confirmed</span>
-        )}
-        {status === "pending" && (
-          <span className={styles.statusPending}>Pending</span>
-        )}
-        {status === "cancelled" && (
-          <span className={styles.statusCancelled}>Cancelled</span>
-        )}
-      </div>
-    </div>
-  );
-};

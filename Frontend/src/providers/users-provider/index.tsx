@@ -25,28 +25,22 @@ import {
   deleteUserPending,
 } from "./actions";
 import axios from "axios";
+
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
-  //getCurrentUser
-  const getCurrentUser = (token: string): Promise<IUser | null> => {
+  // Get current user
+  const getCurrentUser = async (token: string): Promise<IUser | null> => {
     dispatch(getCurrentUserPending());
-    const endpoint =
-      "https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations";
-    console.log("Trying to get the current user");
+    const endpoint = `https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations`;
+    console.log("token", token);
     return axios
       .get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token} `,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        if (response) {
-          console.log(
-            "this is the response from get current user",
-            response.data.result.user
-          );
+        if (response?.data?.result?.user) {
           dispatch(getCurrentUserSuccess(response.data.result.user));
           return response.data.result.user;
         } else {
@@ -59,40 +53,117 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error fetching current user:", error);
         dispatch(getCurrentUserError());
         return null;
-      })
-      .finally(() => {
-        console.log("Done trying to process your getUser request");
       });
   };
-  const getCurrentPatient = (userId: number): Promise<IPatient | null> => {
+
+  // Get current patient
+  const getCurrentPatient = async (token: string): // userId: number
+  Promise<IPatient | null> => {
     dispatch(getCurrentPatientPending());
-    const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?input=${userId}`;
-    console.log("Trying to get the current user");
+    //const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?input=${userId}`;
+    const endpoint =
+      "https://localhost:44311/api/services/app/Patient/GetCurrentPatient";
+
     return axios
-      .get(endpoint)
+      .get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((response) => {
-        if (response) {
-          console.log(
-            "this is the response from get current user",
-            response.data.result.user
-          );
-          dispatch(getCurrentPatientSuccess(response.data.result.user));
-          return response.data.result.user;
+        if (response?.data?.result) {
+          dispatch(getCurrentPatientSuccess(response.data.result));
+          return response.data.result;
         } else {
-          console.warn("No user data found in response");
+          console.warn("No patient data found in response");
           dispatch(getCurrentPatientError());
           return null;
         }
       })
       .catch((error) => {
-        console.error("Error fetching current user:", error);
-        dispatch(getCurrentUserError());
+        console.error("Error fetching current patient:", error);
+        dispatch(getCurrentPatientError());
         return null;
-      })
-      .finally(() => {
-        console.log("Done trying to process your getUser request");
       });
   };
+
+  // Fetch all users
+  const getUsers = async () => {
+    dispatch(getUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/GetAll`;
+
+    return instance
+      .get(endpoint)
+      .then((response) => {
+        dispatch(getUserSuccess(response.data?.result ?? []));
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+        dispatch(getUserError(error));
+      });
+  };
+
+  // Create a user
+  const createUser = async (user: IUser) => {
+    dispatch(createUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/Create`;
+
+    return instance
+      .post(endpoint, user)
+      .then((response) => {
+        dispatch(createUserSuccess(response.data?.result));
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error);
+        dispatch(createUserError(error));
+      });
+  };
+
+  // Update a user
+  const updateUser = async (user: IUser) => {
+    dispatch(updateUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/Update`;
+
+    return instance
+      .put(endpoint, user)
+      .then((response) => {
+        dispatch(updateUserSuccess(response.data?.result));
+      })
+      .catch((error) => {
+        console.error("Error updating user:", error);
+        dispatch(updateUserError(error));
+      });
+  };
+
+  // Delete a user
+  const deleteUser = (id: string) => {
+    dispatch(deleteUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/Delete?input=${id}`;
+
+    return instance
+      .delete(endpoint)
+      .then((response) => {
+        dispatch(deleteUserSuccess(response.data?.result));
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        dispatch(deleteUserError(error));
+      });
+  };
+
+  // Get a specific user
+  const getUser = async (id: string) => {
+    dispatch(getUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/Get?input=${id}`;
+    return axios
+      .get(endpoint)
+      .then((response) => {
+        dispatch(getUserSuccess(response.data?.result));
+      })
+      .catch((error) => {
+        console.error("Error fetching user:", error);
+        dispatch(getUserError(error));
+      });
+  };
+
   return (
     <UserStateContext.Provider value={state}>
       <UserActionContext.Provider
@@ -110,83 +181,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       </UserActionContext.Provider>
     </UserStateContext.Provider>
   );
-  // Fetch all Users
-  const getUsers = async () => {
-    dispatch(getUserPending);
-    const endpoint = `getusersAll`;
-    await instance
-      .get(endpoint)
-      .then((response) => {
-        dispatch(getUserSuccess(response.data));
-        console.log(response.data);
-      })
-      .catch((error) => {
-        dispatch(getUserError(error));
-        console.error(error);
-      });
-  };
-  // create User
-  const createUser = async (user: IUser) => {
-    dispatch(createUserPending());
-    const endpoint = `createuser/user`;
-    await instance
-      .post(endpoint, user)
-      .then((response) => {
-        dispatch(createUserSuccess(response.data));
-        console.log(response.data);
-      })
-      .catch((error) => {
-        dispatch(createUserError(error));
-        console.error(error);
-      });
-  };
-  // Update existing User
-  const updateUser = async (user: IUser) => {
-    dispatch(updateUserPending());
-    const endpoint = `updateuser/user`;
-    await instance
-      .post(endpoint, user)
-      .then((response) => {
-        dispatch(updateUserSuccess(response.data));
-        console.log(response.data);
-      })
-      .catch((error) => {
-        dispatch(updateUserError(error));
-        console.error(error);
-      });
-  };
-  //Delete user
-  const deleteUser = async (id: string) => {
-    dispatch(deleteUserPending());
-    const endpoint = `updateuser/user`;
-    await instance
-      .post(endpoint, id)
-      .then((response) => {
-        dispatch(deleteUserSuccess(response.data));
-        console.log(response.data);
-      })
-      .catch((error) => {
-        dispatch(deleteUserError(error));
-        console.error(error);
-      });
-  };
-  //getUser
-  const getUser = async (id: string) => {
-    dispatch(getUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?input=${id}`;
-    await axios
-      .get(endpoint)
-      .then((response) => {
-        dispatch(getUserSuccess(response.data));
-        console.log("Fetched user by get user by Id" + response.data);
-      })
-      .catch((error) => {
-        dispatch(getUserError(error));
-        console.error(error);
-      });
-  };
 };
 
+// Hook for user state
 export const useUserState = () => {
   const context = useContext(UserStateContext);
   if (!context) {
@@ -195,6 +192,7 @@ export const useUserState = () => {
   return context;
 };
 
+// Hook for user actions
 export const useUserActions = () => {
   const context = useContext(UserActionContext);
   if (!context) {

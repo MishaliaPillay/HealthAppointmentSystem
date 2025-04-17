@@ -13,8 +13,10 @@ import {
   signUpSuccess,
 } from "./actions";
 import axios from "axios";
+import { useRouter } from "next/dist/client/components/navigation";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+   const router = useRouter();
   //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     sessionStorage.removeItem("jwt");
     if (sessionStorage.length === 0) {
       dispatch(signOutSuccess());
+      router.push("/");
     }
     dispatch(signInError);
   };

@@ -74,17 +74,18 @@ namespace healthap.Services.PersonServices
                 _mapper.Map<List<PatientResponseDto>>(patients)
             );
         }
-                public async Task<PatientResponseDto> GetCurrentPatientAsync(long input)
+                public async Task<PatientResponseDto> GetCurrentPatientAsync()
         {
+            
             // Check if user is logged in
             var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to access patient information.");
-            }
+            //if (!currentUserId.HasValue)
+            //{
+            //    throw new AbpAuthorizationException("You must be logged in to access patient information.");
+            //}
 
             // Get the provider by the input user ID
-            var patient = await _patientManager.GetPatientByUserIdWithDetailsAsync(input);
+            var patient = await _patientManager.GetPatientByUserIdWithDetailsAsync(currentUserId);
 
             // Check if patient exists
             if (patient == null)

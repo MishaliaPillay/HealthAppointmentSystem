@@ -1,24 +1,29 @@
-"user client"
+"use client";
 import { IAppointment } from "../appointment-provider/context";
 
-//User object interface
+// User object interface
 export interface IUser {
-    id?:number,
-    name:string,
-    surname:string, 
-    emailAddress:string,
-    userName:string,
-  }
-
-export interface IProvider{
-     User:IUser,
-     Title:string, 
-     PhoneNumber:string,
-     Biography:string,
-     YearsOfExperience:number,
-     MaxAppointmentsPerDay:number,
-     Qualification:string
+  id?: number;
+  name: string;
+  surname: string;
+  emailAddress: string;
+  userName: string;
+  currentPatient: IPatient
+  currentProvider:IProvider
 }
+
+// Provider object interface
+export interface IProvider {
+  user: IUser;
+  title: string;
+  phoneNumber: string;
+  biography: string;
+  yearsOfExperience: number;
+  maxAppointmentsPerDay: number;
+  qualification: string;
+}
+
+// Patient object interface
 export interface IPatient {
   user: IUser;
   title: string;
@@ -29,8 +34,7 @@ export interface IPatient {
   province: string;
   postalCode: string;
   country: string;
-  preferredContactMethod: number;
-  appointments: IAppointment[]; // Array of appointments
-  id: string; // UUID type
+  preferredContactMethod?: number;
+  appointments?: IAppointment[]; // Array of appointments
+  id?: string; // UUID type
 }
-

@@ -22,13 +22,18 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./login-page.module.css";
-import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
+import {
+  IAuth,
+  ISignInRequest,
+  ISignInResponse,
+} from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
-import { useUserActions } from "@/providers/users-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { getRole } from "@/utils/decoder";
+import { useUserActions } from "@/providers/users-provider";
+import { constrainedMemory } from "process";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -44,15 +49,10 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
-  const { getCurrentUser } = useUserActions();
+  const { getCurrentUser, getCurrentPatient } = useUserActions();
+  
+  const token = sessionStorage.getItem("jwt");
   useEffect(() => {
-    const token = sessionStorage.getItem("jwt");
-    if (!token) {
-      console.log("token part", token);
-    }
-    if (true) {
-      console.log("there is no token", token);
-    }
     if (isPending) {
       setLoading(true);
     }
@@ -69,7 +69,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     }
     if (isSuccess) {
       const role = getRole(token);
-      console.log("this is the " + role);
       if (role === "provider") {
         router.push("/provider-dashboard");
       } else if (role === "patient") {
@@ -78,15 +77,30 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         router.push("/");
       }
     }
-  }, [isPending, isError, isSuccess, router]);
+  }, [isSuccess, isError, isPending]);
 
-  const onFinishLogin = async (values: ISignInRequest) => {
-    await signIn(values);
-    console.log("This is the success in the login button", isSuccess);
-    const token = sessionStorage.getItem("jwt");
-    getCurrentUser(token);
-    
-    console.log("current user info,");
+  const onFinishLogin = async (values) => {
+    debugger;
+    try {
+      const response = await signIn(values);
+      console.log("this is sign in response:", response);
+      if (response === null) {
+        console.error("Access token missing in response:", response);
+        return;
+      }
+      console.log("this is sign in response222222:", response);
+
+      if (token) {
+        const res = await getCurrentUser(token);
+
+        if (res) {
+          await getCurrentPatient(token);
+          console.log("My response", res);
+        }
+      }
+    } catch (error) {
+      console.error("Error during login process:", error);
+    }
   };
 
   const onFinishSignup = async (values: IAuth) => {

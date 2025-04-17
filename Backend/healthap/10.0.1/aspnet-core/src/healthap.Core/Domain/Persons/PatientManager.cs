@@ -103,7 +103,7 @@ namespace healthap.Domain.Persons
             return _patientRepository.GetAllIncluding(p => p.User);
         }
 
-        public async Task<Patient?> GetPatientByUserIdWithDetailsAsync(long userId)
+        public async Task<Patient?> GetPatientByUserIdWithDetailsAsync(long? userId)
         {
             var queryPatient = await _patientRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
 
