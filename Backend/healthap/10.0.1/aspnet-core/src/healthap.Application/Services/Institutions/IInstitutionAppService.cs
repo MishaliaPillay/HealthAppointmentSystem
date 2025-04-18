@@ -12,7 +12,7 @@ namespace healthap.Services.Institutions
         CreateInstitutionDto,     // Used for creating
         UpdateInstitutionDto>     // Used for updating
     {
-        Task<ListResultDto<InstitutionListDto>> GetAllInstitutionsAsync();
+        Task<ListResultDto<InstitutionDto>> GetAllInstitutionsAsync();
         Task<PagedResultDto<InstitutionListDto>> SearchInstitutionsAsync(GetInstitutionListInput input);
         Task<ListResultDto<InstitutionDto>> GetLocationsFromGooglePlacesAsync(string query, string region = "za");
         Task ImportLocationFromGooglePlacesAsync(string placeId);

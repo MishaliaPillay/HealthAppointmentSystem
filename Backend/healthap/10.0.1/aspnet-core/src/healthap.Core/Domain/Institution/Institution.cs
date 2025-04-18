@@ -20,7 +20,7 @@ namespace healthap.Domain.Institution
 
         public virtual ICollection<Speciality>? Specialities { get; set; } = null;
         public virtual ICollection<Provider> Providers { get; set; }
-         public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
 
         //  for Google Places integration
         public string PlaceId { get; set; }
@@ -28,7 +28,7 @@ namespace healthap.Domain.Institution
         public double Longitude { get; set; }
         public string GoogleMapsUrl { get; set; }
 
-      
+
         //public Institution()
         //{
         //    Providers = new List<ProviderLocation>();

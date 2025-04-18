@@ -58,7 +58,7 @@ export const LocationProvider = ({
 
   const getAllPlaces = async () => {
     dispatch(getAllPlacesPending());
-    const endpoint = `/Institution/GetAll`;
+    const endpoint = `/Institution/GetAllInstitutions`;
     await instance
       .get(endpoint)
       .then((response) => {

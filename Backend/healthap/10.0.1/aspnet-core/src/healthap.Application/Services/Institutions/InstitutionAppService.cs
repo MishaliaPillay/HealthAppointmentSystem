@@ -40,15 +40,15 @@ namespace healthap.Services.Institutions
             _institutionDataSeeder = institutionDataSeeder;
         }
 
-        public async Task<ListResultDto<InstitutionListDto>> GetAllInstitutionsAsync()
+        public async Task<ListResultDto<InstitutionDto>> GetAllInstitutionsAsync()
         {
             try
             {
                 var institutions = await Repository.GetAllListAsync();
                 Logger.Info($"Number of institutions retrieved: {institutions.Count}");
 
-                return new ListResultDto<InstitutionListDto>(
-                    ObjectMapper.Map<List<InstitutionListDto>>(institutions)
+                return new ListResultDto<InstitutionDto>(
+                    ObjectMapper.Map<List<InstitutionDto>>(institutions)
                 );
             }
             catch (Exception ex)
