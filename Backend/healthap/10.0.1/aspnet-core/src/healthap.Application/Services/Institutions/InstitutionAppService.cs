@@ -14,6 +14,7 @@ using Abp.Authorization;
 using healthap.Authorization;
 using healthap.EntityFrameworkCore.Seed;
 using System;
+using Microsoft.Extensions.Logging.Console;
 
 namespace healthap.Services.Institutions
 {
@@ -41,11 +42,22 @@ namespace healthap.Services.Institutions
 
         public async Task<ListResultDto<InstitutionListDto>> GetAllInstitutionsAsync()
         {
-            var institutions = await Repository.GetAllListAsync();
-            return new ListResultDto<InstitutionListDto>(
-                ObjectMapper.Map<List<InstitutionListDto>>(institutions)
-            );
+            try
+            {
+                var institutions = await Repository.GetAllListAsync();
+                Logger.Info($"Number of institutions retrieved: {institutions.Count}");
+
+                return new ListResultDto<InstitutionListDto>(
+                    ObjectMapper.Map<List<InstitutionListDto>>(institutions)
+                );
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error retrieving all institutions", ex);
+                throw;
+            }
         }
+
 
         public async Task<PagedResultDto<InstitutionListDto>> SearchInstitutionsAsync(GetInstitutionListInput input)
         {
