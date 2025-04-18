@@ -91,7 +91,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
       if (emailExists) {
         return Promise.reject("Email already exists");
       }
-    } catch (err) {
+    } catch {
       return Promise.reject("Error validating email");
     }
   };
@@ -103,7 +103,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
       if (usernameExists) {
         return Promise.reject("Username already exists");
       }
-    } catch (err) {
+    } catch {
       return Promise.reject("Error validating username");
     }
   };
