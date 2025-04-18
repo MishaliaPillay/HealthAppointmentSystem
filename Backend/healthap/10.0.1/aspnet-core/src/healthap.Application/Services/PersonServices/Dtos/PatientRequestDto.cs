@@ -14,7 +14,6 @@ namespace healthap.Services.PersonServices.Dtos
         public string Province { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
-   
         public ReflistConMethod PreferredContactMethod { get; set; }
     }
 }

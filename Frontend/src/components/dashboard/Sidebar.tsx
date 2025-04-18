@@ -54,9 +54,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     },
 
     {
-      key: "help",
+      key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,
-      label: "Help",
+      label: (
+        <Link href="/patient-dashboard/help">Help</Link>
+      ),
     },
     {
       key: "logout",
@@ -108,5 +110,3 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 };
 
 export default Sidebar;
-
-

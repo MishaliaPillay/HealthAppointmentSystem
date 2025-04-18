@@ -59,7 +59,7 @@ namespace healthap.Domain.Persons
                 }
 
                 // Add to Patient role
-                await _userManager.AddToRoleAsync(user, "PATIENT");
+                 await _userManager.AddToRoleAsync(user, "PATIENT");
 
 
                 var patient = new Patient
@@ -100,7 +100,7 @@ namespace healthap.Domain.Persons
         }
         public IQueryable<Patient> GetAllPaitentsAsync()
         {
-             return _patientRepository.GetAllIncluding(p => p.User);
+            return _patientRepository.GetAllIncluding(p => p.User);
         }
     }
 }
