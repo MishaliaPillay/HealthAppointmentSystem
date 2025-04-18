@@ -9,6 +9,7 @@ import {
   signInPending,
   signInSuccess,
   signOutSuccess,
+  
   signUpPending,
   signUpSuccess,
 } from "./actions";
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
- 
+
     const endpoint =
       Auth.role == "PATIENT"
         ? `https://localhost:44311/api/services/app/Patient/Create`
@@ -26,7 +27,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await axios
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
+        console.log("ndnsc");
         dispatch(signUpSuccess(response.data));
+        console.log();
       })
       .catch((error) => {
         console.error(error);

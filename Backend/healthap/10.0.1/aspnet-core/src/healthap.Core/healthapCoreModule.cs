@@ -52,5 +52,5 @@ public class healthapCoreModule : AbpModule
         IocManager.Resolve<AppTimes>().StartupTime = Clock.Now;
     }
 
-
+    
 }

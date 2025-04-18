@@ -58,7 +58,7 @@ namespace healthap.Domain.Persons
                 }
 
                 // Add Provider role
-                //await _userManager.AddToRoleAsync(user, "PROVIDER");
+                await _userManager.AddToRoleAsync(user, "provider");
 
                 // Create provider entity
                 var provider = new Provider
@@ -70,7 +70,7 @@ namespace healthap.Domain.Persons
                     YearsOfExperience = yearsOfExperience,
                     MaxAppointmentsPerDay = maxAppointmentsPerDay,
                     Qualification = qualification,
-                    ProviderAvailabilty = new List<ProviderAvailabilty>(),
+                    Availabilities = new List<ProviderAvailabilty>(),
                     Appointments = new List<Appointment>()
                 };
 
@@ -98,13 +98,6 @@ namespace healthap.Domain.Persons
         public IQueryable<Provider> GetAllProvidersAsync()
         {
             return _providerRepository.GetAllIncluding(p => p.User);
-        }
-
-        public async Task<Provider?> GetProviderByUserIdWithDetailsAsync(long userId)
-        {
-            return await _providerRepository
-                .GetAllIncluding(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty)
-                .FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
     }
