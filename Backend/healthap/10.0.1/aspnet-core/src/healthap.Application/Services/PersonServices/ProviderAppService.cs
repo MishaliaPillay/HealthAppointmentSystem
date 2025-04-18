@@ -31,17 +31,19 @@ namespace healthap.Services.PersonServices
         public override async Task<ProviderResponseDto> CreateAsync(ProviderRequestDto input)
         {
             var provider = await _providerManager.CreateProviderAsync(
-                input.Title,
-                input.Name,
-                input.Surname,
-                input.EmailAddress,
-                input.PhoneNumber,
-                input.UserName,
-                input.Password,
-                input.Biography,
-                input.YearsOfExperience,
-                input.MaxAppointmentsPerDay,
-                input.Qualification
+           input.Title,
+    input.Name,
+    input.Surname,
+    input.EmailAddress,
+    input.PhoneNumber,
+    input.UserName,
+    input.Password,
+    input.Biography,
+    input.YearsOfExperience,
+    input.MaxAppointmentsPerDay,
+    input.Qualification,
+    input.Speciality,
+    input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }

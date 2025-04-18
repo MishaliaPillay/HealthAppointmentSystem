@@ -8,6 +8,8 @@
         public int YearsOfExperience { get; set; }
         public int MaxAppointmentsPerDay { get; set; }
         public string Qualification { get; set; }
-        public string Specialty { get; set; }
+        public string Speciality { get; set; }
+        public int InstitutionId { get; set; }
+
     }
 }
