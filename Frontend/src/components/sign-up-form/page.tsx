@@ -1,16 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Select, DatePicker, Checkbox } from "antd";
-import {
-  LockOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
-
+import { useRouter } from "next/navigation";
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
-import { RadioChangeEvent } from "antd";
-import { StoreValue } from "antd/es/form/interface";
+
+import { IUserCheck } from "@/providers/check-user-provider/models";
 import { IAuth } from "@/providers/auth-provider/models";
 import { useAuthActions } from "@/providers/auth-provider";
 import { useCheckuserActions } from "@/providers/check-user-provider";
@@ -27,33 +22,28 @@ interface SignupFormProps {
 export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState("");
-  const [showTooltip, setShowTooltip] = useState(false);
   const { signUp } = useAuthActions();
 
   const [form] = Form.useForm();
 
   const { userExists } = useCheckuserActions();
-  const passwordChecks = {
-    length: password.length >= 8,
-    lowercase: /[a-z]/.test(password),
-    uppercase: /[A-Z]/.test(password),
-    number: /[0-9]/.test(password),
-    specialChar: /[@$!%*?&]/.test(password),
-  };
+
   const hasErrors = form
     .getFieldsError()
     .some(({ errors }) => errors.length > 0);
 
   const isButtonDisabled = loading || hasErrors;
-  const validateEmailExists = (value: StoreValue): Promise<void> => {
+
+  const validateEmailExists = async (_: any, value: string) => {
     if (!value) return Promise.resolve();
 
+    // This will ensure we debounce the userExists function
     return new Promise<void>((resolve, reject) => {
+      // The debounced version of userExists
       const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
-            emailAddress: value as string,
+            emailAddress: value,
             userName: "",
           });
           if (result.result.emailExists) {
@@ -61,42 +51,46 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           } else {
             resolve();
           }
-        } catch {
+        } catch (err) {
           reject("Error validating email");
         }
-      }, 500);
+      }, 500); // Delay set to 500ms
 
+      // Call the debounced function immediately (doesn't wait for user input)
       debouncedUserExists();
     });
   };
 
-  const validateUsernameExists = (value: StoreValue): Promise<void> => {
+  const validateUsernameExists = async (_: any, value: string) => {
     if (!value) return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
+      // The debounced version of userExists for username
       const debouncedUserExists = debounce(async () => {
         try {
           const result = await userExists({
             emailAddress: "",
-            userName: value as string,
+            userName: value,
           });
           if (result.result.userNameExists) {
             reject("Username already exists");
           } else {
             resolve();
           }
-        } catch {
+        } catch (err) {
           reject("Error validating username");
         }
-      }, 500);
+      }, 500); // Delay set to 500ms
 
+      // Call the debounced function immediately
       debouncedUserExists();
     });
   };
 
-  const handleroleChange = (e: RadioChangeEvent) => {
+  const handleroleChange = (e: any) => {
     setrole(e.target.value.toLowerCase());
   };
+
   const onFinishSignup = async (values: IAuth) => {
     onBeforeSubmit?.();
     setLoading(true);
@@ -109,7 +103,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     };
 
     await signUp(formattedValues);
-
+    // Do NOT check isSuccess here – it will update *after* state change
     setLoading(false);
   };
 
@@ -199,57 +193,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           { min: 8, message: "Password must be at least 8 characters!" },
         ]}
       >
-        <div style={{ position: "relative" }}>
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder="Password"
-            size="large"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setShowTooltip(e.target.value.length > 0);
-            }}
-            onBlur={() => setShowTooltip(false)}
-          />
-          {showTooltip && (
-            <div
-              style={{
-                position: "absolute",
-                top: "100%",
-                left: 0,
-                background: "#fff",
-                border: "1px solid #ccc",
-                padding: "10px",
-                borderRadius: "5px",
-                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                width: "100%",
-                zIndex: 10,
-              }}
-            >
-              <p>Password must contain:</p>
-              {Object.entries(passwordChecks).map(([key, valid]) => (
-                <p
-                  key={key}
-                  style={{ color: valid ? "green" : "red", marginBottom: 4 }}
-                >
-                  {valid ? (
-                    <CheckCircleOutlined style={{ color: "green" }} />
-                  ) : (
-                    <CloseCircleOutlined style={{ color: "red" }} />
-                  )}{" "}
-                  {
-                    {
-                      length: "At least 8 characters",
-                      lowercase: "At least one lowercase letter",
-                      uppercase: "At least one uppercase letter",
-                      number: "At least one number",
-                      specialChar: "At least one special character (!@#$%^&*)",
-                    }[key]
-                  }
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
+        <Input.Password placeholder="Password" />
       </Form.Item>
 
       {role === "patient" && (
