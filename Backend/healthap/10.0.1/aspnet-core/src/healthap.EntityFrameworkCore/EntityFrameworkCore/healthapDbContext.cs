@@ -44,22 +44,22 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
             entity.Property(e => e.GoogleMapsUrl).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<ProviderLocation>(entity =>
-        {
-            entity.ToTable("ProviderLocations");
-            entity.HasKey(e => e.Id);
+        //modelBuilder.Entity<ProviderLocation>(entity =>
+        //{
+        //    entity.ToTable("ProviderLocations");
+        //    entity.HasKey(e => e.Id);
 
-            entity.HasOne(e => e.Institution)
-                .WithMany(l => l.Providers)
-                .HasForeignKey(e => e.LocationId)
-                .OnDelete(DeleteBehavior.Restrict);
+        //    entity.HasOne(e => e.Institution)
+        //        .WithMany(l => l.Providers)
+        //        .HasForeignKey(e => e.LocationId)
+        //        .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Provider)
-                .WithMany()
-                .HasForeignKey(e => e.ProviderId)
-                .OnDelete(DeleteBehavior.Restrict);
+        //    entity.HasOne(e => e.Provider)
+        //        .WithMany()
+        //        .HasForeignKey(e => e.ProviderId)
+        //        .OnDelete(DeleteBehavior.Restrict);
 
-            entity.Property(e => e.Specialization).HasMaxLength(200);
-        });
+        //    entity.Property(e => e.Specialization).HasMaxLength(200);
+        //});
     }
 }

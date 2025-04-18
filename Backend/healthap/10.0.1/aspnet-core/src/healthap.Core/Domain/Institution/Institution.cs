@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Abp.Domain.Entities.Auditing;
 using healthap.Domain.Appointments;
+using healthap.Domain.Persons;
+using healthap.MultiTenancy.speciality;
+
 
 namespace healthap.Domain.Institution
 {
@@ -19,8 +18,9 @@ namespace healthap.Domain.Institution
         public string FacilityType { get; set; }
         public string Description { get; set; }
 
-        public virtual ICollection<ProviderLocation> Providers { get; set; }
-        // public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Speciality>? Specialities { get; set; } = null;
+        public virtual ICollection<Provider> Providers { get; set; }
+         public virtual ICollection<Appointment> Appointments { get; set; }
 
         //  for Google Places integration
         public string PlaceId { get; set; }
@@ -28,11 +28,12 @@ namespace healthap.Domain.Institution
         public double Longitude { get; set; }
         public string GoogleMapsUrl { get; set; }
 
-        public Institution()
-        {
-            Providers = new List<ProviderLocation>();
-            //Appointments = new List<Appointment>();
-        }
+      
+        //public Institution()
+        //{
+        //    Providers = new List<ProviderLocation>();
+        //    //Appointments = new List<Appointment>();
+        //}
     }
 
 }

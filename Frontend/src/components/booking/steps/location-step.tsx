@@ -72,11 +72,12 @@ import {
   useLocationActions,
 } from "@/providers/institutionLocation-provider";
 import { ILocation } from "@/providers/institutionLocation-provider/context";
+import { Facility } from "../types";
 
 const { Title, Text } = Typography;
 
 interface LocationPageProps {
-  onSelect?: (location: ILocation) => void;
+  onSelect?: (location: ILocation | Facility) => void; // Accept both types
   onBack?: () => void;
 }
 

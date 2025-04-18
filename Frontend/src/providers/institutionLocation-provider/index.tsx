@@ -90,7 +90,6 @@ export const LocationProvider = ({
     </LocationStateContext.Provider>
   );
 };
-
 export const useLocationState = () => {
   const context = useContext(LocationStateContext);
   if (!context) {
