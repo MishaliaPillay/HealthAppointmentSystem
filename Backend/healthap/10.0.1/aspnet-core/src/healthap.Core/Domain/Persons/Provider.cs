@@ -21,6 +21,12 @@ namespace healthap.Domain.Persons
         public int YearsOfExperience { get; set; }
         public int MaxAppointmentsPerDay { get; set; }
         public string Qualification { get; set; }
+        public string Speciality { get; set; }
+
+        public int InstitutionId { get; set; }
+
+
+
         public virtual ICollection<ProviderAvailabilty>? Availabilities { get; set; } = null;
         public virtual ICollection<Appointment>? Appointments { get; set; } = null;
     }
