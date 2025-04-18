@@ -2093,13 +2093,17 @@ namespace healthap.Migrations
 
             modelBuilder.Entity("healthap.Domain.Appointments.Appointment", b =>
                 {
-                    b.HasOne("healthap.Domain.Persons.Patient", null)
+                    b.HasOne("healthap.Domain.Persons.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId");
 
-                    b.HasOne("healthap.Domain.Persons.Provider", null)
+                    b.HasOne("healthap.Domain.Persons.Provider", "Provider")
                         .WithMany("Appointments")
                         .HasForeignKey("ProviderId");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
