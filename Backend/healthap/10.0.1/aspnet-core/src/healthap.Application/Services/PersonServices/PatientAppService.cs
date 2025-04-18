@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using AutoMapper;
@@ -73,27 +72,6 @@ namespace healthap.Services.PersonServices
                 totalCount,
                 _mapper.Map<List<PatientResponseDto>>(patients)
             );
-        }
-                public async Task<PatientResponseDto> GetCurrentPatientAsync(long input)
-        {
-            // Check if user is logged in
-            var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to access patient information.");
-            }
-
-            // Get the provider by the input user ID
-            var patient = await _patientManager.GetPatientByUserIdWithDetailsAsync(input);
-
-            // Check if patient exists
-            if (patient == null)
-            {
-                throw new UserFriendlyException("Patient not found");
-            }
-
-            // Map to DTO and return
-            return _mapper.Map<Patient, PatientResponseDto>(patient);
         }
     }
 }
