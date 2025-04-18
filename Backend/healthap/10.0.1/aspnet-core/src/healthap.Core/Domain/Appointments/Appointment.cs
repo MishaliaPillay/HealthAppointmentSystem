@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities.Auditing;
-using healthap.Domain.Persons;
 
 namespace healthap.Domain.Appointments
 {
@@ -15,9 +14,5 @@ namespace healthap.Domain.Appointments
         public string Purpose { get; set; }
         public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
 
-        // Navigation properties 
-
-        public virtual Patient Patient { get; set; }
-        public virtual Provider Provider { get; set; }
     }
 }

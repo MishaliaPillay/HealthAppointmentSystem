@@ -10,7 +10,6 @@ using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using Abp.Authorization;
 
 namespace healthap.Services.PersonServices
 {
@@ -22,7 +21,7 @@ namespace healthap.Services.PersonServices
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
 
-        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager, IMapper mapper) : base(repository)
+        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager ,IMapper mapper) : base(repository)
         {
             _providerManager = providerManager;
             _mapper = mapper;
@@ -55,28 +54,6 @@ namespace healthap.Services.PersonServices
             return _mapper.Map<ProviderResponseDto>(proivder);
 
         }
-
-        public async Task<ProviderResponseDto> GetCurrentProviderAsync(long input)
-        {
-            // Check if user is logged in
-            var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to access provider information.");
-            }
-
-            // Get the provider by the input user ID
-            var provider = await _providerManager.GetProviderByUserIdWithDetailsAsync(input);
-
-            // Check if provider exists
-            if (provider == null)
-            {
-                throw new UserFriendlyException("Provider not found");
-            }
-
-            // Map to DTO and return
-            return _mapper.Map<Provider, ProviderResponseDto>(provider);
-        }
         public override async Task<PagedResultDto<ProviderResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _providerManager.GetAllProvidersAsync();
@@ -93,5 +70,4 @@ namespace healthap.Services.PersonServices
             );
         }
     }
-
 }

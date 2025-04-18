@@ -1680,9 +1680,8 @@ namespace healthap.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("ProviderAvailabilty");
+                    b.ToTable("ProviderAvailabilities");
                 });
-
 
             modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
                 {
@@ -1790,9 +1789,6 @@ namespace healthap.Migrations
                     b.Property<string>("Qualification")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Speciality")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -1871,6 +1867,27 @@ namespace healthap.Migrations
                     b.HasIndex("TenancyName");
 
                     b.ToTable("AbpTenants");
+                });
+
+            modelBuilder.Entity("healthap.MultiTenancy.speciality.Speciality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SpecialtyName")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("Specialities");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
@@ -2093,43 +2110,20 @@ namespace healthap.Migrations
 
             modelBuilder.Entity("healthap.Domain.Appointments.Appointment", b =>
                 {
-                    b.HasOne("healthap.Domain.Persons.Patient", "Patient")
+                    b.HasOne("healthap.Domain.Persons.Patient", null)
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId");
 
-                    b.HasOne("healthap.Domain.Persons.Provider", "Provider")
+                    b.HasOne("healthap.Domain.Persons.Provider", null)
                         .WithMany("Appointments")
                         .HasForeignKey("ProviderId");
-
-                    b.Navigation("Patient");
-
-                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
-                        .WithMany("ProviderAvailabilty")
+                        .WithMany("Availabilities")
                         .HasForeignKey("ProviderId");
-
-                    b.Navigation("Provider");
-                });
-
-            modelBuilder.Entity("healthap.Domain.Institution.ProviderLocation", b =>
-                {
-                    b.HasOne("healthap.Domain.Institution.Institution", "Institution")
-                        .WithMany("Providers")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("healthap.Authorization.Users.User", "Provider")
-                        .WithMany()
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Institution");
 
                     b.Navigation("Provider");
                 });
@@ -2181,6 +2175,17 @@ namespace healthap.Migrations
                     b.Navigation("Edition");
 
                     b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("healthap.MultiTenancy.speciality.Speciality", b =>
+                {
+                    b.HasOne("healthap.Domain.Persons.Provider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
@@ -2254,11 +2259,6 @@ namespace healthap.Migrations
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Institution.Institution", b =>
-                {
-                    b.Navigation("Providers");
-                });
-
             modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
                 {
                     b.Navigation("Appointments");
@@ -2268,7 +2268,7 @@ namespace healthap.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("ProviderAvailabilty");
+                    b.Navigation("Availabilities");
                 });
 #pragma warning restore 612, 618
         }

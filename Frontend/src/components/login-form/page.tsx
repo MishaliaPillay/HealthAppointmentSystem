@@ -45,10 +45,7 @@ export default function LoginForm({
 
       <Form.Item
         name="password"
-        rules={[
-          { required: true, message: "Please input your password!" },
-          { min: 8, message: "Password must be at least 8 characters!" },
-        ]}
+        rules={[{ required: true, message: "Please input your password!" }]}
       >
         <Input.Password placeholder="Password" />
       </Form.Item>
