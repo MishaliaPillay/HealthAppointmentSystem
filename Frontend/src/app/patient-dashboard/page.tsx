@@ -1,5 +1,15 @@
 "use client";
-import { Typography, Modal } from "antd";
+import {
+  Typography,
+  Modal,
+  Spin,
+  Row,
+  Col,
+  Card,
+  Button,
+  Progress,
+} from "antd";
+const { Title, Text } = Typography;
 import styles from "./patientdash.module.css";
 import BookingModule from "../../components/booking/booking";
 import { useState, useEffect } from "react";
@@ -8,11 +18,8 @@ import {
   usePatientState,
 } from "@/providers/paitient-provider";
 
+
 import { useUserActions } from "@/providers/users-provider";
-
-import Card from "antd/es/card/Card";
-
-const { Title } = Typography;
 
 export default function Dashboard() {
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -23,10 +30,12 @@ export default function Dashboard() {
 
   const { getCurrentPatient } = usePatientActions();
 
-  const handleCloseBookingModal = () => {
-    setShowBookingModal(false);
-  };
-
+   const handleOpenBookingModal = () => {
+     setShowBookingModal(true);
+   };
+ const handleCloseBookingModal = () => {
+   setShowBookingModal(false);
+ };
   useEffect(() => {
     if (isPending) {
       setLoading(true);
@@ -45,37 +54,33 @@ export default function Dashboard() {
     }
   }, [isError, isPending, isSuccess, currentPatient]);
 
-  const fetchPatientOnReload = async () => {
+  const fetchPatientOnReload = async ():Promise<void> => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
       await getCurrentUser(token)
         .then(async (user) => {
-          await getCurrentPatient(user.id);
+          return await getCurrentPatient(user.id);
+          
         })
         .catch((err) => console.log("Error Current User : ", err));
+        if (Loading || isPending) {
+          <Spin spinning tip="Loading patient data..." />;
+      }
+         if (isError || !getCurrentUser(token)) {
+          <p>Failed to load patient data. Please try again.</p>;
+         }
     }
   };
 
-  // if (loading || isPending) {
-  //   return <Spin spinning tip="Loading patient data..." />;
-  // }
 
-  // if (isError || !getCurrentPatient()) {
-  //   return <p>Failed to load patient data. Please try again.</p>;
-  // }
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, {currentPatient?.user.name}!</Title>
+        <Title level={3}>Welcome back, {currentPatient?.user.name}</Title>
+        </Card>
 
-        {/* <Text>
-          Your next appointment is with Dr.{" "}
-          {currentPatient.appointments?.[0]?.doctorName || "TBD"}
-        </Text>  */}
-      </Card>
-
-      {/* <Row gutter={[24, 24]} className={styles.rowSpacing}>
+      <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
           <Card title="Quick Actions" variant="outlined">
             <div className={styles.quickActions}>
@@ -99,15 +104,15 @@ export default function Dashboard() {
               <div className={styles.statLabel}>
                 <Text>
                   Recent Appointments:{" "}
-                  {currentPatient.appointments?.length || 0}
+                  {currentPatient?.appointments?.length || 0}
                 </Text>
               </div>
               <Progress
-                percent={
-                  (currentPatient.appointments?.length /
-                    currentPatient.MaxAppointmentsPerDay) *
-                    100 || 0
-                }
+                // percent={
+                //   (currentPatient.appointments?.length /
+                //     currentPatient.MaxAppointmentsPerDay) *
+                //     100 || 0
+                // }
                 strokeColor="#52c41a"
                 showInfo={false}
               />
@@ -120,7 +125,7 @@ export default function Dashboard() {
             </div>
           </Card>
         </Col>
-      </Row> */}
+      </Row>
       {/* 
       <Card
         title="Upcoming Appointments"
@@ -140,7 +145,7 @@ export default function Dashboard() {
             />
           )) || <Text>No upcoming appointments.</Text>}
         </div>
-      </Card> */}
+      </Card> 
 
       {/* Booking Modal */}
       <Modal
