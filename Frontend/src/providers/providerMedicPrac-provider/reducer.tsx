@@ -7,6 +7,18 @@ export const ProviderReducer = handleActions<
   IProviderStateContext
 >(
   {
+    [ProviderActionEnums.getCurrentProviderPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [ProviderActionEnums.getCurrentProviderSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [ProviderActionEnums.getCurrentProviderError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
     [ProviderActionEnums.getProvidersPending]: (state, action) => ({
       ...state,
       ...action.payload,

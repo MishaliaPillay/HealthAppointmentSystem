@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { IProvider, IProviderRegisteration } from "./models";
 import { createContext } from "react";
 
@@ -19,12 +19,14 @@ export interface IProviderActionContext {
   registerProvider: (Provider: IProviderRegisteration) => Promise<void>;
   updateProvider: (Provider: IProvider) => void;
   deleteProviderbyId: (ProviderId: string) => void; //letting user delete their own profile
+  getCurrentProvider: (userId: number) => Promise<IProvider>; // Fixed camelCase name
 }
 // Initial state with default values
 export const INITIAL_STATE: IProviderStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
+  Providers: [],
 };
 
 // Create the state context and the action context

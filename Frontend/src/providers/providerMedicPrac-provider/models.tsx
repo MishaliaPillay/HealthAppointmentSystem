@@ -1,28 +1,30 @@
+import { IAppointment } from "../appointment-provider/context";
+import { IUser } from "../users-provider/models";
+
 export interface IProvider {
-    _id?:string;
-    FirstName: string;
-    LastName: string;
-    Email: string;
-    //TODO:KM May have to remove at some point
-    Role: string;
-    Title:string;
-    Biography:string;
-    PhoneNumber:string;
-    YearsOfExperience:number;
-    MaxAppointmentsPerDay:number;
-    Qualification:string;
+  user: IUser;
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  Title: string;
+  Biography: string;
+  PhoneNumber: string;
+  YearsOfExperience: number;
+  MaxAppointmentsPerDay: number;
+  Qualification: string;
+  appointments?: IAppointment[];
+  _id?: string;
 }
 export interface IProviderRegisteration {
-    FirstName: string;
-    LastName: string;
-    Email: string;
-     //TODO:KM May have to remove at some point
-    Role: string;
-    Title:string;
-    Password:string;
-    Biography:string;
-    PhoneNumber:string;
-    YearsOfExperience:number;
-    MaxAppointmentsPerDay:number;
-    Qualification:string;
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  Role: string;
+  Title: string;
+  Password: string;
+  Biography: string;
+  PhoneNumber: string;
+  YearsOfExperience: number;
+  MaxAppointmentsPerDay: number;
+  Qualification: string;
 }

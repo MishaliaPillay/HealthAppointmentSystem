@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
-import { IProvider } from "./models";
+import { IProvider, IProviderRegisteration } from "./models";
 import {
   INITIAL_STATE,
   ProviderActionContext,
@@ -9,6 +9,9 @@ import {
 import { ProviderReducer } from "./reducer";
 import { useContext, useReducer } from "react";
 import {
+  getCurrentProviderPending,
+  getCurrentProviderSuccess,
+  getCurrentProviderError,
   registerProviderPending,
   registerProviderError,
   registerProviderSuccess,
@@ -23,7 +26,7 @@ import {
   deleteProviderPending,
   deleteProviderSuccess,
 } from "./actions";
-
+import axios from "axios";
 export const ProviderProvider = ({
   children,
 }: {
@@ -32,8 +35,34 @@ export const ProviderProvider = ({
   const [state, dispatch] = useReducer(ProviderReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
+  // Get current Provider
+  const getCurrentProvider = async (
+    userId: number
+  ): Promise<IProvider | null> => {
+    dispatch(getCurrentProviderPending());
+    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?id=${userId}`;
+
+    return axios
+      .get(endpoint)
+      .then((response) => {
+        if (response?.data?.result) {
+          dispatch(getCurrentProviderSuccess(response.data.result));
+          return response.data.result;
+        } else {
+          console.warn("No Provider data found in response");
+          dispatch(getCurrentProviderError());
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current Provider:", error);
+        dispatch(getCurrentProviderError());
+        return null;
+      });
+  };
+
   //Register the Provider
-  const registerProvider = async (Provider: IProvider) => {
+  const registerProvider = async (Provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
     const endpoint = `/register`;
     await instance
@@ -44,7 +73,7 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(registerProviderError());
-      })
+      });
   };
 
   //Get All Providers
@@ -59,7 +88,7 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getProvidersError());
-      })
+      });
   };
 
   //Get Provider
@@ -74,7 +103,7 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getProviderError());
-      })
+      });
   };
 
   //Update Provider
@@ -89,7 +118,7 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(updateProviderError());
-      })
+      });
   };
 
   //Delete Provider
@@ -103,13 +132,14 @@ export const ProviderProvider = ({
       })
       .catch((error) => {
         dispatch(deleteProviderSuccess(error.data));
-      })
+      });
   };
 
   return (
     <ProviderStateContext.Provider value={state}>
       <ProviderActionContext.Provider
         value={{
+          getCurrentProvider,
           registerProvider,
           getProviders,
           getProvider,

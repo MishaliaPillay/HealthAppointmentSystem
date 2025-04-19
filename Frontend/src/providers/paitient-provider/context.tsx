@@ -20,7 +20,7 @@ export interface IPatientActionContext {
   registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
   updatePatient: (Patient: string, patientData: UpdatePatientDto) => void;
   deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
-  getCurrentPatient: (userId:number) => Promise<IPatient>; // Fixed camelCase name
+  getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
 }
 // Initial state with default values
 export const INITIAL_STATE: IPatientStateContext = {
