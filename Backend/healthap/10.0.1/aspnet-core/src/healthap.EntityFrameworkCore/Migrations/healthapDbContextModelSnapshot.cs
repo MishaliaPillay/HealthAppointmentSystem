@@ -1819,6 +1819,7 @@ namespace healthap.Migrations
                     b.HasIndex("ProviderId");
 
                     b.ToTable("ProviderLocations");
+                    b.ToTable("ProviderAvailabilities");
                 });
 
             modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
@@ -2044,6 +2045,11 @@ namespace healthap.Migrations
 
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
@@ -2058,6 +2064,9 @@ namespace healthap.Migrations
                     b.HasIndex("ProviderId");
 
                     b.ToTable("Speciality");
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("Specialities");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

@@ -4,6 +4,7 @@ using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using healthap.Domain.Appointments;
 using healthap.Domain.Institution;
+﻿using Abp.Domain.Entities;
 using healthap.Domain.Persons;
 using System;
 using System.Collections.Generic;
