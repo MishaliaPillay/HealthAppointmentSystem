@@ -12,6 +12,7 @@ import {
   Col,
   Spin,
   Select,
+  Divider,
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import {
@@ -46,7 +47,7 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (currentPatient) {
       const data: UpdatePatientDto = {
-        id: currentPatient.id,
+        id: currentPatient.id, // still stored internally for updating
         name: currentPatient.user.name,
         surname: currentPatient.user.surname,
         emailAddress: currentPatient.user.emailAddress,
@@ -62,7 +63,7 @@ const ProfilePage: React.FC = () => {
         preferredContactMethod: currentPatient.preferredContactMethod,
       };
       setFormValues(data);
-      form.setFieldsValue(data); // set values in form
+      form.setFieldsValue(data);
     }
   }, [currentPatient]);
 
@@ -88,7 +89,6 @@ const ProfilePage: React.FC = () => {
       await updatePatient(formValues.id, {
         ...formValues,
         ...values,
-        id: formValues.id,
       });
     } catch (error) {
       console.error("Validation failed:", error);
@@ -99,122 +99,87 @@ const ProfilePage: React.FC = () => {
     <div>
       <Title level={2}>Profile</Title>
       <Card>
-        <Row gutter={[24, 24]}>
-          <Col xs={24} md={8}>
-            <div style={{ textAlign: "center" }}>
-              <Avatar size={100} icon={<UserOutlined />} />
-            </div>
-          </Col>
-          <Col xs={24} md={16}>
-            {loading || !formValues ? (
-              <Spin spinning tip="Loading patient data..." />
-            ) : (
-              <Form
-                layout="vertical"
-                onValuesChange={(changedValues) =>
-                  setFormValues({ ...formValues, ...changedValues })
-                }
-              >
-                <Form.Item label="ID" name="id" initialValue={formValues?.id}>
-                  <Input disabled />
-                </Form.Item>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          {/* Avatar showing first initial */}
+          <Avatar
+            size={100}
+            style={{ backgroundColor: "#1890ff", fontSize: 36 }}
+          >
+            {formValues?.name?.charAt(0).toUpperCase() || <UserOutlined />}
+          </Avatar>
+          {/* Full name displayed below the avatar */}
+          <div style={{ marginTop: 12, fontSize: 18, fontWeight: 500 }}>
+            {formValues?.name} {formValues?.surname}
+          </div>
+        </div>
 
-                <Form.Item
-                  label="Full Name"
-                  name="name"
-                  initialValue={formValues?.name}
-                >
+        {loading || !formValues ? (
+          <Spin spinning tip="Loading patient data..." />
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            onValuesChange={(changedValues) =>
+              setFormValues({ ...formValues, ...changedValues })
+            }
+          >
+            <Row gutter={24}>
+              {/* Left column */}
+              <Col xs={24} md={12}>
+                <Form.Item label="Full Name" name="name">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Surname"
-                  name="surname"
-                  initialValue={formValues?.surname}
-                >
+                <Form.Item label="Surname" name="surname">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Email Address"
-                  name="emailAddress"
-                  initialValue={formValues?.emailAddress}
-                >
+                <Form.Item label="Email Address" name="emailAddress">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Phone Number"
-                  name="phoneNumber"
-                  initialValue={formValues?.phoneNumber}
-                >
+                <Form.Item label="Phone Number" name="phoneNumber">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Username"
-                  name="userName"
-                  initialValue={formValues?.userName}
-                >
+                <Form.Item label="Username" name="userName">
                   <Input />
                 </Form.Item>
 
                 <Form.Item label="Password" name="password">
                   <Input.Password placeholder="Enter new password (optional)" />
                 </Form.Item>
+              </Col>
 
-                <Form.Item
-                  label="Title"
-                  name="title"
-                  initialValue={formValues?.title}
-                >
+              {/* Right column */}
+              <Col xs={24} md={12}>
+                <Form.Item label="Title" name="title">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Address"
-                  name="address"
-                  initialValue={formValues?.address}
-                >
+                <Form.Item label="Address" name="address">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="City"
-                  name="city"
-                  initialValue={formValues?.city}
-                >
+                <Form.Item label="City" name="city">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Province"
-                  name="province"
-                  initialValue={formValues?.province}
-                >
+                <Form.Item label="Province" name="province">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Postal Code"
-                  name="postalCode"
-                  initialValue={formValues?.postalCode}
-                >
+                <Form.Item label="Postal Code" name="postalCode">
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  label="Country"
-                  name="country"
-                  initialValue={formValues?.country}
-                >
+                <Form.Item label="Country" name="country">
                   <Input />
                 </Form.Item>
 
                 <Form.Item
                   label="Preferred Contact Method"
                   name="preferredContactMethod"
-                  initialValue={formValues?.preferredContactMethod}
                 >
                   <Select
                     onChange={(value) =>
@@ -228,16 +193,18 @@ const ProfilePage: React.FC = () => {
                     <Option value={ReflistConMethod.SMS}>SMS</Option>
                   </Select>
                 </Form.Item>
+              </Col>
+            </Row>
 
-                <Form.Item>
-                  <Button type="primary" onClick={updatePatientProfile}>
-                    Save Changes
-                  </Button>
-                </Form.Item>
-              </Form>
-            )}
-          </Col>
-        </Row>
+            <Divider />
+
+            <Form.Item style={{ textAlign: "center" }}>
+              <Button type="primary" onClick={updatePatientProfile}>
+                Save Changes
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
       </Card>
     </div>
   );
