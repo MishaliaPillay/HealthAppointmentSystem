@@ -18,6 +18,8 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Speciality> Specialities { get; set; }
     public DbSet<ProviderAvailabilty> ProviderAvailabilities { get; set; }
+    public DbSet<Institution> Institutions { get; set; }
+    public DbSet<ProviderLocation> ProviderLocations { get; set; }
 
     public healthapDbContext(DbContextOptions<healthapDbContext> options)
         : base(options)
