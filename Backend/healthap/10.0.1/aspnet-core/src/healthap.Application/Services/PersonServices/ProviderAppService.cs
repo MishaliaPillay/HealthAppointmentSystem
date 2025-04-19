@@ -21,7 +21,7 @@ namespace healthap.Services.PersonServices
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
 
-        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager ,IMapper mapper) : base(repository)
+        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager, IMapper mapper) : base(repository)
         {
             _providerManager = providerManager;
             _mapper = mapper;
@@ -31,16 +31,18 @@ namespace healthap.Services.PersonServices
         {
             var provider = await _providerManager.CreateProviderAsync(
                 input.Title,
-                input.Name,
-                input.Surname,
-                input.EmailAddress,
-                input.PhoneNumber,
-                input.UserName,
-                input.Password,
-                input.Biography,
-                input.YearsOfExperience,
-                input.MaxAppointmentsPerDay,
-                input.Qualification
+    input.Name,
+    input.Surname,
+    input.EmailAddress,
+    input.PhoneNumber,
+    input.UserName,
+    input.Password,
+    input.Biography,
+    input.YearsOfExperience,
+    input.MaxAppointmentsPerDay,
+    input.Qualification,
+    input.Speciality,
+    input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }

@@ -2,7 +2,7 @@
 
 import { Typography, Row, Col, Card, Button, Progress, Modal } from "antd";
 import styles from "./patientdash.module.css";
-import BookingModule from "../../components/booking/booking";
+import { BookingModule } from "../../components/booking/booking";
 import { useState } from "react";
 
 const { Title, Text } = Typography;
