@@ -35,9 +35,10 @@ namespace healthap.Domain.Persons
             string biography,
             int yearsOfExperience,
             int maxAppointmentsPerDay,
-            string qualification, string speciality,
-int institutionId
-)
+            string qualification,
+            string speciality,
+            int institutionId)
+
         {
             try
             {
@@ -60,7 +61,7 @@ int institutionId
                 }
 
                 // Add Provider role
-                //await _userManager.AddToRoleAsync(user, "PROVIDER");
+                await _userManager.AddToRoleAsync(user, "provider");
 
                 // Create provider entity
                 var provider = new Provider
@@ -72,8 +73,9 @@ int institutionId
                     YearsOfExperience = yearsOfExperience,
                     MaxAppointmentsPerDay = maxAppointmentsPerDay,
                     Qualification = qualification,
-                    Specialty = speciality,
+                    Specialty = speciality,           // ✅ Add this line
                     InstitutionId = institutionId,
+                    // Availabilities = new List<ProviderAvailabilty>(),
                     ProviderAvailabilty = new List<ProviderAvailabilty>(),
                     Appointments = new List<Appointment>()
                 };

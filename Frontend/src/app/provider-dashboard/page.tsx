@@ -20,7 +20,7 @@ export default function ProviderDashboard() {
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back{user?.name}</Title>
+        <Title level={3}>Welcome back {user?.name}</Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 

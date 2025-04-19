@@ -10,7 +10,6 @@ using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using Abp.Authorization;
 
 namespace healthap.Services.PersonServices
 {
@@ -42,7 +41,7 @@ namespace healthap.Services.PersonServices
                 input.YearsOfExperience,
                 input.MaxAppointmentsPerDay,
                 input.Qualification, input.Specialty,
-    input.InstitutionId
+                input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }
@@ -55,28 +54,6 @@ namespace healthap.Services.PersonServices
             }
             return _mapper.Map<ProviderResponseDto>(proivder);
 
-        }
-
-        public async Task<ProviderResponseDto> GetCurrentProviderAsync(long input)
-        {
-            // Check if user is logged in
-            var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to access provider information.");
-            }
-
-            // Get the provider by the input user ID
-            var provider = await _providerManager.GetProviderByUserIdWithDetailsAsync(input);
-
-            // Check if provider exists
-            if (provider == null)
-            {
-                throw new UserFriendlyException("Provider not found");
-            }
-
-            // Map to DTO and return
-            return _mapper.Map<Provider, ProviderResponseDto>(provider);
         }
         public override async Task<PagedResultDto<ProviderResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
@@ -94,5 +71,4 @@ namespace healthap.Services.PersonServices
             );
         }
     }
-
 }

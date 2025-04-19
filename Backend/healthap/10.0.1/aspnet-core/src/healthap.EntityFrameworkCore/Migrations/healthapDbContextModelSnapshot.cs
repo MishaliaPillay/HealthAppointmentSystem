@@ -2296,7 +2296,7 @@ namespace healthap.Migrations
             modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
-                        .WithMany("ProviderAvailabilty")
+                        .WithMany("Availabilities")
                         .HasForeignKey("ProviderId");
 
                     b.Navigation("Provider");
@@ -2480,7 +2480,7 @@ namespace healthap.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("ProviderAvailabilty");
+                    b.Navigation("Availabilities");
                 });
 #pragma warning restore 612, 618
         }
