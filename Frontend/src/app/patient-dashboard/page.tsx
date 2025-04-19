@@ -18,23 +18,23 @@ import {
   usePatientState,
 } from "@/providers/paitient-provider";
 
-import { useUserActions, useUserState } from "@/providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
 
 export default function Dashboard() {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [Loading, setLoading] = useState(false);
-  const { currentUser } = useUserState();
+
   const { isPending, isError, isSuccess, currentPatient } = usePatientState();
   const { getCurrentUser } = useUserActions();
 
   const { getCurrentPatient } = usePatientActions();
 
-   const handleOpenBookingModal = () => {
-     setShowBookingModal(true);
-   };
- const handleCloseBookingModal = () => {
-   setShowBookingModal(false);
- };
+  const handleOpenBookingModal = () => {
+    setShowBookingModal(true);
+  };
+  const handleCloseBookingModal = () => {
+    setShowBookingModal(false);
+  };
   useEffect(() => {
     if (isPending) {
       setLoading(true);
@@ -53,28 +53,28 @@ export default function Dashboard() {
     }
   }, [isError, isPending, isSuccess, currentPatient]);
 
-  const fetchPatientOnReload = async ():Promise<void> => {
+  const fetchPatientOnReload = async (): Promise<void> => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
       await getCurrentUser(token)
         .then(async (user) => {
           return await getCurrentPatient(user.id);
-          
         })
         .catch((err) => console.error("Error Current User : ", err));
-        if (Loading || isPending) {
-          <Spin spinning tip="Loading patient data..." />;
+      if (Loading || isPending) {
+        <Spin spinning tip="Loading patient data..." />;
       }
-         if (isError || !getCurrentUser(token)) {
-          <p>Failed to load patient data. Please try again.</p>;
-         }
+      if (isError || !getCurrentUser(token)) {
+        <p>Failed to load patient data. Please try again.</p>;
+      }
     }
   };
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back, {currentUser.name}</Title>
-        </Card>
+        <Title level={3}>Welcome back, {currentPatient?.user.name}</Title>
+      </Card>
+
       <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
           <Card title="Quick Actions" variant="outlined">
