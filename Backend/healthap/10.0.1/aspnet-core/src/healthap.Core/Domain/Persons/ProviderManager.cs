@@ -88,9 +88,9 @@ namespace healthap.Domain.Persons
         }
         public async Task<Provider> GetProviderByIdWithUserAsync(Guid id)
         {
-            //returning an IQuerable that all/mutiple patients  with their users information and appointments nested  
+            //returning an IQuerable that all/mutiple providers  with their users information and appointments nested  
             var query = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
-            //returning only one patient with that id
+            //returning only one provider with that id
             return await query.FirstOrDefaultAsync(p => p.Id == id);
 
         }
@@ -103,10 +103,64 @@ namespace healthap.Domain.Persons
         public async Task<Provider?> GetProviderByUserIdWithDetailsAsync(long userId)
         {
             var queryProvider = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty);
-                return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
+            return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
         }
+        public async Task<Provider> UpdateproviderAsync(
+          Guid providerId,
+          string? Name,
+          string? surname,
+          string? emailAddress,
+          string? userName,
+          string? password,
+          string? title,
+          string? phoneNumber,
+          string? biography,
+          int? yearsOfExperienece,
+          int? maxiumAppointmentsPerDay,
+          string? qaulifcations,
+          string? speciality)
+        {
+            var provider = await _providerRepository.GetAsync(providerId);
+            if (provider == null)
+                throw new UserFriendlyException("provider not found");
 
+            var user = await _userManager.GetUserByIdAsync(provider.UserId);
+            if (user == null)
+                throw new UserFriendlyException("User not found");
+
+            // Only update fields that are provided (not null)
+            if (!string.IsNullOrEmpty(Name)) user.Name = Name;
+            if (!string.IsNullOrEmpty(surname)) user.Surname = surname;
+            if (!string.IsNullOrEmpty(emailAddress)) user.EmailAddress = emailAddress;
+            if (!string.IsNullOrEmpty(userName)) user.UserName = userName;
+            if (!string.IsNullOrEmpty(title)) provider.Title = title;
+            if (!string.IsNullOrEmpty(phoneNumber)) provider.PhoneNumber = phoneNumber;
+            if (!string.IsNullOrEmpty(biography)) provider.Biography = biography;
+            if (yearsOfExperienece.HasValue) provider.YearsOfExperience = yearsOfExperienece.Value;
+            if (maxiumAppointmentsPerDay.HasValue) provider.MaxAppointmentsPerDay = maxiumAppointmentsPerDay.Value;
+            if (!string.IsNullOrEmpty(qaulifcations)) provider.Qualification = qaulifcations;
+            if (!string.IsNullOrEmpty(speciality)) provider.Speciality = speciality;
+
+            if (!string.IsNullOrEmpty(password))
+            {
+                var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passwordResult = await _userManager.ResetPasswordAsync(user, passwordResetToken, password);
+                if (!passwordResult.Succeeded)
+                    throw new UserFriendlyException("Failed to update password: " + string.Join(", ", passwordResult.Errors));
+            }
+
+           
+
+            await _providerRepository.UpdateAsync(provider);
+            await _userManager.UpdateAsync(user);
+
+            return provider;
+        }
     }
+
+
+
+}
 
 
 }
