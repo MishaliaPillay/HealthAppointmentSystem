@@ -47,7 +47,7 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (currentPatient) {
       const data: UpdatePatientDto = {
-        id: currentPatient.id, // still stored internally for updating
+        id: currentPatient.id,
         name: currentPatient.user.name,
         surname: currentPatient.user.surname,
         emailAddress: currentPatient.user.emailAddress,
@@ -90,6 +90,15 @@ const ProfilePage: React.FC = () => {
         ...formValues,
         ...values,
       });
+
+      // Update form values immediately with new data after successful update
+      setFormValues((prev) => ({
+        ...prev,
+        ...values,
+      }));
+
+      // Optionally update the UI right away
+      form.setFieldsValue({ ...values });
     } catch (error) {
       console.error("Validation failed:", error);
     }
