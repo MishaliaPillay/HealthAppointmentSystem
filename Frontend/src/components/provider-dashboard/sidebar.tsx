@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MenuProps } from "antd";
-import { useAuthActions } from "@/providers/auth-provider";
+
 
 const { Sider } = Layout;
 
@@ -22,7 +22,6 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const pathname = usePathname();
-  const { signOut } = useAuthActions();
  
   const menuItems: MenuProps["items"] = [
     {
@@ -51,8 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Logout",
-      onClick: () =>  signOut(),
+      label: "Logout"
     },
   ];
 

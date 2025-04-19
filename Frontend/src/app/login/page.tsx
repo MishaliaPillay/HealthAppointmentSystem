@@ -89,9 +89,9 @@ export default function LoginSignup({ className }: LoginSignupProps) {
           .then(async (user) => {
             await getCurrentPatient(user.id);
           })
-          .catch((err) => console.log("Error Current User : ", err));
+          .catch((err) => console.error("Error Current User : ", err));
       })
-      .catch((err) => console.log("Sign in Error", err));
+      .catch((err) => console.error("Sign in Error", err));
   };
 
   const onFinishSignup = async (values: IAuth) => {
