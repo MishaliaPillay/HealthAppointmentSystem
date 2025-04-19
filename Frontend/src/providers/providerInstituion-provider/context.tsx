@@ -29,6 +29,7 @@ export const INITIAL_STATE: IProvidersInStateContext = {
 
 export interface IProvidersInActionContext {
   getProviderInInstitution: (id: number) => void;
+  getProviderBySpeality: (speciality: string) => void;
 }
 
 export const ProvidersInStateContext =
