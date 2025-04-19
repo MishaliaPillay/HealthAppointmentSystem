@@ -7,6 +7,8 @@ import { ProviderProvider } from "../providers/providerMedicPrac-provider";
 import { PatientProvider } from "../providers/paitient-provider";
 import { UserProvider } from "../providers/users-provider";
 import { CheckUserProvider } from "@/providers/check-user-provider";
+import { LocationProvider } from "@/providers/institutionLocation-provider";
+import { ProvidersInstituionProvider } from "@/providers/providerInstituion-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +43,14 @@ export default function RootLayout({
             <AuthProvider>
               <ProviderProvider>
                 <PatientProvider>
-                  <UserProvider>{children}</UserProvider>
+                  <UserProvider>
+                    <LocationProvider>
+                      {" "}
+                      <ProvidersInstituionProvider>
+                        {children}
+                      </ProvidersInstituionProvider>
+                    </LocationProvider>
+                  </UserProvider>
                 </PatientProvider>
               </ProviderProvider>
             </AuthProvider>{" "}

@@ -5,7 +5,7 @@ export interface IProvidersInInstitution {
   id: string;
   userName: string;
   fullName: string;
-  title: number;
+  title: string;
   biography: string;
   phoneNumber: string;
   maxAppointmentsPerDay: number;
@@ -17,8 +17,21 @@ export interface IProvidersInStateContext {
   readonly isPending: boolean;
   readonly isSuccess: boolean;
   readonly isError: boolean;
-  readonly Provider?: IProvidersInInstitution;
-  readonly Providers?: IProvidersInInstitution[];
+  readonly providers?: {
+    result: {
+      id: number;
+      userId: number;
+      userName: string;
+      fullName: string;
+      title: string;
+      biography: string;
+      phoneNumber: string;
+      maxAppointmentsPerDay: number;
+      qualification: string;
+      speciality: string;
+      yearsOfExperience: number;
+    }[];
+  };
 }
 
 export const INITIAL_STATE: IProvidersInStateContext = {
@@ -29,7 +42,6 @@ export const INITIAL_STATE: IProvidersInStateContext = {
 
 export interface IProvidersInActionContext {
   getProviderInInstitution: (id: number) => void;
-  getProviderBySpeality: (speciality: string) => void;
 }
 
 export const ProvidersInStateContext =

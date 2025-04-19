@@ -1,6 +1,6 @@
 "use client";
 import { createAction } from "redux-actions";
-import { ILocation, ILocationStateContext } from "./context";
+import { ILocation, ILocationStateContext, IInstitution } from "./context";
 
 export enum LocationActionEnums {
   //For get the location by descrption
@@ -17,6 +17,9 @@ export enum LocationActionEnums {
   getAllPlacesPending = "Get_ALLPLACES_PENDING",
   getAllPlacesSuccess = "Get__ALLPLACES_SUCCESS",
   getAllPlacesError = "Get__ALLPLACES_ERROR",
+  getInstitutionsWithSpecialtyPending = "GET_INSTITUTIONS_WITH_SPECIALTY_PENDING",
+  getInstitutionsWithSpecialtySuccess = "GET_INSTITUTIONS_WITH_SPECIALTY_SUCCESS",
+  getInstitutionsWithSpecialtyError = "GET_INSTITUTIONS_WITH_SPECIALTY_ERROR",
 }
 
 // get places by description Actions
@@ -93,3 +96,25 @@ export const getAllPlacesError = createAction<ILocationStateContext>(
   LocationActionEnums.getAllPlacesError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
+
+export const getInstitutionsWithSpecialtyPending =
+  createAction<ILocationStateContext>(
+    LocationActionEnums.getInstitutionsWithSpecialtyPending,
+    () => ({ isPending: true, isSuccess: false, isError: false })
+  );
+
+export const getInstitutionsWithSpecialtySuccess = createAction<
+  ILocationStateContext,
+  IInstitution[]
+>(LocationActionEnums.getInstitutionsWithSpecialtySuccess, (institutions) => ({
+  isPending: false,
+  isSuccess: true,
+  isError: false,
+  institutions,
+}));
+
+export const getInstitutionsWithSpecialtyError =
+  createAction<ILocationStateContext>(
+    LocationActionEnums.getInstitutionsWithSpecialtyError,
+    () => ({ isPending: false, isSuccess: false, isError: true })
+  );

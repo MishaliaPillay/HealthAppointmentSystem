@@ -17,6 +17,9 @@ import {
   getPlacesByStateError,
   getPlacesByStatePending,
   getPlacesByStateSuccess,
+  getInstitutionsWithSpecialtyPending,
+  getInstitutionsWithSpecialtySuccess,
+  getInstitutionsWithSpecialtyError,
 } from "./actions";
 
 export const LocationProvider = ({
@@ -40,6 +43,24 @@ export const LocationProvider = ({
         console.error(error);
         dispatch(getPlacesByDescriptionError());
       });
+  };
+  //encodeURIComponent(specialty)  because multiword another multi-word specialty will break request
+  const getInstitutionsWithSpecialty = async (specialty: string) => {
+    dispatch(getInstitutionsWithSpecialtyPending());
+
+    const endpoint = `/ProviderInstution/GetInstitutionsWithProvidersBySpecialty?specialty=${encodeURIComponent(
+      specialty
+    )}`;
+
+    try {
+      const response = await instance.get(endpoint);
+      const result = response.data?.result || [];
+      console.log("Fetched institutions with specialty:", result);
+      dispatch(getInstitutionsWithSpecialtySuccess(result));
+    } catch (error) {
+      console.error("Failed to fetch institutions:", error);
+      dispatch(getInstitutionsWithSpecialtyError());
+    }
   };
 
   const getPlacesByState = async (state: string) => {
@@ -83,6 +104,7 @@ export const LocationProvider = ({
           getPlacesByDescription,
           getPlacesByState,
           getAllPlaces,
+          getInstitutionsWithSpecialty,
         }}
       >
         {children}
