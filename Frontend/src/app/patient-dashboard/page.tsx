@@ -62,7 +62,7 @@ export default function Dashboard() {
           return await getCurrentPatient(user.id);
           
         })
-        .catch((err) => console.log("Error Current User : ", err));
+        .catch((err) => console.error("Error Current User : ", err));
         if (Loading || isPending) {
           <Spin spinning tip="Loading patient data..." />;
       }
