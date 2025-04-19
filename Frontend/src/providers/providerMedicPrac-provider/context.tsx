@@ -7,6 +7,7 @@ export interface IProviderStateContext {
   isPending: boolean;
   isSuccess: boolean;
   isError: boolean;
+  currentProvider?: IProvider;
   errorMessage?: string;
   Provider?: IProvider;
   Providers?: IProvider[]; // Array of Providers
