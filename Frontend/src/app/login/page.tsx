@@ -16,109 +16,46 @@ import {
 import {
   UserOutlined,
   LockOutlined,
-  MedicineBoxOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import dayjs from "dayjs";
+
 import styles from "./login-page.module.css";
 import { IAuth, ISignInRequest } from "@/providers/auth-provider/models";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getRole } from "@/utils/decoder";
 import { useUserActions } from "@/providers/users-provider";
 import { usePatientActions } from "@/providers/paitient-provider";
+
 const { Title } = Typography;
 const { Option } = Select;
 
 interface LoginSignupProps {
-  className?: string; //if we want to style
+  className?: string;
 }
+
 export default function LoginSignup({ className }: LoginSignupProps) {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [Loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuthActions();
-  const { isSuccess, isError, isPending } = useAuthState();
+  const { isError, isSuccess } = useAuthState();
   const [role, setrole] = useState<"patient" | "provider">("patient");
   const [password, setPassword] = useState<string>("");
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const { getCurrentUser } = useUserActions();
   const { getCurrentPatient } = usePatientActions();
-  const [token, setToken] = useState("");
 
+  // Turn off loader after navigation
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const jwt = sessionStorage.getItem("jwt") || "";
-      setToken(jwt);
+    if (Loading) {
+      setLoading(false);
     }
-  }, []);
-  useEffect(() => {
-    if (isPending) {
-      setLoading(true);
-    }
-    if (isError) {
-      toast.error("Your signup was unsuccessful!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    if (isSuccess) {
-      const role = getRole(token);
-      if (role === "provider") {
-        router.push("/provider-dashboard");
-      } else if (role === "patient") {
-        router.push("/patient-dashboard");
-      } else {
-        router.push("/");
-      }
-    }
-  }, [isSuccess, isError, isPending, router, token]);
- 
-  const onFinishLogin = async (values: ISignInRequest) => {
-    await signIn(values)
-      .then(async (access) => {
-        await getCurrentUser(access.result.accessToken)
-          .then(async (user) => {
-            await getCurrentPatient(user.id);
-          })
-          .catch((err) => console.error("Error Current User : ", err));
-      })
-      .catch((err) => console.error("Sign in Error", err));
-  };
-
-  const onFinishSignup = async (values: IAuth) => {
-    if (isPending) {
-      setLoading(true);
-    }
-    try {
-      const authPayload: IAuth =
-        role === "patient"
-          ? {
-              ...values,
-              role: "patient",
-            }
-          : {
-              ...values,
-              role: "provider",
-            };
-      await signUp(authPayload);
-      if (isSuccess) {
-        setActiveTab("login");
-      }
-    } catch (error) {
-      if (isError) {
-        console.error("Signup error:", error);
-      }
-    }
-  };
+  }, [pathname]);
 
   const passwordChecks = {
     length: password.length >= 8,
@@ -156,6 +93,56 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const handleroleChange = (e: RadioChangeEvent) => {
     setrole(e.target.value);
   };
+
+  const onFinishLogin = async (values: ISignInRequest) => {
+    try {
+      setLoading(true);
+      const access = await signIn(values);
+      const accessToken = access.result.accessToken;
+
+      sessionStorage.setItem("jwt", accessToken);
+
+      const role = getRole(accessToken);
+      const user = await getCurrentUser(accessToken);
+
+      if (role === "patient") {
+        await getCurrentPatient(user.id);
+        router.push("/patient-dashboard");
+      } else if (role === "provider") {
+        router.push("/provider-dashboard");
+      } else {
+        router.push("/");
+      }
+    } catch (err) {
+      console.error("Login error", err);
+      toast.error("Login failed. Please try again.");
+      setLoading(false); 
+    }
+  };
+
+  const onFinishSignup = async (values: IAuth) => {
+    try {
+      setLoading(true);
+      const authPayload: IAuth = {
+        ...values,
+        role,
+      };
+
+      await signUp(authPayload);
+
+      if (isSuccess) {
+        setActiveTab("login");
+      }
+    } catch (error) {
+      if (isError) {
+        console.error("Signup error:", error);
+        toast.error("Signup failed. Please check your inputs.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loginForm = (
     <Form
       name="login"
@@ -209,10 +196,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
               {Object.entries(passwordChecks).map(([key, valid]) => (
                 <p
                   key={key}
-                  style={{
-                    color: valid ? "green" : "red",
-                    marginBottom: 4,
-                  }}
+                  style={{ color: valid ? "green" : "red", marginBottom: 4 }}
                 >
                   {valid ? (
                     <CheckCircleOutlined style={{ color: "green" }} />
@@ -253,7 +237,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
       className={styles.form}
       initialValues={{ role: "patient" }}
     >
-      {/* User Type Selection - Moved to the top */}
       <Form.Item
         name="role"
         label="I am a:"
@@ -262,16 +245,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         ]}
       >
         <Radio.Group onChange={handleroleChange} value={role}>
-          <Radio value="PATIENT">Patient</Radio>
-          <Radio value="PROVIDER">Medical practitioner</Radio>
+          <Radio value="patient">Patient</Radio>
+          <Radio value="provider">Medical practitioner</Radio>
         </Radio.Group>
       </Form.Item>
 
-      {/* Common Fields for Both Patients and Providers */}
-      <Form.Item
-        name="title"
-        rules={[{ required: true, message: "Please select your title!" }]}
-      >
+      <Form.Item name="title" rules={[{ required: true }]}>
         <Select placeholder="Select your title">
           <Option value="Mr">Mr</Option>
           <Option value="Ms">Ms</Option>
@@ -280,123 +259,55 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </Select>
       </Form.Item>
 
-      <Form.Item
-        name="name"
-        rules={[{ required: true, message: "Please input your name!" }]}
-      >
+      <Form.Item name="name" rules={[{ required: true }]}>
         <Input placeholder="First Name" />
       </Form.Item>
 
-      <Form.Item
-        name="surname"
-        rules={[{ required: true, message: "Please input your surname!" }]}
-      >
+      <Form.Item name="surname" rules={[{ required: true }]}>
         <Input placeholder="Last Name" />
       </Form.Item>
 
       <Form.Item
         name="emailAddress"
-        rules={[
-          { required: true, message: "Please input your email!" },
-          { type: "email", message: "Please enter a valid email!" },
-        ]}
+        rules={[{ required: true, type: "email" }]}
       >
         <Input placeholder="Email" />
       </Form.Item>
 
-      <Form.Item
-        name="phoneNumber"
-        rules={[{ required: true, message: "Please input your phone number!" }]}
-      >
+      <Form.Item name="phoneNumber" rules={[{ required: true }]}>
         <Input placeholder="Phone Number" />
       </Form.Item>
 
-      <Form.Item
-        name="userName"
-        rules={[{ required: true, message: "Please input your username!" }]}
-      >
+      <Form.Item name="userName" rules={[{ required: true }]}>
         <Input placeholder="Username" />
       </Form.Item>
 
-      <Form.Item
-        name="password"
-        rules={[
-          { required: true, message: "Please input your password!" },
-          { min: 8, message: "Password must be at least 8 characters!" },
-        ]}
-      >
+      <Form.Item name="password" rules={[{ required: true, min: 8 }]}>
         <Input.Password placeholder="Password" />
       </Form.Item>
 
-      {/* Patient-Specific Fields */}
       {role === "patient" && (
         <>
-          <Form.Item
-            name="dateOfBirth"
-            rules={[
-              { required: true, message: "Please input your date of birth!" },
-            ]}
-          >
-            <DatePicker
-              placeholder="Date of Birth"
-              style={{ width: "100%" }}
-              onChange={(date) => {
-                dayjs(date).toISOString(); // Format as ISO 8601
-              }}
-            />
+          <Form.Item name="dateOfBirth" rules={[{ required: true }]}>
+            <DatePicker placeholder="Date of Birth" style={{ width: "100%" }} />
           </Form.Item>
-
-          <Form.Item
-            name="address"
-            rules={[{ required: true, message: "Please input your address!" }]}
-          >
+          <Form.Item name="address" rules={[{ required: true }]}>
             <Input placeholder="Address" />
           </Form.Item>
-
-          <Form.Item
-            name="city"
-            rules={[{ required: true, message: "Please input your city!" }]}
-          >
+          <Form.Item name="city" rules={[{ required: true }]}>
             <Input placeholder="City" />
           </Form.Item>
-
-          <Form.Item
-            name="province"
-            rules={[{ required: true, message: "Please input your province!" }]}
-          >
+          <Form.Item name="province" rules={[{ required: true }]}>
             <Input placeholder="Province" />
           </Form.Item>
-
-          <Form.Item
-            name="postalCode"
-            rules={[
-              { required: true, message: "Please input your postal code!" },
-            ]}
-          >
+          <Form.Item name="postalCode" rules={[{ required: true }]}>
             <Input placeholder="Postal Code" />
           </Form.Item>
-
-          <Form.Item
-            name="country"
-            rules={[{ required: true, message: "Please input your country!" }]}
-          >
+          <Form.Item name="country" rules={[{ required: true }]}>
             <Input placeholder="Country" />
           </Form.Item>
-          <Form.Item
-            name="preferredContactMethod"
-            rules={[
-              {
-                required: true,
-                message: "Please select your preferred ContactMethod",
-              },
-            ]}
-          >
-            <Select
-              placeholder="Please select your preferred ContactMethod"
-              onChange={(value) => {
-                Number(value);
-              }}
-            >
+          <Form.Item name="preferredContactMethod" rules={[{ required: true }]}>
+            <Select placeholder="Preferred Contact Method">
               <Option value={1}>Email</Option>
               <Option value={2}>SMS</Option>
             </Select>
@@ -406,49 +317,17 @@ export default function LoginSignup({ className }: LoginSignupProps) {
 
       {role === "provider" && (
         <>
-          <Form.Item
-            name="biography"
-            rules={[
-              { required: true, message: "Please input your biography!" },
-            ]}
-          >
+          <Form.Item name="biography" rules={[{ required: true }]}>
             <Input.TextArea placeholder="Biography" rows={4} />
           </Form.Item>
-
-          <Form.Item
-            name="yearsOfExperience"
-            rules={[
-              {
-                required: true,
-                message: "Please input your years of experience!",
-              },
-            ]}
-          >
+          <Form.Item name="yearsOfExperience" rules={[{ required: true }]}>
             <Input placeholder="Years of Experience" type="number" />
           </Form.Item>
-
-          <Form.Item
-            name="maxAppointmentsPerDay"
-            rules={[
-              {
-                required: true,
-                message: "Please input max appointments per day!",
-              },
-            ]}
-          >
+          <Form.Item name="maxAppointmentsPerDay" rules={[{ required: true }]}>
             <Input placeholder="Max Appointments Per Day" type="number" />
           </Form.Item>
-          <Form.Item
-            name="specialty"
-            label="Medical Specialty"
-            rules={[
-              { required: true, message: "Please select your specialty!" },
-            ]}
-          >
-            <Select
-              placeholder="Select your specialty"
-              prefix={<MedicineBoxOutlined />}
-            >
+          <Form.Item name="specialty" rules={[{ required: true }]}>
+            <Select placeholder="Select your specialty">
               {medicalSpecialties.map((specialty) => (
                 <Option key={specialty} value={specialty}>
                   {specialty}
@@ -456,18 +335,12 @@ export default function LoginSignup({ className }: LoginSignupProps) {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="qualification"
-            rules={[
-              { required: true, message: "Please input your qualification!" },
-            ]}
-          >
+          <Form.Item name="qualification" rules={[{ required: true }]}>
             <Input placeholder="Qualification" />
           </Form.Item>
         </>
       )}
 
-      {/* Agree to Terms */}
       <Form.Item
         name="agreeToTerms"
         valuePropName="checked"
@@ -488,7 +361,6 @@ export default function LoginSignup({ className }: LoginSignupProps) {
         </Checkbox>
       </Form.Item>
 
-      {/* Submit Button */}
       <Form.Item>
         <Button
           type="primary"

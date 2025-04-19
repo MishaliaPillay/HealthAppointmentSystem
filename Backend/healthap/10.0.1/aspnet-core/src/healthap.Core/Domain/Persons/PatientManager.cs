@@ -112,19 +112,19 @@ namespace healthap.Domain.Persons
         }
 
         public async Task<Patient> UpdatePatientAsync(
-      Guid patientId,
-      string? Name,
-      string? surname,
-      string? emailAddress,
-      string? phoneNumber,
-      string? userName,
-      string? password,
-      string? title,
-      string? address,
-      string? city,
-      string? province,
-      string? postalCode,
-      string? country,
+          Guid patientId,
+          string? Name,
+          string? surname,
+          string? emailAddress,
+          string? phoneNumber,
+          string? userName,
+          string? password,
+          string? title,
+          string? address,
+          string? city,
+          string? province,
+          string? postalCode,
+          string? country,
       ReflistConMethod? preferredContactMethod)
         {
             var patient = await _patientRepository.GetAsync(patientId);

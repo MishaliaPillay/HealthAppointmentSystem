@@ -24,7 +24,6 @@ export enum AbpTokenProperies {
   nbf = "nbf",
   exp = "exp",
   iss = "iss",
-  aud = "aud",
   nameidentifier = `${claims}nameidentifier`, // userId
   name = `${claims}name`,
   emailaddress = `${claims}emailaddress`,
@@ -42,7 +41,7 @@ export const getRole = (accessToken: string): string => {
     const decoded = decodeToken(accessToken);
     return `${decoded[AbpTokenProperies.role]}`.toLocaleLowerCase();
   }
-  return "patient";
+  return "provider";
 };
 export const getId = (token): string => {
   if (token) {
