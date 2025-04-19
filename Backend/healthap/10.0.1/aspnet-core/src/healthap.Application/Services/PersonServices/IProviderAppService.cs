@@ -9,7 +9,6 @@ namespace healthap.Services.PersonServices
     //TODO: KM do more research on this PagedAndSortedResultRequestDto 
     public interface IProviderAppService : IAsyncCrudAppService<ProviderResponseDto, Guid, PagedAndSortedResultRequestDto, ProviderRequestDto, ProviderResponseDto>
     {
-        public Task<ProviderResponseDto> CreateAsync(ProviderRequestDto input);
-
+        public Task<ProviderResponseDto> GetCurrentProviderAsync(long input);
     }
-}
+    }
