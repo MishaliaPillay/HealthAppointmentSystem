@@ -10,7 +10,7 @@ using healthap.Domain.Persons;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {
-    public class ProviderAvailabiltyDto:EntityDto<Guid>
+    public class ProviderAvailabiltyDto : EntityDto<Guid>
     {
         public Guid ProviderId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
@@ -19,4 +19,5 @@ namespace healthap.Services.AppointmentServices.Dtos
         public bool IsAvailable { get; set; }
         public virtual Provider Provider { get; set; }
     }
+
 }
