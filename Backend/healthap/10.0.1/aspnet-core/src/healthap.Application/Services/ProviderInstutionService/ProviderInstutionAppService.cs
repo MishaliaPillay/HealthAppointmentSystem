@@ -56,12 +56,13 @@ namespace healthap.Services.ProviderInstutionService
                     YearsOfExperience = p.YearsOfExperience,
                     MaxAppointmentsPerDay = p.MaxAppointmentsPerDay,
                     Qualification = p.Qualification,
-                    Speciality = p.Speciality
+                    Speciality = p.Specialty,
+                    InstitutionId = p.InstitutionId,
                 })
                 .ToListAsync();
 
             return providers;
         }
     }
-     
+
 }

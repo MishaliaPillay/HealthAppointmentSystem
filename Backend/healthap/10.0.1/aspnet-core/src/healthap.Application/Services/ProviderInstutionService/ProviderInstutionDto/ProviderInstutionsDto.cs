@@ -20,7 +20,8 @@ namespace healthap.Services.ProviderInstutionService.ProviderInstutionDto
         public string Qualification { get; set; }
         public string Speciality { get; set; }
 
-      
+        public int InstitutionId { get; set; }
+
 
 
 
