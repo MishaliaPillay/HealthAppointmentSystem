@@ -41,7 +41,7 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?id=${userId}`;
+    const endpoint = `/Provider/GetCurrentProvider?id=${userId}`;
 
     return axios
       .get(endpoint)
@@ -65,8 +65,8 @@ export const ProviderProvider = ({
   //Register the Provider
   const registerProvider = async (Provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/register`;
-    await instance
+    const endpoint = `/Patient/Create`;
+    https: await instance
       .post(endpoint, Provider)
       .then((response) => {
         dispatch(registerProviderSuccess(response.data));
@@ -80,8 +80,8 @@ export const ProviderProvider = ({
   //Get All Providers
   const getProviders = async () => {
     dispatch(getProvidersPending());
-    const endpoint = `providers`;
-    await instance
+    const endpoint = `/Patient/GetAll`;
+    https: await instance
       .post(endpoint)
       .then((response) => {
         dispatch(getProvidersSuccess(response.data));
@@ -95,7 +95,7 @@ export const ProviderProvider = ({
   //Get Provider
   const getProvider = async (ProviderId: string) => {
     dispatch(getProviderPending());
-    const endpoint = `Provider`;
+    const endpoint = `/Patient/Get`;
     await instance
       .post(endpoint, ProviderId)
       .then((response) => {
@@ -132,7 +132,7 @@ export const ProviderProvider = ({
   //Delete Provider
   const deleteProviderbyId = async (ProviderId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `${ProviderId}`;
+    const endpoint = `/Patient/Delete`;
     await instance
       .delete(endpoint)
       .then((response) => {
