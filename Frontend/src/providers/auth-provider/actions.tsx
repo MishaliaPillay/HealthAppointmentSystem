@@ -59,22 +59,5 @@ export const signInError = createAction<IAuthStateContext>(
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-//SIGN OUT ACTIONS
-export const signOutPending = createAction<IAuthStateContext>(
-  AuthActionEnums.signOutPending,
-  () => ({ isPending: true, isSuccess: false, isError: false })
-);
 
-export const signOutSuccess = createAction<IAuthStateContext>(
-  AuthActionEnums.signOutSuccess,
-  () => ({
-    isPending: false,
-    isSuccess: true,
-    isError: false,
-  })
-);
 
-export const signOutError = createAction<IAuthStateContext>(
-  AuthActionEnums.signOutError,
-  () => ({ isPending: false, isSuccess: false, isError: true })
-);
