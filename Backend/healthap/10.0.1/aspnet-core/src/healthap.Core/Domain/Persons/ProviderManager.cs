@@ -72,7 +72,7 @@ int institutionId
                     YearsOfExperience = yearsOfExperience,
                     MaxAppointmentsPerDay = maxAppointmentsPerDay,
                     Qualification = qualification,
-                    Speciality = speciality,
+                    Specialty = speciality,
                     InstitutionId = institutionId,
                     ProviderAvailabilty = new List<ProviderAvailabilty>(),
                     Appointments = new List<Appointment>()

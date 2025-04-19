@@ -29,6 +29,39 @@ namespace healthap.Services.ProviderInstutionService
             // _availabilityRepository = availabilityRepository;
 
         }
+        public async Task<List<InstitutionWithProvidersDto>> GetInstitutionsWithProvidersBySpecialtyAsync(string specialty)
+        {
+            var providersWithSpecialty = await _providerRepository.GetAll()
+                .Include(p => p.User)
+                .Include(p => p.Institution)
+                .Where(p => p.Specialty == specialty)
+                .ToListAsync();
+
+            var groupedByInstitution = providersWithSpecialty
+                .GroupBy(p => p.Institution)
+                .Select(group => new InstitutionWithProvidersDto
+                {
+                    InstitutionId = group.Key.Id,
+                    InstitutionName = group.Key.Description, // or use a Name field if exists
+                    Address = group.Key.Address,
+                    Providers = group.Select(p => new ProviderInstutionsDto
+                    {
+                        UserId = p.UserId,
+                        UserName = p.User.UserName,
+                        FullName = p.User.FullName,
+                        Title = p.Title,
+                        Biography = p.Biography,
+                        PhoneNumber = p.PhoneNumber,
+                        YearsOfExperience = p.YearsOfExperience,
+                        MaxAppointmentsPerDay = p.MaxAppointmentsPerDay,
+                        Qualification = p.Qualification,
+                        Speciality = p.Specialty,
+                        InstitutionId = p.InstitutionId,
+                    }).ToList()
+                }).ToList();
+
+            return groupedByInstitution;
+        }
 
         public async Task<List<ProviderInstutionsDto>> GetProvidersInInstitutionAsync(int institutionId)
         {
@@ -56,12 +89,13 @@ namespace healthap.Services.ProviderInstutionService
                     YearsOfExperience = p.YearsOfExperience,
                     MaxAppointmentsPerDay = p.MaxAppointmentsPerDay,
                     Qualification = p.Qualification,
-                    Speciality = p.Speciality
+                    Speciality = p.Specialty,
+                    InstitutionId = p.InstitutionId,
                 })
                 .ToListAsync();
 
             return providers;
         }
     }
-     
+
 }
