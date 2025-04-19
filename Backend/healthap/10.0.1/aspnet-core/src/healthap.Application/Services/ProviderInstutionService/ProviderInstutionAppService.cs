@@ -16,17 +16,17 @@ namespace healthap.Services.ProviderInstutionService
     {
         private readonly IRepository<Provider, Guid> _providerRepository;
         private readonly IRepository<Institution, int> _institutionRepository;
-        //  private readonly IRepository<ProviderAvailabilty, int> _availabilityRepository;
+       
 
         public ProviderInstutionAppService(
             IRepository<Provider, Guid> providerRepository,
             IRepository<Institution, int> institutionRepository
-            //IRepository<ProviderAvailabilty, int> availabilityRepository
+            
             )
         {
             _providerRepository = providerRepository;
             _institutionRepository = institutionRepository;
-            // _availabilityRepository = availabilityRepository;
+          
 
         }
         public async Task<List<InstitutionWithProvidersDto>> GetInstitutionsWithProvidersBySpecialtyAsync(string specialty)

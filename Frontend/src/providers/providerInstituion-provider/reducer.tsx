@@ -31,6 +31,28 @@ export const ProviderInReducer = handleActions<
       ...state,
       ...action.payload,
     }),
+
+    // get Provider in an institution by id
+    [ProviderInActionEnums.getProviderbySpecialityPending]: (
+      state,
+      action
+    ) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [ProviderInActionEnums.getProviderbySpecialitySuccess]: (
+      state,
+      action
+    ) => ({
+      ...state,
+      ...action.payload,
+    }),
+
+    [ProviderInActionEnums.getProviderbySpecialityError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
   },
+
   INITIAL_STATE
 );

@@ -8,6 +8,9 @@ import {
   ProvidersInStateContext,
 } from "./context";
 import {
+  getProviderbySpecialityError,
+  getProviderbySpecialityPending,
+  getProviderbySpecialitySuccess,
   getProvidersInInstitutionError,
   getProvidersInInstitutionPending,
   getProvidersInInstitutionSuccess,
@@ -37,11 +40,28 @@ export const ProvidersInstituionProvider = ({
       });
   };
 
+  //Get Providers in Intitution by the speciality
+  const getProviderBySpeality = async (speciality: string) => {
+    dispatch(getProviderbySpecialityPending());
+    const endpoint = `ProviderInstution/GetInstitutionsWithProvidersBySpecialty/${speciality}`;
+
+    await instance
+      .post(endpoint, speciality)
+      .then((response) => {
+        dispatch(getProviderbySpecialitySuccess(response.data));
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(getProviderbySpecialityError());
+      });
+  };
+
   return (
     <ProvidersInStateContext.Provider value={state}>
       <ProvidersInActionContext.Provider
         value={{
           getProviderInInstitution,
+          getProviderBySpeality,
         }}
       >
         {children}
