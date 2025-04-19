@@ -11,7 +11,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MenuProps } from "antd";
-import { useAuthActions } from "@/providers/auth-provider";
+import { useRouter } from "next/navigation";
+import { useUserActions, useUserState } from "@/providers/users-provider";
+import { useEffect } from "react";
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -20,8 +22,29 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
-  const { signOut} = useAuthActions();
-
+  useEffect(() => {
+    if (!currentUser) {
+      fetchCurrentUser();
+    }
+  })
+  const router = useRouter();
+  const signOutUser = () => {
+     sessionStorage.removeItem("jwt");
+    if (sessionStorage.length === 0) {
+      router.push("/");
+    }
+  }
+  
+    const fetchCurrentUser = async () => {
+      const token = sessionStorage.getItem("jwt");
+      if (token) {
+        await getCurrentUser(token).catch((err) => {
+          console.error("Error fetching current user: ", err);
+        });
+      }
+    };
+ const { getCurrentUser }=useUserActions();
+ const { currentUser,} = useUserState();
   const pathname = usePathname();
 
   const menuItems: MenuProps["items"] = [
@@ -54,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: () => signOut(),
+      onClick: () => signOutUser(),
     },
   ];
 
@@ -86,8 +109,13 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           color: "white",
         }}
       >
-        <Avatar style={{ backgroundColor: "#87CEFA" }}>JD</Avatar>
-        {!collapsed && <div style={{ margin: "12px 0" }}>John Doe</div>}
+        <Avatar style={{ backgroundColor: "#87CEFA" }}>
+          {" "}
+          {currentUser ? currentUser.name?.[0] : "U"}
+        </Avatar>
+        {!collapsed && (
+          <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
+        )}
       </div>
       <Menu
         theme="dark"

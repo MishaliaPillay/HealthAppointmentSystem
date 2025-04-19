@@ -9,21 +9,18 @@ import {
   Avatar,
   Badge,
   Tag,
-  Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
 const { Title, Text } = Typography;
 import { useUserState } from "../../providers/users-provider";
-const [Loading, setLoading] = useState(false);
-import { useState } from "react";
-//import { toast } from "react-toastify";
 
 export default function ProviderDashboard() {
+  const { user } = useUserState();
+
   return (
-    <Spin spinning={Loading} tip="Loading hold on">
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back</Title>
+        <Title level={3}>Welcome back {user?.name}</Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 
@@ -148,8 +145,7 @@ export default function ProviderDashboard() {
           </Card>
         </Col>
       </Row>
-      </div>
-      </Spin>
+    </div>
   );
 }
 

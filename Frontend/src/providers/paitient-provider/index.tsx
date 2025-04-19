@@ -110,13 +110,16 @@ export const PatientProvider = ({
   
  const updatePatient = async (patientId: string, patientData: UpdatePatientDto) => {
   dispatch(updatePatientPending());
-  
+   const payload = {
+     ...patientData,
+     id: patientId,
+   };
   // Match the exact route pattern: [HttpPut("Update/{id}")]
-  // const endpoint = `/Patient/Update/${patientId}`;
-   const endpoint = `/api/services/app/Patient/Update?=id${patientId}`;
+  const endpoint = `/Patient/UpdatePatient`;
+   //const endpoint = `/api/services/app/Patient/Update?=id${patientId}`;
   
   await instance
-    .put(endpoint, patientData) 
+    .put(endpoint, payload)
     .then((response) => {
       dispatch(updatePatientSuccess(response.data));
     })
