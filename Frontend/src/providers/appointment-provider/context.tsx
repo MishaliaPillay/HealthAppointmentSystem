@@ -6,10 +6,16 @@ import { createContext } from "react";
 
 export interface IAppointment {
   id?: string;
+  patientId: string;
+  providerId: string;
+  patientName?: string;
+  providerName?: string;
   appointmentDate: Date;
   appointmentTime: string;
   appointmentPurpose: string;
   AppointmentStatus: AppointmentStatusReflist;
+  lastModified?: Date;
+  notificationSent?: boolean;
 }
 //Appointment Context shape Interface
 export interface IAppointmentStateContext {
