@@ -15,13 +15,17 @@ namespace healthap.Domain.Persons
     {
         private readonly UserManager _userManager;
         private readonly IRepository<Provider, Guid> _providerRepository;
+        private readonly IRepository<Provider, Guid> _repository;
 
         public ProviderManager(
             UserManager userManager,
-            IRepository<Provider, Guid> providerRepository)
+            IRepository<Provider, Guid> providerRepository,
+            IRepository<Provider, Guid> repository)
+
         {
             _userManager = userManager;
             _providerRepository = providerRepository;
+            _repository = repository;
         }
 
         public async Task<Provider> CreateProviderAsync(
@@ -149,18 +153,36 @@ namespace healthap.Domain.Persons
                     throw new UserFriendlyException("Failed to update password: " + string.Join(", ", passwordResult.Errors));
             }
 
-           
+
 
             await _providerRepository.UpdateAsync(provider);
             await _userManager.UpdateAsync(user);
 
             return provider;
         }
+
+
+        public async Task<Provider> GetProviderByUserIdAsync(long userId)
+        {
+            var providers = await _repository.GetAllIncludingAsync(
+                p => p.User,
+                p => p.Appointments,
+                p => p.ProviderAvailabilty
+            );
+
+            var provider = await providers.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (provider == null)
+            {
+                throw new UserFriendlyException("Provider not found");
+            }
+
+            return provider;
+        }
+    
+    
     }
 
 
 
 }
 
-
-}

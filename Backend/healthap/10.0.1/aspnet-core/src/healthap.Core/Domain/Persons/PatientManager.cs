@@ -9,6 +9,7 @@ using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 
 namespace healthap.Domain.Persons
 {
@@ -16,13 +17,16 @@ namespace healthap.Domain.Persons
     {
         private readonly UserManager _userManager;
         private readonly IRepository<Patient, Guid> _patientRepository;
+        private readonly IRepository<Patient, Guid> _repository;
 
         public PatientManager(
             UserManager userManager,
-            IRepository<Patient, Guid> patientRepository)
+            IRepository<Patient, Guid> patientRepository,
+            IRepository<Patient, Guid> repository)
         {
             _userManager = userManager;
             _patientRepository = patientRepository;
+            _repository = repository;
         }
 
         public async Task<Patient> CreatePatientAsync(
@@ -102,6 +106,22 @@ namespace healthap.Domain.Persons
         public IQueryable<Patient> GetAllPaitentsAsync()
         {
             return _patientRepository.GetAllIncluding(p => p.User);
+        }
+
+        public async Task<Patient> GetPatientByUserIdAsync(long userId)
+        {
+            var patients = await _repository.GetAllIncludingAsync(
+                p => p.User,
+                p => p.Appointments
+            );
+
+            var patient = await patients.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (patient == null)
+            {
+                throw new UserFriendlyException("Patient not found");
+            }
+
+            return patient;
         }
 
         public async Task<Patient?> GetPatientByUserIdWithDetailsAsync(long? userId)

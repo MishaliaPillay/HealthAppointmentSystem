@@ -22,7 +22,7 @@ namespace healthap.Services.PersonServices
     {
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
-        private readonly IRepository<Patient, Guid> _repository;
+        private readonly IRepository<Provider, Guid> _repository;
 
         public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager, IMapper mapper) : base(repository)
         {
@@ -57,28 +57,6 @@ namespace healthap.Services.PersonServices
             return _mapper.Map<ProviderResponseDto>(proivder);
 
         }
-
-        public async Task<ProviderResponseDto> GetCurrentProviderAsync(long input)
-        {
-            // Check if user is logged in
-            var currentUserId = AbpSession.UserId;
-            if (!currentUserId.HasValue)
-            {
-                throw new AbpAuthorizationException("You must be logged in to access provider information.");
-            }
-
-            // Get the provider by the input user ID
-            var provider = await _providerManager.GetProviderByUserIdWithDetailsAsync(input);
-
-            // Check if provider exists
-            if (provider == null)
-            {
-                throw new UserFriendlyException("Provider not found");
-            }
-
-            // Map to DTO and return
-            return _mapper.Map<Provider, ProviderResponseDto>(provider);
-        }
         public override async Task<PagedResultDto<ProviderResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _providerManager.GetAllProvidersAsync();
@@ -93,6 +71,11 @@ namespace healthap.Services.PersonServices
                 totalCount,
                 _mapper.Map<List<ProviderResponseDto>>(providers)
             );
+        }
+        public async Task<ProviderResponseDto> GetCurrentProviderAsync(long userId)
+        {
+            var provider = await _providerManager.GetProviderByUserIdAsync(userId);
+            return _mapper.Map<Provider, ProviderResponseDto>(provider);
         }
 
         public async Task<ProviderResponseDto> UpdateproviderAsync(UpdateProviderDto input)
@@ -120,6 +103,8 @@ namespace healthap.Services.PersonServices
 
             return _mapper.Map<ProviderResponseDto>(updatedprovider);
         }
+
+      
     }
 
 }
