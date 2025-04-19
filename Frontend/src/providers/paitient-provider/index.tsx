@@ -114,10 +114,7 @@ export const PatientProvider = ({
      ...patientData,
      id: patientId,
    };
-  // Match the exact route pattern: [HttpPut("Update/{id}")]
-  const endpoint = `/Patient/UpdatePatient`;
-   //const endpoint = `/api/services/app/Patient/Update?=id${patientId}`;
-  
+  const endpoint = `/Patient/UpdatePatient`;  
   await instance
     .put(endpoint, payload)
     .then((response) => {
