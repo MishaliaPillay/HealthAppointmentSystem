@@ -132,14 +132,14 @@ export const ProviderProvider = ({
   //Delete Provider
   const deleteProviderbyId = async (ProviderId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `/Patient/Delete`;
+    const endpoint = `/Patient/Delete?ProviderId=${ProviderId}`;
     await instance
       .delete(endpoint)
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
       })
       .catch((error) => {
-        dispatch(deleteProviderSuccess(error.data));
+        dispatch(deleteProviderSuccess(error.data || "An error occurrred"));
       });
   };
 
