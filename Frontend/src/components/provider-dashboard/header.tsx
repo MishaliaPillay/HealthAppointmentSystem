@@ -6,9 +6,10 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-
 import Link from "next/link";
 import type { MenuProps } from "antd";
+import { useUserState } from "@/providers/users-provider";
+import NotificationPopup from "../notification/page";
 
 const { Header: AntHeader } = Layout;
 
@@ -18,10 +19,12 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
+  const { user } = useUserState();
+
   const items: MenuProps["items"] = [
     {
       key: "profile",
-      label: <Link href="/patient-dashboard/profile">Profile</Link>,
+      label: <Link href="/provider-dashboard/profile">Profile</Link>,
     },
     {
       key: "logout",
@@ -37,6 +40,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        background: "#001529",
       }}
     >
       <Button
@@ -46,12 +50,24 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         style={{ color: "white" }}
       />
 
-      <Dropdown menu={{ items }} placement="bottomRight">
-        <Space style={{ cursor: "pointer", color: "white" }}>
-          <UserOutlined />
-          <span className="hidden sm:inline">John Doe</span>
-        </Space>
-      </Dropdown>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '24px',
+        height: '100%',
+        marginRight: '12px'
+      }}>
+        <NotificationPopup
+          userId={user?.id || ""}
+          title="Provider Notifications"
+        />
+        <Dropdown menu={{ items }} placement="bottomRight">
+          <Space style={{ cursor: "pointer", color: "white" }}>
+            <UserOutlined />
+            <span>{user?.name || "Provider"}</span>
+          </Space>
+        </Dropdown>
+      </div>
     </AntHeader>
   );
 };

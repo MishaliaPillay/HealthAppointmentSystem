@@ -4,7 +4,6 @@ import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   CalendarOutlined,
-  FileTextOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
@@ -24,27 +23,30 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   const menuItems: MenuProps["items"] = [
     {
-      key: "/patient-dashboard",
+      key: "/provider-dashboard",
       icon: <DashboardOutlined />,
-      label: <Link href="/patient-dashboard">Dashboard</Link>,
+      label: <Link href="/provider-dashboard">Dashboard</Link>,
     },
     {
-      key: "/patient-dashboard/appointments",
+      key: "/provider-dashboard/appointments",
       icon: <CalendarOutlined />,
       label: (
-        <Link href="/patient-dashboard/appointments">My Appointments</Link>
+        <Link href="/provider-dashboard/appointments">Appointments</Link>
       ),
     },
     {
-      key: "/patient-dashboard/medical-history",
-      icon: <FileTextOutlined />,
-      label: <Link href="/provider-dashboard/calendar">calendar</Link>,
+      key: "/provider-dashboard/calendar",
+      icon: <CalendarOutlined />,
+      label: (
+        <Link href="/provider-dashboard/calendar">Calendar</Link>
+      ),
     },
-
     {
-      key: "help",
+      key: "/provider-dashboard/help",
       icon: <QuestionCircleOutlined />,
-      label: "Help",
+      label: (
+        <Link href="/provider-dashboard/help">Help</Link>
+      ),
     },
     {
       key: "logout",

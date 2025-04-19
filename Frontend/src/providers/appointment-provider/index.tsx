@@ -15,7 +15,7 @@ import {
   bookAppointmentSuccess,
   deleteAppointmentError,
   deleteAppointmentPending,
-  deleteAppointmenttSuccess,
+  deleteAppointmenttSuccess, 
   getAllAppointmentError,
   getAllAppointmentPending,
   getAllAppointmentSuccess,
