@@ -9,18 +9,63 @@ import {
   Avatar,
   Badge,
   Tag,
+  Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
 const { Title, Text } = Typography;
-import { useUserState } from "../../providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
+import { useEffect, useState } from "react";
+import {
+  useProviderState,
+  useProviderActions,
+} from "@/providers/providerMedicPrac-provider";
 
 export default function ProviderDashboard() {
-  const { user } = useUserState();
+
+  const [Loading, setLoading] = useState(false);
+  const { isPending, isError, isSuccess, currentProvider } = useProviderState();
+  const { getCurrentUser } = useUserActions();
+  const { getCurrentProvider } = useProviderActions();
+
+  useEffect(() => {
+    if (isPending) {
+      setLoading(true);
+    }
+
+    if (isError) {
+      setLoading(false);
+    }
+
+    if (isSuccess) {
+      setLoading(false);
+    }
+
+    if (currentProvider === undefined) {
+      fetchProviderOnReload();
+    }
+  }, [isError, isPending, isSuccess, currentProvider]);
+
+  const fetchProviderOnReload = async (): Promise<void> => {
+    const token = sessionStorage.getItem("jwt");
+    if (token) {
+      await getCurrentUser(token)
+        .then(async (user) => {
+          return await getCurrentProvider(user.id);
+        })
+        .catch((err) => console.error("Error Current User : ", err));
+      if (Loading || isPending) {
+        <Spin spinning tip="Loading provider data..." />;
+      }
+      if (isError || !getCurrentUser(token)) {
+        <p>Failed to load provider data. Please try again.</p>;
+      }
+    }
+  };
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back {user?.name}</Title>
+        <Title level={3}>Welcome back {currentProvider.title}{currentProvider.user.surname}</Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 
