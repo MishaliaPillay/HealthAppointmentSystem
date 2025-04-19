@@ -102,15 +102,15 @@ namespace healthap.Services.PersonServices
             return _mapper.Map<Patient, PatientResponseDto>(patient);
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<PatientResponseDto> Update(Guid id, [FromBody] UpdatePatientDto input) 
+        public async Task<PatientResponseDto> UpdatePatientAsync(UpdatePatientDto input) 
         {
-            var patient = await _repository.GetAsync(id);
+           
+            var patient = await _repository.GetAsync(input.Id);
             if (patient == null)
                 throw new UserFriendlyException("Patient not found");
 
             var updatedPatient = await _patientManager.UpdatePatientAsync(
-                id,
+                input.Id,
                 input.Name,
                 input.Surname,
                 input.EmailAddress,
@@ -129,9 +129,6 @@ namespace healthap.Services.PersonServices
             return _mapper.Map<PatientResponseDto>(updatedPatient);
         }
 
-        public override Task<PatientResponseDto> UpdateAsync(PatientResponseDto input)
-        {
-            return base.UpdateAsync(input);
-        }
+        
     }
 }

@@ -113,11 +113,11 @@ namespace healthap.Domain.Persons
 
         public async Task<Patient> UpdatePatientAsync(
       Guid patientId,
-      string? firstName,
+      string? Name,
       string? surname,
       string? emailAddress,
       string? phoneNumber,
-      string? username,
+      string? userName,
       string? password,
       string? title,
       string? address,
@@ -136,10 +136,10 @@ namespace healthap.Domain.Persons
                 throw new UserFriendlyException("User not found");
 
             // Only update fields that are provided (not null)
-            if (!string.IsNullOrEmpty(firstName)) user.Name = firstName;
+            if (!string.IsNullOrEmpty(Name)) user.Name = Name;
             if (!string.IsNullOrEmpty(surname)) user.Surname = surname;
             if (!string.IsNullOrEmpty(emailAddress)) user.EmailAddress = emailAddress;
-            if (!string.IsNullOrEmpty(username)) user.UserName = username;
+            if (!string.IsNullOrEmpty(userName)) user.UserName = userName;
             if (!string.IsNullOrEmpty(title)) patient.Title = title;
             if (!string.IsNullOrEmpty(phoneNumber)) patient.PhoneNumber = phoneNumber;
             if (!string.IsNullOrEmpty(address)) patient.Address = address;
