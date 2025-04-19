@@ -1,5 +1,5 @@
 "use client";
-import { IPatient, IPatientRegisteration } from "./models";
+import { IPatient, IPatientRegisteration, UpdatePatientDto } from "./models";
 import { createContext } from "react";
 
 // Context shape
@@ -18,7 +18,7 @@ export interface IPatientActionContext {
   getPatients: () => void;
   getPatient: (id: string) => void;
   registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
-  updatePatient: (Patient: IPatient) => void;
+  updatePatient: (Patient: string, patientData: UpdatePatientDto) => void;
   deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
   getCurrentPatient: (userId:number) => Promise<IPatient>; // Fixed camelCase name
 }

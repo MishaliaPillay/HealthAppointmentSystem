@@ -1,6 +1,6 @@
 "use client";
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
-import { IPatient, IPatientRegisteration } from "./models";
+import { IPatient, IPatientRegisteration, UpdatePatientDto } from "./models";
 import {
   INITIAL_STATE,
   PatientActionContext,
@@ -35,14 +35,12 @@ export const PatientProvider = ({
 }) => {
   const [state, dispatch] = useReducer(PatientReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
-  // Get current patient
 
+  // Get current patient
   const getCurrentPatient = async (
     userId: number
   ): Promise<IPatient | null> => {
-    //loader
     dispatch(getCurrentPatientPending());
-
     const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?id=${userId}`;
 
     return axios
@@ -64,7 +62,7 @@ export const PatientProvider = ({
       });
   };
 
-  //Register the patient
+  // Register the patient
   const registerPatient = async (Patient: IPatientRegisteration) => {
     dispatch(registerPatientPending());
     const endpoint = `/Patient/Create`;
@@ -79,12 +77,12 @@ export const PatientProvider = ({
       });
   };
 
-  //Get All Patients
+  // Get All Patients
   const getPatients = async () => {
     dispatch(getPatientsPending());
-    const endpoint = `/Provider/GetAll`;
+    const endpoint = `/Patient/GetAll`;
     await instance
-      .post(endpoint)
+      .get(endpoint)
       .then((response) => {
         dispatch(getPatientsSuccess(response.data));
       })
@@ -94,12 +92,12 @@ export const PatientProvider = ({
       });
   };
 
-  //Get Patient
+  // Get Patient
   const getPatient = async (patientId: string) => {
     dispatch(getPatientPending());
-    const endpoint = `Provider/Get?Id=${patientId}`;
+    const endpoint = `/Patient/Get?Id=${patientId}`;
     await instance
-      .post(endpoint, patientId)
+      .get(endpoint)
       .then((response) => {
         dispatch(getPatientsSuccess(response.data));
       })
@@ -109,34 +107,40 @@ export const PatientProvider = ({
       });
   };
 
-  //Update Paitient
-  const updatePatient = async (patient: IPatient) => {
-    dispatch(updatePatientPending());
-    const endpoint = `/Provider/Update`;
-    await instance
-      .post(endpoint, patient)
-      .then((response) => {
-        dispatch(updatePatientSuccess(response.data));
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(updatePatientError());
-      });
-  };
+  
+ const updatePatient = async (patientId: string, patientData: UpdatePatientDto) => {
+  dispatch(updatePatientPending());
+  
+  // Match the exact route pattern: [HttpPut("Update/{id}")]
+  // const endpoint = `/Patient/Update/${patientId}`;
+   const endpoint = `/api/services/app/Patient/Update?=id${patientId}`;
+  
+  await instance
+    .put(endpoint, patientData) 
+    .then((response) => {
+      dispatch(updatePatientSuccess(response.data));
+    })
+    .catch((error) => {
+      console.error("Update error:", error.response?.data || error.message);
+      dispatch(updatePatientError());
+    });
+};
 
-  //Delete Patient
+  // Delete Patient
   const deletePatientbyId = async (patientId: string) => {
     dispatch(deletePatientPending());
-    const endpoint = `/Provider/Delete?Id=${patientId}`;
+    const endpoint = `/Delete?Id=${patientId}`;
     await instance
       .delete(endpoint)
       .then((response) => {
         dispatch(deletePatientSuccess(response.data));
       })
       .catch((error) => {
+        console.error("Error deleting patient:", error);
         dispatch(deletePatientSuccess(error.data));
       });
   };
+
   return (
     <PatientStateContext.Provider value={state}>
       <PatientActionContext.Provider
@@ -154,6 +158,7 @@ export const PatientProvider = ({
     </PatientStateContext.Provider>
   );
 };
+
 export const usePatientState = () => {
   const context = useContext(PatientStateContext);
   if (!context) {

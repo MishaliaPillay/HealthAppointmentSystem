@@ -11,6 +11,7 @@ using AutoMapper;
 using healthap.Authorization.Users;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace healthap.Services.PersonServices
@@ -77,7 +78,7 @@ namespace healthap.Services.PersonServices
                 _mapper.Map<List<PatientResponseDto>>(patients)
             );
         }
-                public async Task<PatientResponseDto> GetCurrentPatientAsync(long id)
+        public async Task<PatientResponseDto> GetCurrentPatientAsync(long id)
         {
 
             // Check if user is logged in
@@ -88,7 +89,7 @@ namespace healthap.Services.PersonServices
             //}
             var queryPatient = await _repository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
 
- 
+
             // Get the provider by the input user ID
             var patient = await queryPatient.FirstOrDefaultAsync(p => p.UserId == id);
             // Check if patient exists
@@ -99,6 +100,38 @@ namespace healthap.Services.PersonServices
 
             // Map to DTO and return
             return _mapper.Map<Patient, PatientResponseDto>(patient);
+        }
+
+        [HttpPut("Update/{id}")]
+        public async Task<PatientResponseDto> Update(Guid id, [FromBody] UpdatePatientDto input) 
+        {
+            var patient = await _repository.GetAsync(id);
+            if (patient == null)
+                throw new UserFriendlyException("Patient not found");
+
+            var updatedPatient = await _patientManager.UpdatePatientAsync(
+                id,
+                input.Name,
+                input.Surname,
+                input.EmailAddress,
+                input.PhoneNumber,
+                input.UserName,
+                input.Password,
+                input.Title,
+                input.Address,
+                input.City,
+                input.Province,
+                input.PostalCode,
+                input.Country,
+                input.PreferredContactMethod
+            );
+
+            return _mapper.Map<PatientResponseDto>(updatedPatient);
+        }
+
+        public override Task<PatientResponseDto> UpdateAsync(PatientResponseDto input)
+        {
+            return base.UpdateAsync(input);
         }
     }
 }

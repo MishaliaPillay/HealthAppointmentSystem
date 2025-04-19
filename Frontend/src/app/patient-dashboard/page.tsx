@@ -71,9 +71,6 @@ export default function Dashboard() {
          }
     }
   };
-
-
-
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
