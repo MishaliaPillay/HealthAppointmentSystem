@@ -47,7 +47,14 @@ export default function LoginSignup({ className }: LoginSignupProps) {
   const router = useRouter();
   const { getCurrentUser } = useUserActions();
   const { getCurrentPatient } = usePatientActions();
-  const token = sessionStorage.getItem("jwt") || "";
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const jwt = sessionStorage.getItem("jwt") || "";
+      setToken(jwt);
+    }
+  }, []);
   useEffect(() => {
     if (isPending) {
       setLoading(true);
