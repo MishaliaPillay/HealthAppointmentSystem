@@ -3,30 +3,24 @@ import { IUser } from "../users-provider/models";
 
 export interface IProvider {
   user: IUser;
-  FirstName: string;
-  LastName: string;
-  Email: string;
-  Title: string;
-  Biography: string;
-  PhoneNumber: string;
-  YearsOfExperience: number;
-  MaxAppointmentsPerDay: number;
-  Qualification: string;
+  title: string;
+  biography: string;
+  phoneNumber: string;
+  yearsOfExperience: number;
+  maxAppointmentsPerDay: number;
+  qualification: string;
   appointments?: IAppointment[];
   _id?: string;
 }
 export interface IProviderRegisteration {
-  FirstName: string;
-  LastName: string;
-  Email: string;
-  Role: string;
-  Title: string;
-  Password: string;
-  Biography: string;
-  PhoneNumber: string;
-  YearsOfExperience: number;
-  MaxAppointmentsPerDay: number;
-  Qualification: string;
+  user: IUser;
+  title: string;
+  password: string;
+  biography: string;
+  phoneNumber: string;
+  yearsOfExperience: number;
+  maxAppointmentsPerDay: number;
+  qualification: string;
 }
 export interface UpdateProvider {
   id?: string;
