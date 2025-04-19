@@ -1,7 +1,7 @@
 "use client";
 import { IProvider, IProviderRegisteration } from "./models";
 import { createContext } from "react";
-
+import { UpdateProvider } from "./models";
 // Context shape
 export interface IProviderStateContext {
   isPending: boolean;
@@ -17,7 +17,7 @@ export interface IProviderActionContext {
   getProviders: () => void;
   getProvider: (id: string) => void;
   registerProvider: (Provider: IProviderRegisteration) => Promise<void>;
-  updateProvider: (Provider: IProvider) => void;
+  updateProvider: (ProviderId: string, providerData: UpdateProvider) => void;
   deleteProviderbyId: (ProviderId: string) => void; //letting user delete their own profile
   getCurrentProvider: (userId: number) => Promise<IProvider>; // Fixed camelCase name
 }

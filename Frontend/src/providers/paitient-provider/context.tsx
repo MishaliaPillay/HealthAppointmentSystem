@@ -18,7 +18,7 @@ export interface IPatientActionContext {
   getPatients: () => void;
   getPatient: (id: string) => void;
   registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
-  updatePatient: (Patient: string, patientData: UpdatePatientDto) => void;
+  updatePatient: (PatientId: string, patientData: UpdatePatientDto) => void;
   deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
   getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
 }

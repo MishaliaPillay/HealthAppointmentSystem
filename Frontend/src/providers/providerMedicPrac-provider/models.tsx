@@ -28,3 +28,19 @@ export interface IProviderRegisteration {
   MaxAppointmentsPerDay: number;
   Qualification: string;
 }
+export interface UpdateProvider {
+  id?: string;
+  name?: string;
+  surname?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+  userName?: string;
+  email: string;
+  title: string;
+  biography: string;
+  yearsOfExperience: number;
+  maxAppointmentsPerDay: number;
+  qualification: string;
+  appointments?: IAppointment[];
+  _id?: string;
+}

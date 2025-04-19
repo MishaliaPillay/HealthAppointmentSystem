@@ -27,6 +27,7 @@ import {
   deleteProviderSuccess,
 } from "./actions";
 import axios from "axios";
+import { UpdateProvider } from "../providerMedicPrac-provider/models";
 export const ProviderProvider = ({
   children,
 }: {
@@ -107,16 +108,23 @@ export const ProviderProvider = ({
   };
 
   //Update Provider
-  const updateProvider = async (Provider: IProvider) => {
+  const updateProvider = async (
+    ProviderId: string,
+    ProviderData: UpdateProvider
+  ) => {
     dispatch(updateProviderPending());
-    const endpoint = `updateProvider`;
+    const payload = {
+      ...ProviderData,
+      id: ProviderId,
+    };
+    const endpoint = `/Provider/UpdateProvider`;
     await instance
-      .post(endpoint, Provider)
+      .put(endpoint, payload)
       .then((response) => {
         dispatch(updateProviderSuccess(response.data));
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Update error:", error.response?.data || error.message);
         dispatch(updateProviderError());
       });
   };
