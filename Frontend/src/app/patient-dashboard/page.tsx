@@ -2,7 +2,7 @@
 
 import { Typography, Row, Col, Card, Button, Progress, Modal } from "antd";
 import styles from "./patientdash.module.css";
-import { BookingModule } from "../../components/booking/booking";
+// import { BookingModule } from "../../components/booking/booking";
 import { useState } from "react";
 
 const { Title, Text } = Typography;
@@ -95,9 +95,7 @@ export default function Dashboard() {
         onCancel={handleCloseBookingModal}
         width={800}
         footer={null}
-      >
-        <BookingModule showButton={false} onClose={handleCloseBookingModal} />
-      </Modal>
+      ></Modal>
     </div>
   );
 }

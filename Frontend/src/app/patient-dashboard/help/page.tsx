@@ -47,7 +47,7 @@ export default function HelpPage() {
         <Paragraph className="paragraph">
           <ul>
             <li>✔️ Update your profile from the Dashboard → Update Profile</li>
-            <li>✔️ View medical history from the &quot;Medical History&quot; tab on the left menu</li>
+   
             <li>✔️ Cancel an appointment from the &quot;My Appointments&quot; section</li>
           </ul>
         </Paragraph>
