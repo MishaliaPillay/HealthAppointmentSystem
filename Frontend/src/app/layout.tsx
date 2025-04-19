@@ -6,6 +6,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { ProviderProvider } from "../providers/providerMedicPrac-provider";
 import { PatientProvider } from "../providers/paitient-provider";
 import { UserProvider } from "../providers/users-provider";
+import { CheckUserProvider } from "@/providers/check-user-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
   return (
     <ConfigProvider theme={HealthColors}>
       <html lang="en">
+<<<<<<< HEAD
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
           {/* <AuthProvider>
           <ProviderProvider>
@@ -50,6 +52,18 @@ export default function RootLayout({
               </ProviderProvider>
             </UserProvider>
           </AuthProvider>
+=======
+        <body className={`${geistSans.variable} ${geistMono.variable}`}><CheckUserProvider>
+          <AuthProvider>
+            <ProviderProvider>
+              <PatientProvider>
+                
+                  <UserProvider>{children}</UserProvider>
+               
+              </PatientProvider>
+            </ProviderProvider>
+          </AuthProvider> </CheckUserProvider>
+>>>>>>> Development
         </body>
       </html>
     </ConfigProvider>

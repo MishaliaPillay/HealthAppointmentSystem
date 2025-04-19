@@ -9,6 +9,7 @@ namespace healthap.Services.AppointmentServices
 {
     public class AppointmentAppService : AsyncCrudAppService<Appointment, AppointmentDto, Guid>, IAppointmentAppService
     {
+
         public AppointmentAppService(IRepository<Appointment, Guid> repository) : base(repository)
         {
         }

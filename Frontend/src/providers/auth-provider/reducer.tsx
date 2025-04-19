@@ -18,6 +18,18 @@ export const AuthReducer = handleActions<IAuthStateContext, IAuthStateContext>(
       ...state,
       ...action.payload,
     }),
+    [AuthActionEnums.signUpError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [AuthActionEnums.signUpSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [AuthActionEnums.signUpPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
   },
   INITIAL_STATE
 );

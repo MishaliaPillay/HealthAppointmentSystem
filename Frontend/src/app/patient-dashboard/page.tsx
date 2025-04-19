@@ -11,12 +11,17 @@ import {
 } from "antd";
 const { Title, Text } = Typography;
 import styles from "./patientdash.module.css";
+<<<<<<< HEAD
 import BookingModule from "../../components/booking/booking";
 import { useState, useEffect } from "react";
 import {
   usePatientActions,
   usePatientState,
 } from "@/providers/paitient-provider";
+=======
+import { BookingModule } from "../../components/booking/booking";
+import { useState } from "react";
+>>>>>>> Development
 
 
 import { useUserActions } from "@/providers/users-provider";
