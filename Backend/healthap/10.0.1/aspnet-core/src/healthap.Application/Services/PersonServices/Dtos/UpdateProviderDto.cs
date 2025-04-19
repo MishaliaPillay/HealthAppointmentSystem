@@ -8,7 +8,7 @@ namespace healthap.Services.PersonServices.Dtos
 {
     public class UpdateProviderDto: UserRequestDto
     {
-        public Guid ProviderId { get; set; }
+        public Guid Id { get; set; }
         public string? Title { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Biography { get; set; }
