@@ -11,6 +11,7 @@ using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Abp.Authorization;
+using NuGet.Protocol.Core.Types;
 
 namespace healthap.Services.PersonServices
 {
@@ -21,6 +22,7 @@ namespace healthap.Services.PersonServices
     {
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
+        private readonly IRepository<Patient, Guid> _repository;
 
         public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager, IMapper mapper) : base(repository)
         {
@@ -91,6 +93,32 @@ namespace healthap.Services.PersonServices
                 totalCount,
                 _mapper.Map<List<ProviderResponseDto>>(providers)
             );
+        }
+
+        public async Task<ProviderResponseDto> UpdateproviderAsync(UpdateProviderDto input)
+        {
+
+            var provider = await _repository.GetAsync(input.Id);
+            if (provider == null)
+                throw new UserFriendlyException("provider not found");
+
+            var updatedprovider = await _providerManager.UpdateproviderAsync(
+                input.Id,
+                input.Name,
+                input.Surname,
+                input.EmailAddress,
+                input.PhoneNumber,
+                input.UserName,
+                input.Password,
+                input.Title,
+                input.Biography,
+                input.YearsOfExperience,
+                input.MaxiumAppointmentsPerDay,
+                input.Qualifications,
+                input.Speciality
+            );
+
+            return _mapper.Map<ProviderResponseDto>(updatedprovider);
         }
     }
 
