@@ -1,0 +1,36 @@
+.container {
+    padding: 24px;
+    border-radius: 12px;
+    margin: 24px;
+  }
+  
+  .title {
+    color: #1677ff;
+    margin-bottom: 16px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .subtitle {
+    color: #1677ff;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  
+  .paragraph {
+    font-size: 16px;
+    color: #595959;
+    margin-bottom: 24px;
+  }
+  
+  .collapse {
+    background-color: #fafafa;
+    border-radius: 8px;
+  }
+  
+  .panelHeader {
+    font-weight: 500;
+    font-size: 16px;
+    color: #262626;
+  }

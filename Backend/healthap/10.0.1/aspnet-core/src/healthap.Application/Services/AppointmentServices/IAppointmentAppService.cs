@@ -10,6 +10,5 @@ namespace healthap.Services.AppointmentServices
 {
     public interface IAppointmentAppService : IAsyncCrudAppService<AppointmentDto, Guid>
     {
-
     }
 }

@@ -1,6 +1,6 @@
 // BookingModule.tsx
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Steps } from "antd";
+import { Button, Modal, Steps, message } from "antd";
 import {
   SPECIALTIES,
   FACILITIES,
@@ -22,7 +22,7 @@ interface BookingModuleProps {
   onClose?: () => void;
 }
 
-const BookingModule: React.FC<BookingModuleProps> = ({
+export const BookingModule: React.FC<BookingModuleProps> = ({
   showButton = true,
   onClose,
 }) => {
@@ -43,8 +43,6 @@ const BookingModule: React.FC<BookingModuleProps> = ({
   const [showDoctorProfile, setShowDoctorProfile] = useState(false);
   const [doctorToShow, setDoctorToShow] = useState<Doctor | null>(null);
 
-  // If the component is used directly in a modal (not with its own button)
-  // we should consider it already open
   useEffect(() => {
     if (!showButton) {
       setIsOpen(true);
@@ -110,6 +108,10 @@ const BookingModule: React.FC<BookingModuleProps> = ({
   const handleDoctorSelect = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
     setCurrentStep(3);
+    message.info({
+      content: `Selected Dr. ${doctor.name} - ${SPECIALTIES.find(s => s.id === doctor.specialty)?.name}`,
+      duration: 3
+    });
   };
 
   const handleDateSelect = (date: string) => {
@@ -122,14 +124,24 @@ const BookingModule: React.FC<BookingModuleProps> = ({
   };
 
   const handleSubmitBooking = () => {
-    // Here you would connect to your API to save the booking
-    Modal.success({
-      title: "Booking Confirmed",
+    message.success({
       content: `Your appointment with ${selectedDoctor?.name} on ${selectedDate} at ${selectedTimeSlot?.time} has been booked.`,
-      onOk: () => {
-        handleCloseModal();
-      },
+      className: 'custom-class',
+      duration: 2,
     });
+    
+    const appointmentDate = new Date(selectedDate + ' ' + selectedTimeSlot?.time);
+    const reminderDate = new Date(appointmentDate.getTime() - 24 * 60 * 60 * 1000);
+    
+    const reminders = JSON.parse(localStorage.getItem('appointmentReminders') || '[]');
+    reminders.push({
+      doctorName: selectedDoctor?.name,
+      date: appointmentDate.toISOString(),
+      reminderDate: reminderDate.toISOString()
+    });
+    localStorage.setItem('appointmentReminders', JSON.stringify(reminders));
+    
+    handleCloseModal();
   };
 
   const viewDoctorProfile = (doctor: Doctor) => {
@@ -190,7 +202,6 @@ const BookingModule: React.FC<BookingModuleProps> = ({
     }
   };
 
-  // Only render the booking content (no button or modal) if used directly in another modal
   if (!showButton) {
     return (
       <div className={styles.modalContent}>
@@ -233,7 +244,6 @@ const BookingModule: React.FC<BookingModuleProps> = ({
     );
   }
 
-  // Original implementation with button and modal for standalone usage
   return (
     <div style={{ maxWidth: "1024px", margin: "0 auto", padding: 16 }}>
       <Button
@@ -294,4 +304,3 @@ const BookingModule: React.FC<BookingModuleProps> = ({
   );
 };
 
-export default BookingModule;
