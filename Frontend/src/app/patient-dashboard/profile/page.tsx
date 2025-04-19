@@ -19,15 +19,15 @@ import {
   usePatientState,
 } from "@/providers/paitient-provider";
 import { useUserActions } from "@/providers/users-provider";
-import {
-  UpdatePatientDto,
-} from "@/providers/paitient-provider/models";
-import {  ReflistConMethod}  from "../../../models/enums/ReflistConMethod"
+import { UpdatePatientDto } from "@/providers/paitient-provider/models";
+import { ReflistConMethod } from "../../../models/enums/ReflistConMethod";
+
 const { Title } = Typography;
 const { Option } = Select;
 
 const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const [formValues, setFormValues] = useState<UpdatePatientDto | null>(null);
 
   const { isPending, isError, isSuccess, currentPatient } = usePatientState();
@@ -45,22 +45,24 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (currentPatient) {
-      setFormValues({
-        id: currentPatient?.id,
-        name: currentPatient?.user.name,
-        surname: currentPatient?.user.surname,
-        emailAddress: currentPatient?.user.emailAddress,
-        phoneNumber: currentPatient?.phoneNumber,
-        userName: currentPatient?.user.userName,
+      const data: UpdatePatientDto = {
+        id: currentPatient.id,
+        name: currentPatient.user.name,
+        surname: currentPatient.user.surname,
+        emailAddress: currentPatient.user.emailAddress,
+        phoneNumber: currentPatient.phoneNumber,
+        userName: currentPatient.user.userName,
         password: "",
-        title: currentPatient?.title,
-        address: currentPatient?.address,
-        city: currentPatient?.city,
-        province: currentPatient?.province,
-        postalCode: currentPatient?.postalCode,
-        country: currentPatient?.country,
-        preferredContactMethod: currentPatient?.preferredContactMethod,
-      });
+        title: currentPatient.title,
+        address: currentPatient.address,
+        city: currentPatient.city,
+        province: currentPatient.province,
+        postalCode: currentPatient.postalCode,
+        country: currentPatient.country,
+        preferredContactMethod: currentPatient.preferredContactMethod,
+      };
+      setFormValues(data);
+      form.setFieldsValue(data); // set values in form
     }
   }, [currentPatient]);
 
@@ -80,10 +82,17 @@ const ProfilePage: React.FC = () => {
   };
 
   const updatePatientProfile = async () => {
-    if (!formValues || !currentPatient.id) return;
-    const patientDataToSend = { ...formValues };
-    delete patientDataToSend.id;
-    await updatePatient(currentPatient.id, formValues);
+    try {
+      const values = await form.validateFields();
+      if (!formValues?.id) return;
+      await updatePatient(formValues.id, {
+        ...formValues,
+        ...values,
+        id: formValues.id,
+      });
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
   };
 
   return (
@@ -109,6 +118,7 @@ const ProfilePage: React.FC = () => {
                 <Form.Item label="ID" name="id" initialValue={formValues?.id}>
                   <Input disabled />
                 </Form.Item>
+
                 <Form.Item
                   label="Full Name"
                   name="name"
@@ -116,6 +126,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Surname"
                   name="surname"
@@ -123,6 +134,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Email Address"
                   name="emailAddress"
@@ -130,6 +142,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Phone Number"
                   name="phoneNumber"
@@ -137,6 +150,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Username"
                   name="userName"
@@ -144,9 +158,11 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item label="Password" name="password">
                   <Input.Password placeholder="Enter new password (optional)" />
                 </Form.Item>
+
                 <Form.Item
                   label="Title"
                   name="title"
@@ -154,6 +170,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Address"
                   name="address"
@@ -161,6 +178,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="City"
                   name="city"
@@ -168,6 +186,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Province"
                   name="province"
@@ -175,6 +194,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Postal Code"
                   name="postalCode"
@@ -182,6 +202,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Country"
                   name="country"
@@ -189,6 +210,7 @@ const ProfilePage: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Preferred Contact Method"
                   name="preferredContactMethod"
@@ -206,6 +228,7 @@ const ProfilePage: React.FC = () => {
                     <Option value={ReflistConMethod.SMS}>SMS</Option>
                   </Select>
                 </Form.Item>
+
                 <Form.Item>
                   <Button type="primary" onClick={updatePatientProfile}>
                     Save Changes
