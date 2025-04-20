@@ -69,8 +69,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     getAllPlaces();
   }, []);
 
-
-
   const debouncedEmailCheck = useRef(
     debounce(async (value: string) => {
       const result = await userExists({ emailAddress: value, userName: "" });
@@ -413,23 +411,35 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 placeholder="Select Institution"
                 showSearch
                 loading={isPending}
-                optionFilterProp="children" // search the rendered text
-                dropdownStyle={{ maxHeight: 300, overflowY: "auto" }}
-              >
-                {institutions.map((inst) => (
-                  <Option key={inst.id} value={inst.id}>
+                filterOption={(input, option) =>
+                  (option?.label as string)
+                    ?.toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={institutions.map((inst) => ({
+                  label: inst.description, // used for searching
+                  value: inst.id,
+                  inst, // attach full object for rendering
+                }))}
+                optionRender={(option) => {
+                  const inst = option.data.inst;
+                  return (
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <strong>{inst.description}</strong>
                       <span style={{ fontSize: 12, color: "gray" }}>
                         {inst.address} • {inst.city}, {inst.state}
                       </span>
                     </div>
-                  </Option>
-                ))}
-                {institutions.length === 0 && !isPending && (
-                  <Option disabled>No institutions found</Option>
-                )}
-              </Select>
+                  );
+                }}
+                notFoundContent={
+                  !isPending && institutions.length === 0 ? (
+                    <div style={{ padding: "8px", color: "gray" }}>
+                      No institutions found
+                    </div>
+                  ) : null
+                }
+              />
             </Form.Item>
           </>
         )}
