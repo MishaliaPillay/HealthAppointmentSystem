@@ -1,19 +1,21 @@
 "use client";
-import { Layout, Menu, Avatar } from "antd";
 
+import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   CalendarOutlined,
   FileTextOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { MenuProps } from "antd";
-import { useRouter } from "next/navigation";
 import { useUserActions, useUserState } from "@/providers/users-provider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getRole } from "@/utils/decoder";
+
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -22,64 +24,91 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+  const [role, setRole] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { getCurrentUser } = useUserActions();
+  const { currentUser } = useUserState();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+    const userRole = getRole(token);
+    setRole(userRole);
+  }, []);
+
   useEffect(() => {
     if (!currentUser) {
-      fetchCurrentUser();
-    }
-  })
-  const router = useRouter();
-  const signOutUser = () => {
-     sessionStorage.removeItem("jwt");
-    if (sessionStorage.length === 0) {
-      router.push("/");
-    }
-  }
-  
-    const fetchCurrentUser = async () => {
       const token = sessionStorage.getItem("jwt");
       if (token) {
-        await getCurrentUser(token).catch((err) => {
+        getCurrentUser(token).catch((err) => {
           console.error("Error fetching current user: ", err);
         });
       }
-    };
- const { getCurrentUser }=useUserActions();
- const { currentUser,} = useUserState();
-  const pathname = usePathname();
+    }
+  }, [currentUser, getCurrentUser]);
 
+  const signOutUser = () => {
+    sessionStorage.removeItem("jwt");
+    router.push("/");
+  };
+
+  // Full menu list including Back button
   const menuItems: MenuProps["items"] = [
     {
-      key: "/patient-dashboard",
+      key: `/${role}-dashboard/profile`,
       icon: <DashboardOutlined />,
-      label: <Link href="/patient-dashboard">Dashboard</Link>,
+      label: <Link href={`/${role}-dashboard`}>Dashboard</Link>,
     },
     {
-      key: "/patient-dashboard/appointments",
+      key: `/${role}-dashboard/appointments`,
       icon: <CalendarOutlined />,
       label: (
-        <Link href="/patient-dashboard/appointments">My Appointments</Link>
+        <Link href={`/${role}-dashboard/appointments`}>My Appointments</Link>
       ),
     },
-    {
-      key: "/patient-dashboard/medical-history",
-      icon: <FileTextOutlined />,
-      label: (
-        <Link href="/patient-dashboard/medical-history">Medical History</Link>
-      ),
-    },
-
+    ...(role === "patient"
+      ? [
+          {
+            key: "/patient-dashboard/medical-history",
+            icon: <FileTextOutlined />,
+            label: (
+              <Link href="/patient-dashboard/medical-history">
+                Medical History
+              </Link>
+            ),
+          },
+        ]
+      : []),
     {
       key: "help",
       icon: <QuestionCircleOutlined />,
       label: "Help",
     },
     {
+      key: "back",
+      icon: <ArrowLeftOutlined />,
+      label: "Back",
+      onClick: () => router.back(),
+    },
+    {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      onClick: () => signOutUser(),
+      onClick: signOutUser,
     },
   ];
+
+  const getSelectedKey = () => {
+    const match = menuItems
+      .map((item) => item?.key as string)
+      .find((key) => pathname.startsWith(key));
+    return match || "";
+  };
 
   return (
     <Sider
@@ -110,7 +139,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         }}
       >
         <Avatar style={{ backgroundColor: "#87CEFA" }}>
-          {" "}
           {currentUser ? currentUser.name?.[0] : "U"}
         </Avatar>
         {!collapsed && (
@@ -120,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       <Menu
         theme="dark"
         mode="inline"
-        selectedKeys={[pathname]}
+        selectedKeys={[getSelectedKey()]}
         items={menuItems}
       />
     </Sider>
@@ -128,5 +156,3 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 };
 
 export default Sidebar;
-
-
