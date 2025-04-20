@@ -23,14 +23,14 @@ namespace healthap.Services.PersonServices
         private readonly IMapper _mapper;
 
         private readonly IRepository<Provider, Guid> _providerRepository;
-        private readonly IRepository<ProviderAvailabilty, Guid> _providerAvailabilityRepository;
+        private readonly IRepository<ProviderAvailability, Guid> _providerAvailabilityRepository;
         private readonly IRepository<Appointment, Guid> _appointmentRepository;
 
         public ProviderAppService(
             IRepository<Provider, Guid> repository,
             ProviderManager providerManager,
             IMapper mapper,
-            IRepository<ProviderAvailabilty, Guid> providerAvailabilityRepository,
+            IRepository<ProviderAvailability, Guid> providerAvailabilityRepository,
             IRepository<Appointment, Guid> appointmentRepository
         ) : base(repository)
         {
@@ -103,22 +103,20 @@ namespace healthap.Services.PersonServices
 
             foreach (var item in input.Availabilities)
             {
-                var newAvailability = new ProviderAvailabilty
+                var newAvailability = new ProviderAvailability
                 {
                     Id = Guid.NewGuid(),
                     Provider = provider,
+                    DayOfWeek = item.DayOfWeek, // ✅ Add it here
                     StartTime = item.StartTime,
                     EndTime = item.EndTime,
                     IsAvailable = item.IsAvailable
                 };
 
-                typeof(ProviderAvailabilty)
-                    .GetProperty("DayOfWeek")
-                    ?.SetValue(newAvailability, item.DayOfWeek);
-
                 await _providerAvailabilityRepository.InsertAsync(newAvailability);
             }
         }
+
 
         public async Task<AvailableSlotsOutput> GetAvailableSlotsAsync(Guid providerId, DateTime date)
         {

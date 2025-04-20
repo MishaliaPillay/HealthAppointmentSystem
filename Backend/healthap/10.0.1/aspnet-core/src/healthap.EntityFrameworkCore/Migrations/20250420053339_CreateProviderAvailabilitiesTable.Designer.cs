@@ -12,15 +12,15 @@ using healthap.EntityFrameworkCore;
 namespace healthap.Migrations
 {
     [DbContext(typeof(healthapDbContext))]
-    [Migration("20250419224021_providersetsAvailabilty")]
-    partial class providersetsAvailabilty
+    [Migration("20250420053339_CreateProviderAvailabilitiesTable")]
+    partial class CreateProviderAvailabilitiesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1645,7 +1645,7 @@ namespace healthap.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1656,6 +1656,9 @@ namespace healthap.Migrations
 
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
@@ -2304,10 +2307,10 @@ namespace healthap.Migrations
                     b.Navigation("Provider");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
-                        .WithMany("ProviderAvailabilty")
+                        .WithMany("ProviderAvailability")
                         .HasForeignKey("ProviderId");
 
                     b.Navigation("Provider");
@@ -2491,7 +2494,7 @@ namespace healthap.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("ProviderAvailabilty");
+                    b.Navigation("ProviderAvailability");
                 });
 #pragma warning restore 612, 618
         }

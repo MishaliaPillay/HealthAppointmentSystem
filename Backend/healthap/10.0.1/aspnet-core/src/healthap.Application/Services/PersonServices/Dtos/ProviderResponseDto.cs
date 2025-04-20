@@ -20,8 +20,8 @@ namespace healthap.Services.PersonServices.Dtos
         public string Qualification { get; set; }
         public string Specialty { get; set; }
         public int InstitutionId { get; set; }
-        public List<ProviderAvailabiltyDto> ProviderAvailabilty { get; set; }
-        public List<ProviderAvailabiltyDto> Availabilities { get; set; }
+        public List<ProviderAvailabilityDto> ProviderAvailability { get; set; }
+        public List<ProviderAvailabilityDto> Availabilities { get; set; }
         public List<AppointmentDto> Appointments { get; set; }
 
     }

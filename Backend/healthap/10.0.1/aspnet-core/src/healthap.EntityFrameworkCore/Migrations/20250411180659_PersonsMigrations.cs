@@ -68,7 +68,7 @@ namespace healthap.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProviderAvailabilty",
+                name: "ProviderAvailability",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -86,9 +86,9 @@ namespace healthap.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProviderAvailabilty", x => x.Id);
+                    table.PrimaryKey("PK_ProviderAvailability", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProviderAvailabilty_Persons_ProviderId",
+                        name: "FK_ProviderAvailability_Persons_ProviderId",
                         column: x => x.ProviderId,
                         principalTable: "Persons",
                         principalColumn: "Id");
@@ -110,8 +110,8 @@ namespace healthap.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProviderAvailabilty_ProviderId",
-                table: "ProviderAvailabilty",
+                name: "IX_ProviderAvailability_ProviderId",
+                table: "ProviderAvailability",
                 column: "ProviderId");
 
             migrationBuilder.AddForeignKey(
@@ -141,7 +141,7 @@ namespace healthap.Migrations
                 table: "Appointments");
 
             migrationBuilder.DropTable(
-                name: "ProviderAvailabilty");
+                name: "ProviderAvailability");
 
             migrationBuilder.DropTable(
                 name: "Persons");

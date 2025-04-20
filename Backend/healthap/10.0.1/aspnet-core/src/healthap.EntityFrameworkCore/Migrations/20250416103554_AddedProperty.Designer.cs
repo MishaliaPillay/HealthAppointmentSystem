@@ -1640,7 +1640,7 @@ namespace healthap.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2235,7 +2235,7 @@ namespace healthap.Migrations
                         .HasForeignKey("ProviderId");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
                         .WithMany("Availabilities")

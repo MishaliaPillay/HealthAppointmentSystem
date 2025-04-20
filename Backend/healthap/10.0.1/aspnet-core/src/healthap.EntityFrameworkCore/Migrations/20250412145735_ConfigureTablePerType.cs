@@ -20,8 +20,9 @@ namespace healthap.Migrations
                 table: "Appointments");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_ProviderAvailabilty_Persons_ProviderId",
-                table: "ProviderAvailabilty");
+       name: "FK_ProviderAvailability_Persons_ProviderId",
+       table: "ProviderAvailability");
+
 
             migrationBuilder.DropColumn(
                 name: "Address",
@@ -131,8 +132,8 @@ namespace healthap.Migrations
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProviderAvailabilty_Providers_ProviderId",
-                table: "ProviderAvailabilty",
+                name: "FK_ProviderAvailability_Providers_ProviderId",
+                table: "ProviderAvailability",
                 column: "ProviderId",
                 principalTable: "Providers",
                 principalColumn: "Id");
@@ -150,8 +151,8 @@ namespace healthap.Migrations
                 table: "Appointments");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_ProviderAvailabilty_Providers_ProviderId",
-                table: "ProviderAvailabilty");
+                name: "FK_ProviderAvailability_Providers_ProviderId",
+                table: "ProviderAvailability");
 
             migrationBuilder.DropTable(
                 name: "Patients");
@@ -248,8 +249,8 @@ namespace healthap.Migrations
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProviderAvailabilty_Persons_ProviderId",
-                table: "ProviderAvailabilty",
+                name: "FK_ProviderAvailability_Persons_ProviderId",
+                table: "ProviderAvailability",
                 column: "ProviderId",
                 principalTable: "Persons",
                 principalColumn: "Id");

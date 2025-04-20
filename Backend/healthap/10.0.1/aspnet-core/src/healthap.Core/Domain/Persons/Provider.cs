@@ -26,7 +26,7 @@ namespace healthap.Domain.Persons
 
         // Address attributes
         public virtual healthap.Domain.Institution.Institution Institution { get; set; }
-        public virtual ICollection<ProviderAvailabilty>? ProviderAvailabilty { get; set; } = null;
+        public virtual ICollection<ProviderAvailability>? ProviderAvailability { get; set; } = null;
         public virtual ICollection<Appointment>? Appointments { get; set; } = null;
     }
 }

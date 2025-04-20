@@ -1645,7 +1645,7 @@ namespace healthap.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1688,7 +1688,7 @@ namespace healthap.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("ProviderAvailabilty");
+                    b.ToTable("ProviderAvailability");
                 });
 
             modelBuilder.Entity("healthap.Domain.Institution.Institution", b =>
@@ -2311,10 +2311,10 @@ namespace healthap.Migrations
                         .HasForeignKey("ProviderId");
                 });
 
-            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
+            modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailability", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
-                        .WithMany("ProviderAvailabilty")
+                        .WithMany("ProviderAvailability")
                         .HasForeignKey("ProviderId");
 
                     b.Navigation("Provider");
@@ -2496,7 +2496,7 @@ namespace healthap.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("ProviderAvailabilty");
+                    b.Navigation("ProviderAvailability");
                 });
 #pragma warning restore 612, 618
         }

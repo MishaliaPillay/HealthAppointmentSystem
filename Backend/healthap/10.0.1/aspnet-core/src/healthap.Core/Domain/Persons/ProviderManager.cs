@@ -75,8 +75,8 @@ namespace healthap.Domain.Persons
                     Qualification = qualification,
                     Specialty = speciality,           // ✅ Add this line
                     InstitutionId = institutionId,
-                    // Availabilities = new List<ProviderAvailabilty>(),
-                    ProviderAvailabilty = new List<ProviderAvailabilty>(),
+                    // Availabilities = new List<ProviderAvailability>(),
+                    ProviderAvailability = new List<ProviderAvailability>(),
                     Appointments = new List<Appointment>()
                 };
 
@@ -108,7 +108,7 @@ namespace healthap.Domain.Persons
 
         public async Task<Provider?> GetProviderByUserIdWithDetailsAsync(long userId)
         {
-            var queryProvider = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty);
+            var queryProvider = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments, p => p.ProviderAvailability);
             return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 

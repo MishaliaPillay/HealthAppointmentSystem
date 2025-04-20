@@ -34,7 +34,7 @@ namespace healthap.Services.PersonServices.Mappings
             .ForMember(d => d.UserId, opt => opt.Ignore());
 
             CreateMap<Appointment, AppointmentDto>();
-            CreateMap<ProviderAvailabilty, ProviderAvailabiltyDto>();
+            CreateMap<ProviderAvailability, ProviderAvailabilityDto>();
 
         }
 

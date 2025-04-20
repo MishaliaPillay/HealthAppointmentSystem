@@ -10,7 +10,7 @@ using healthap.Domain.Persons;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {
-    public class ProviderAvailabiltyDto : EntityDto<Guid>
+    public class ProviderAvailabilityDto : EntityDto<Guid>
     {
         public Guid ProviderId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
