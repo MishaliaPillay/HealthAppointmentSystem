@@ -23,6 +23,23 @@ import { useCheckuserActions } from "@/providers/check-user-provider";
 import { RuleObject } from "antd/lib/form"; // Import RuleObject from Ant Design
 
 import styles from "../../app/page.module.css";
+const specialties = [
+  "Cardiology",
+  "Doctor",
+  "Dermatology",
+  "Family Medicine",
+  "Gastroenterology",
+  "Internal Medicine",
+  "Neurology",
+  "Obstetrics",
+  "Oncology",
+  "Ophthalmology",
+  "Orthopedics",
+  "Pediatrics",
+  "Psychiatry",
+  "Radiology",
+  "Urology",
+];
 
 const { Option } = Select;
 
@@ -87,19 +104,19 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const onFinishSignup = async (values: IAuth) => {
     onBeforeSubmit?.();
     setLoading(true);
-  
+
     const formattedValues = {
       ...values,
       dateOfBirth: values.dateOfBirth
         ? dayjs(values.dateOfBirth).toDate()
         : undefined,
     };
-  
+
     console.log("Formatted signup values with role:", formattedValues);
     await signUp(formattedValues); // Now the role is still available
     setLoading(false);
   };
-  
+
   return (
     <Spin spinning={loading} tip="Please hold on...">
       <Form
@@ -314,14 +331,77 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         )}
 
         {role === "provider" && (
-          <Form.Item
-            name="biography"
-            rules={[
-              { required: true, message: "Please input your biography!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Biography" rows={4} />
-          </Form.Item>
+          <>
+            <Form.Item
+              name="biography"
+              rules={[
+                { required: true, message: "Please input your biography!" },
+              ]}
+            >
+              <Input.TextArea placeholder="Biography" rows={4} />
+            </Form.Item>
+
+            <Form.Item
+              name="yearsOfExperience"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter years of experience!",
+                },
+              ]}
+            >
+              <Input type="number" placeholder="Years of Experience" />
+            </Form.Item>
+
+            <Form.Item
+              name="maxAppointmentsPerDay"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter max appointments per day!",
+                },
+              ]}
+            >
+              <Input type="number" placeholder="Max Appointments Per Day" />
+            </Form.Item>
+
+            <Form.Item
+              name="qualification"
+              rules={[
+                { required: true, message: "Please enter your qualification!" },
+              ]}
+            >
+              <Input placeholder="Qualification" />
+            </Form.Item>
+
+            <Form.Item
+              name="specialty"
+              rules={[
+                { required: true, message: "Please select your specialty!" },
+              ]}
+            >
+              <Select placeholder="Select Specialty" showSearch>
+                {specialties.map((spec) => (
+                  <Option key={spec} value={spec}>
+                    {spec}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="institutionId"
+              rules={[
+                { required: true, message: "Please select your institution!" },
+              ]}
+            >
+              <Select placeholder="Select Institution">
+                <Option value={1}>Institution A</Option>
+                <Option value={2}>Institution B</Option>
+                {/* Replace these with actual fetched institution options */}
+              </Select>
+            </Form.Item>
+          </>
         )}
 
         <Form.Item>
