@@ -1,4 +1,3 @@
-// src/components/FaceAnalyzer/hooks/useCamera.tsx
 import { useState, useRef, useEffect } from "react";
 
 export const useCamera = (setError: (error: string | null) => void) => {
@@ -20,7 +19,7 @@ export const useCamera = (setError: (error: string | null) => void) => {
         videoRef.current.srcObject = stream;
 
         // Log the tracks to verify we have a valid video track
-        const videoTracks = stream.getVideoTracks();
+        // const videoTracks = stream.getVideoTracks();
 
         // Set camera as active
         setCameraActive(true);
@@ -30,7 +29,7 @@ export const useCamera = (setError: (error: string | null) => void) => {
           console.error("Error starting video playback:", playError);
         }
       } else {
-        console.error("Video ref is null, cannot set source");
+        console.error("Video ref is null, can't find source ");
       }
     } catch (error) {
       console.error("Error accessing webcam:", error);

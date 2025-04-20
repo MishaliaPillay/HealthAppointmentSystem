@@ -4,7 +4,7 @@ import * as faceapi from "face-api.js";
 
 export const useFaceDetection = (
   videoRef: RefObject<HTMLVideoElement>,
-  canvasRef: RefObject<HTMLCanvasElement>,
+  _canvasRef: RefObject<HTMLCanvasElement>,
   cameraActive: boolean,
   videoReady: boolean
 ) => {
