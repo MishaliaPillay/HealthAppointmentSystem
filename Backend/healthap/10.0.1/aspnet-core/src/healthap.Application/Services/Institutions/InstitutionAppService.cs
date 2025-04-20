@@ -12,7 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using Abp.Authorization;
 using healthap.Authorization;
+using healthap.ExternalServices.GooglePlaces;
 using healthap.EntityFrameworkCore.Seed;
+
 using System;
 
 namespace healthap.Services.Institutions

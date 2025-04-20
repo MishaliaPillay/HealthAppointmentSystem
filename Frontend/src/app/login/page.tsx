@@ -116,7 +116,7 @@ export default function LoginSignup({ className }: LoginSignupProps) {
     } catch (err) {
       console.error("Login error", err);
       toast.error("Login failed. Please try again.");
-      setLoading(false); 
+      setLoading(false);
     }
   };
 

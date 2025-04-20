@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using AutoMapper;
@@ -31,7 +30,6 @@ namespace healthap.Services.PersonServices
 
         public override async Task<PatientResponseDto> CreateAsync(PatientRequestDto input)
         {
-
             var patient = await _patientManager.CreatePatientAsync(
                 input.Title,
                 input.Name,
@@ -50,7 +48,6 @@ namespace healthap.Services.PersonServices
             );
 
             return _mapper.Map<PatientResponseDto>(patient);
-
         }
 
         public override async Task<PatientResponseDto> GetAsync(EntityDto<Guid> input)
@@ -58,19 +55,19 @@ namespace healthap.Services.PersonServices
             var patient = await _patientManager.GetPatientByIdWithUserAsync(input.Id);
             if (patient == null)
             {
-                throw new UserFriendlyException("Paitient not found");
+                throw new UserFriendlyException("Patient not found");
             }
             return _mapper.Map<PatientResponseDto>(patient);
-
         }
+
         public override async Task<PagedResultDto<PatientResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _patientManager.GetAllPaitentsAsync();
             var totalCount = await query.CountAsync();
-            //pagination:process of dividing a large set of data into smaller and more managebale chuncks 
+
             var patients = await query
-                .Skip(input.SkipCount)//how many records to skip
-                .Take(input.MaxResultCount)//the number of records that should be retrieved 
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
                 .ToListAsync();
 
             return new PagedResultDto<PatientResponseDto>(
@@ -78,15 +75,15 @@ namespace healthap.Services.PersonServices
                 _mapper.Map<List<PatientResponseDto>>(patients)
             );
         }
+
         public async Task<PatientResponseDto> GetCurrentPatientAsync(long userId)
         {
             var patient = await _patientManager.GetPatientByUserIdAsync(userId);
             return _mapper.Map<Patient, PatientResponseDto>(patient);
         }
 
-        public async Task<PatientResponseDto> UpdatePatientAsync(UpdatePatientDto input) 
+        public async Task<PatientResponseDto> UpdatePatientAsync(UpdatePatientDto input)
         {
-           
             var patient = await _repository.GetAsync(input.Id);
             if (patient == null)
                 throw new UserFriendlyException("Patient not found");
@@ -110,7 +107,5 @@ namespace healthap.Services.PersonServices
 
             return _mapper.Map<PatientResponseDto>(updatedPatient);
         }
-
-        
     }
 }

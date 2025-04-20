@@ -11,7 +11,7 @@ import {
 } from "antd";
 const { Title, Text } = Typography;
 import styles from "./patientdash.module.css";
-import BookingModule from "../../components/booking/booking";
+import {BookingModule} from "../../components/booking/booking";
 import { useState, useEffect } from "react";
 import {
   usePatientActions,

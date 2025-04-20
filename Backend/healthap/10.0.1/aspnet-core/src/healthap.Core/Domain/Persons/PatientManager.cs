@@ -64,7 +64,7 @@ namespace healthap.Domain.Persons
                 }
 
                 // Add to Patient role
-                await _userManager.AddToRoleAsync(user, "PATIENT");
+                 await _userManager.AddToRoleAsync(user, "PATIENT");
 
 
                 var patient = new Patient

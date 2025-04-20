@@ -4,10 +4,11 @@ import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   CalendarOutlined,
-  FileTextOutlined,
+//HeartFilled,
   QuestionCircleOutlined,
   LogoutOutlined,
   ArrowLeftOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ import type { MenuProps } from "antd";
 import { useUserActions, useUserState } from "@/providers/users-provider";
 import { useEffect, useState } from "react";
 import { getRole } from "@/utils/decoder";
+//import { useAuthActions } from "@/providers/auth-provider";
 
 const { Sider } = Layout;
 
@@ -26,6 +28,13 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
+  //const { signOut } = useAuthActions();
+
+  // function signOutUser(): void {
+  //   signOut();
+  //   router.push("/");
+  // }
+
   const pathname = usePathname();
 
   const { getCurrentUser } = useUserActions();
@@ -85,9 +94,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         ]
       : []),
     {
-      key: "help",
+      key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,
-      label: "Help",
+      label: <Link href="/patient-dashboard/help">Help</Link>,
     },
     {
       key: "back",
