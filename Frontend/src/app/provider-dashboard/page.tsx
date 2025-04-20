@@ -12,60 +12,60 @@ import {
   Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
-const { Title, Text } = Typography;
-import { useUserActions } from "@/providers/users-provider";
 import { useEffect, useState } from "react";
+
 import {
   useProviderState,
   useProviderActions,
 } from "@/providers/providerMedicPrac-provider";
+import { useUserActions, useUserState } from "@/providers/users-provider";
+
+const { Title, Text } = Typography;
 
 export default function ProviderDashboard() {
+  const [loading, setLoading] = useState(true);
 
-  const [Loading, setLoading] = useState(false);
-  const { isPending, isError, isSuccess, currentProvider } = useProviderState();
-  const { getCurrentUser } = useUserActions();
+  const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
+  const { getCurrentUser } = useUserActions();
+  const { currentuser } = useUserState();
 
+  // Fetch user + provider on mount
   useEffect(() => {
-    if (isPending) {
-      setLoading(true);
-    }
+    fetchProviderOnReload();
+  }, []);
 
-    if (isError) {
-      setLoading(false);
-    }
-
-    if (isSuccess) {
-      setLoading(false);
-    }
-
-    if (currentProvider === undefined) {
-      fetchProviderOnReload();
-    }
-  }, [isError, isPending, isSuccess, currentProvider]);
+  // Track loading state
+  useEffect(() => {
+    setLoading(isPending);
+    if (isError) setLoading(false);
+  }, [isPending, isError]);
 
   const fetchProviderOnReload = async (): Promise<void> => {
     const token = sessionStorage.getItem("jwt");
-    if (token) {
-      await getCurrentUser(token)
-        .then(async (user) => {
-          return await getCurrentProvider(user.id);
-        })
-        .catch((err) => console.error("Error Current User : ", err));
-      if (Loading || isPending) {
-        <Spin spinning tip="Loading provider data..." />;
-      }
-      if (isError || !getCurrentUser(token)) {
-        <p>Failed to load provider data. Please try again.</p>;
-      }
+    if (!token) return;
+
+    try {
+      setLoading(true);
+      const user = await getCurrentUser(token);
+      await getCurrentProvider(user.id);
+    } catch (err) {
+      console.error("Error loading provider/user data:", err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading || !currentProvider) {
+    return <Spin spinning tip="Loading provider data..." />;
+  }
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back {currentProvider.title}{currentProvider.user.surname}</Title>
+        <Title level={3}>
+          Welcome back {currentProvider.title} {currentProvider.user?.surname}
+        </Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 
@@ -107,6 +107,7 @@ export default function ProviderDashboard() {
         extra={<Button type="link">View All</Button>}
       >
         <div className={styles.appointmentList}>
+          {/* Hardcoded example appointments */}
           <PatientAppointmentCard
             id="1"
             patientInitials="JD"
@@ -126,16 +127,6 @@ export default function ProviderDashboard() {
             time="10:30 AM"
             status="scheduled"
             isNewPatient={true}
-          />
-          <PatientAppointmentCard
-            id="3"
-            patientInitials="RG"
-            patientName="Robert Garcia"
-            visitReason="Blood Pressure Review"
-            date="Friday, Apr 11, 2025"
-            time="1:15 PM"
-            status="scheduled"
-            isNewPatient={false}
           />
         </div>
       </Card>

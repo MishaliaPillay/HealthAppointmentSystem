@@ -42,8 +42,9 @@ export const PatientProvider = ({
   ): Promise<IPatient | null> => {
     dispatch(getCurrentPatientPending());
     const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?id=${userId}`;
+    //localhost:44311/api/services/app/Patient/GetCurrentPatient?userId=20
 
-    return axios
+    https: return axios
       .get(endpoint)
       .then((response) => {
         if (response?.data?.result) {

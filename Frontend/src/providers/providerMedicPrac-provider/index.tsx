@@ -41,8 +41,7 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `/Provider/GetCurrentProvider?id=${userId}`;
-
+    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
     return axios
       .get(endpoint)
       .then((response) => {
