@@ -17,13 +17,12 @@ export const LocationReducer = handleActions<
       ...state,
       ...action.payload,
     }),
-
     [LocationActionEnums.getPlacesByDescriptionError]: (state, action) => ({
       ...state,
       ...action.payload,
     }),
 
-    //get places by state
+    // get places by state
     [LocationActionEnums.getPlacesByStatePending]: (state, action) => ({
       ...state,
       ...action.payload,
@@ -32,8 +31,44 @@ export const LocationReducer = handleActions<
       ...state,
       ...action.payload,
     }),
-
     [LocationActionEnums.getPlacesByStateError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+
+    // get all places
+    [LocationActionEnums.getAllPlacesPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [LocationActionEnums.getAllPlacesSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [LocationActionEnums.getAllPlacesError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+
+    // get institutions by specialty
+    [LocationActionEnums.getInstitutionsWithSpecialtyPending]: (
+      state,
+      action
+    ) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [LocationActionEnums.getInstitutionsWithSpecialtySuccess]: (
+      state,
+      action
+    ) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [LocationActionEnums.getInstitutionsWithSpecialtyError]: (
+      state,
+      action
+    ) => ({
       ...state,
       ...action.payload,
     }),

@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+"use client";
+import { useState, useRef, useEffect } from "react";
 import {
   Form,
   Input,
@@ -43,6 +44,11 @@ const specialties = [
 
 const { Option } = Select;
 
+import {
+  useLocationState,
+  useLocationActions,
+} from "@/providers/institutionLocation-provider/index";
+
 interface SignupFormProps {
   onSignupSuccess?: () => void;
   onBeforeSubmit?: () => void;
@@ -56,6 +62,14 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [form] = Form.useForm();
   const { userExists } = useCheckuserActions();
+  const { institutions = [], isPending } = useLocationState();
+  const { getAllPlaces } = useLocationActions();
+
+  useEffect(() => {
+    getAllPlaces();
+  }, []);
+
+
 
   const debouncedEmailCheck = useRef(
     debounce(async (value: string) => {
@@ -395,10 +409,26 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 { required: true, message: "Please select your institution!" },
               ]}
             >
-              <Select placeholder="Select Institution">
-                <Option value={1}>Institution A</Option>
-                <Option value={2}>Institution B</Option>
-                {/* Replace these with actual fetched institution options */}
+              <Select
+                placeholder="Select Institution"
+                showSearch
+                loading={isPending}
+                optionFilterProp="children" // search the rendered text
+                dropdownStyle={{ maxHeight: 300, overflowY: "auto" }}
+              >
+                {institutions.map((inst) => (
+                  <Option key={inst.id} value={inst.id}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <strong>{inst.description}</strong>
+                      <span style={{ fontSize: 12, color: "gray" }}>
+                        {inst.address} • {inst.city}, {inst.state}
+                      </span>
+                    </div>
+                  </Option>
+                ))}
+                {institutions.length === 0 && !isPending && (
+                  <Option disabled>No institutions found</Option>
+                )}
               </Select>
             </Form.Item>
           </>
