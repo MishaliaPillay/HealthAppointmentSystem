@@ -1,76 +1,84 @@
-"use client";
+ "use client";
 
-import { Layout, Button, Dropdown, Space, MenuProps } from "antd";
-import {
-  UserOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
-import Link from "next/link";
-import { useUserState } from "@/providers/users-provider";
-import { useRouter } from "next/navigation";
-const { Header: AntHeader } = Layout;
+ import { Layout, Button, Dropdown, Space, MenuProps } from "antd";
+ import {
+   UserOutlined,
+   MenuFoldOutlined,
+   MenuUnfoldOutlined,
+ } from "@ant-design/icons";
+ import Link from "next/link";
+ import { useUserState } from "@/providers/users-provider";
+ import { useRouter } from "next/navigation";
+ import { getRole } from "@/utils/decoder";
+ import { useEffect, useState } from "react";
 
-interface HeaderProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
-}
+ const { Header: AntHeader } = Layout;
 
-const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
-    const router = useRouter();
-    const signOutUser = () => {
-      sessionStorage.removeItem("jwt");
-      if (sessionStorage.length === 0) {
-        router.push("/");
-      }
-    };
+ interface HeaderProps {
+   collapsed: boolean;
+   setCollapsed: (collapsed: boolean) => void;
+ }
 
+ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
+   const router = useRouter();
+   const { currentUser } = useUserState();
+   const [role, setRole] = useState<string | null>(null);
 
-  const { currentUser } = useUserState();
+   useEffect(() => {
+     const token = sessionStorage.getItem("jwt");
+     if (!token) {
+       router.push("/");
+       return;
+     }
 
-  const items: MenuProps["items"] = [
-    {
-      key: "profile",
-      label: <Link href="/patient-dashboard/profile">Profile</Link>,
-    },
-    {
-      key: "logout",
-      label: (
-        <Button
-          type="text"
-          onClick={() => signOutUser()}
-          style={{ padding: 0 }}
-        >
-          Logout
-        </Button>
-      ),
-    },
-  ];
+     const userRole = getRole(token);
+     setRole(userRole);
+   }, []);
 
-  return (
-    <AntHeader
-      style={{
-        padding: "0 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <Button
-        type="text"
-        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        onClick={() => setCollapsed(!collapsed)}
-        style={{ color: "white" }}
-      />
+   const signOutUser = () => {
+     sessionStorage.removeItem("jwt");
+     router.push("/");
+   };
 
-      <Dropdown menu={{ items }} placement="bottomRight">
-        <Space style={{ cursor: "pointer", color: "white" }}>
-          <span className="hidden sm:inline">{currentUser?.name}</span>
-          <UserOutlined />
-        </Space>
-      </Dropdown>
-    </AntHeader>
-  );
-};
+   const items: MenuProps["items"] = [
+     {
+       key: "profile",
+       label: <Link href={`/${role}-dashboard/profile`}>Profile</Link>,
+     },
+     {
+       key: "logout",
+       label: (
+         <Button type="text" onClick={signOutUser} style={{ padding: 0 }}>
+           Logout
+         </Button>
+       ),
+     },
+   ];
 
-export default Header;
+   return (
+     <AntHeader
+       style={{
+         padding: "0 20px",
+         display: "flex",
+         alignItems: "center",
+         justifyContent: "space-between",
+       }}
+     >
+       <Button
+         type="text"
+         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+         onClick={() => setCollapsed(!collapsed)}
+         style={{ color: "white" }}
+       />
+
+       <Dropdown menu={{ items }} placement="bottomRight">
+         <Space style={{ cursor: "pointer", color: "white" }}>
+           <span className="hidden sm:inline">{currentUser?.name}</span>
+           <UserOutlined />
+         </Space>
+       </Dropdown>
+     </AntHeader>
+   );
+ };
+
+ export default Header;

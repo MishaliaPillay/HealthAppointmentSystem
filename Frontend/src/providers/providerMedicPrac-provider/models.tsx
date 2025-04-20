@@ -29,12 +29,9 @@ export interface UpdateProvider {
   emailAddress?: string;
   phoneNumber?: string;
   userName?: string;
-  email: string;
+  password?: string;
   title: string;
   biography: string;
   yearsOfExperience: number;
-  maxAppointmentsPerDay: number;
   qualification: string;
-  appointments?: IAppointment[];
-  _id?: string;
 }

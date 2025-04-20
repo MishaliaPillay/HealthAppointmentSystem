@@ -31,22 +31,20 @@ export interface IPatient {
   appointments?: IAppointment[];
   id?: string; 
 }
-
-
 export interface UpdatePatientDto {
-  id?:string
+  id?: string;
   name?: string;
   surname?: string;
   emailAddress?: string;
   phoneNumber?: string;
   userName?: string;
-  password?: string; // Leave null if password is not changed
+  password?: string; 
   title?: string;
   address?: string;
   city?: string;
   province?: string;
   postalCode?: string;
   country?: string;
-  preferredContactMethod?: ReflistConMethod; // Assuming it's an enum
+  preferredContactMethod?: ReflistConMethod; 
 }
 
