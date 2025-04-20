@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -9,7 +10,6 @@ using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace healthap.Services.PersonServices
 {
@@ -31,18 +31,18 @@ namespace healthap.Services.PersonServices
         {
             var provider = await _providerManager.CreateProviderAsync(
                 input.Title,
-    input.Name,
-    input.Surname,
-    input.EmailAddress,
-    input.PhoneNumber,
-    input.UserName,
-    input.Password,
-    input.Biography,
-    input.YearsOfExperience,
-    input.MaxAppointmentsPerDay,
-    input.Qualification,
-    input.Speciality,
-    input.InstitutionId
+                input.Name,
+                input.Surname,
+                input.EmailAddress,
+                input.PhoneNumber,
+                input.UserName,
+                input.Password,
+                input.Biography,
+                input.YearsOfExperience,
+                input.MaxAppointmentsPerDay,
+                input.Qualification,
+                input.SpecialtyName,
+                input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }

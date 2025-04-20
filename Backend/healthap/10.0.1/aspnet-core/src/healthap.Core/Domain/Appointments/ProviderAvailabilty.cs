@@ -11,10 +11,11 @@ namespace healthap.Domain.Appointments
     public class ProviderAvailabilty : FullAuditedEntity<Guid>
     {
 
-        //DayOfWeek:DayOfWeek
+        public DayOfWeek DayOfWeek { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public bool IsAvailable { get; set; }
+        public Guid ProviderId { get; set; }
         public virtual Provider Provider { get; set; }
     }
 }

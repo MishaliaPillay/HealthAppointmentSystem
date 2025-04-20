@@ -1610,6 +1610,9 @@ namespace healthap.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("InstitutionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1619,16 +1622,18 @@ namespace healthap.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("PatientId")
+                    b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ProviderId")
+                    b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Purpose")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId");
 
                     b.HasIndex("PatientId");
 
@@ -1648,6 +1653,9 @@ namespace healthap.Migrations
 
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
@@ -1670,7 +1678,7 @@ namespace healthap.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("ProviderId")
+                    b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<TimeSpan>("StartTime")
@@ -1680,7 +1688,140 @@ namespace healthap.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("ProviderAvailabilities");
+                    b.ToTable("ProviderAvailabilties");
+                });
+
+            modelBuilder.Entity("healthap.Domain.Institution.Institution", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("FacilityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("PlaceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Institutions", (string)null);
+                });
+
+            modelBuilder.Entity("healthap.Domain.Institution.ProviderLocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("InstitutionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ProviderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Specialization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("ProviderLocations");
                 });
 
             modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
@@ -1771,6 +1912,9 @@ namespace healthap.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InstitutionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1789,6 +1933,9 @@ namespace healthap.Migrations
                     b.Property<string>("Qualification")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SpecialityName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -1799,6 +1946,8 @@ namespace healthap.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId");
 
                     b.HasIndex("UserId");
 
@@ -1877,6 +2026,9 @@ namespace healthap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("InstitutionId")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1884,6 +2036,8 @@ namespace healthap.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionId");
 
                     b.HasIndex("ProviderId");
 
@@ -2110,20 +2264,51 @@ namespace healthap.Migrations
 
             modelBuilder.Entity("healthap.Domain.Appointments.Appointment", b =>
                 {
-                    b.HasOne("healthap.Domain.Persons.Patient", null)
+                    b.HasOne("healthap.Domain.Institution.Institution", null)
                         .WithMany("Appointments")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("InstitutionId");
 
-                    b.HasOne("healthap.Domain.Persons.Provider", null)
+                    b.HasOne("healthap.Domain.Persons.Patient", "Patient")
                         .WithMany("Appointments")
-                        .HasForeignKey("ProviderId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("healthap.Domain.Persons.Provider", "Provider")
+                        .WithMany("Appointments")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("healthap.Domain.Appointments.ProviderAvailabilty", b =>
                 {
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
                         .WithMany("Availabilities")
-                        .HasForeignKey("ProviderId");
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("healthap.Domain.Institution.ProviderLocation", b =>
+                {
+                    b.HasOne("healthap.Domain.Institution.Institution", "Institution")
+                        .WithMany()
+                        .HasForeignKey("InstitutionId");
+
+                    b.HasOne("healthap.Authorization.Users.User", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Institution");
 
                     b.Navigation("Provider");
                 });
@@ -2141,11 +2326,19 @@ namespace healthap.Migrations
 
             modelBuilder.Entity("healthap.Domain.Persons.Provider", b =>
                 {
+                    b.HasOne("healthap.Domain.Institution.Institution", "Institution")
+                        .WithMany("Providers")
+                        .HasForeignKey("InstitutionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("healthap.Authorization.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Institution");
 
                     b.Navigation("User");
                 });
@@ -2179,6 +2372,10 @@ namespace healthap.Migrations
 
             modelBuilder.Entity("healthap.MultiTenancy.speciality.Speciality", b =>
                 {
+                    b.HasOne("healthap.Domain.Institution.Institution", null)
+                        .WithMany("Specialities")
+                        .HasForeignKey("InstitutionId");
+
                     b.HasOne("healthap.Domain.Persons.Provider", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
@@ -2257,6 +2454,15 @@ namespace healthap.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("healthap.Domain.Institution.Institution", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("Providers");
+
+                    b.Navigation("Specialities");
                 });
 
             modelBuilder.Entity("healthap.Domain.Persons.Patient", b =>
