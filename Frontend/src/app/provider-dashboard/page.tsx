@@ -18,7 +18,7 @@ import {
   useProviderState,
   useProviderActions,
 } from "@/providers/providerMedicPrac-provider";
-import { useUserActions, useUserState } from "@/providers/users-provider";
+import { useUserActions} from "@/providers/users-provider";
 
 const { Title, Text } = Typography;
 
@@ -28,8 +28,7 @@ export default function ProviderDashboard() {
   const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
-  const { currentuser } = useUserState();
-
+  
   // Fetch user + provider on mount
   useEffect(() => {
     fetchProviderOnReload();
