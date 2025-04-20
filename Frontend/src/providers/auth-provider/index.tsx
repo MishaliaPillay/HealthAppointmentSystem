@@ -16,7 +16,6 @@ import axios from "axios";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
 
-  //const instance = getAxiosInstace();
   const signUp = async (Auth: IAuth): Promise<void> => {
     dispatch(signUpPending());
 
@@ -27,9 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await axios
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
-        console.log("ndnsc");
         dispatch(signUpSuccess(response.data));
-        console.log();
       })
       .catch((error) => {
         console.error(error);
@@ -63,11 +60,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
   };
 
- 
-
   return (
     <AuthStateContext.Provider value={state}>
-      <AuthActionContext.Provider value={{ signIn, signUp}}>
+      <AuthActionContext.Provider value={{ signIn, signUp }}>
         {children}
       </AuthActionContext.Provider>
     </AuthStateContext.Provider>

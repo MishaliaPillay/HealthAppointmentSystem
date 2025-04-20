@@ -40,34 +40,17 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [form] = Form.useForm();
   const { userExists } = useCheckuserActions();
 
-  // Using useRef for debouncing, to avoid creating a new debounced function on every render
   const debouncedEmailCheck = useRef(
     debounce(async (value: string) => {
-      try {
-        const result = await userExists({
-          emailAddress: value,
-          userName: "",
-        });
-        return result.result.emailExists;
-      } catch (err) {
-        console.error("Error validating email:", err);
-        throw new Error("Error validating email");
-      }
+      const result = await userExists({ emailAddress: value, userName: "" });
+      return result.result.emailExists;
     }, 500)
   ).current;
 
   const debouncedUsernameCheck = useRef(
     debounce(async (value: string) => {
-      try {
-        const result = await userExists({
-          emailAddress: "",
-          userName: value,
-        });
-        return result.result.userNameExists;
-      } catch (err) {
-        console.error("Error validating username:", err);
-        throw new Error("Error validating username");
-      }
+      const result = await userExists({ emailAddress: "", userName: value });
+      return result.result.userNameExists;
     }, 500)
   ).current;
 
@@ -86,47 +69,37 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
 
   const validateEmailExists = async (_: RuleObject, value: string) => {
     if (!value) return Promise.resolve();
-    try {
-      const emailExists = await debouncedEmailCheck(value);
-      if (emailExists) {
-        return Promise.reject("Email already exists");
-      }
-    } catch {
-      return Promise.reject("Error validating email");
-    }
+    const emailExists = await debouncedEmailCheck(value);
+    if (emailExists) return Promise.reject("Email already exists");
+    return Promise.resolve();
   };
 
   const validateUsernameExists = async (_: RuleObject, value: string) => {
     if (!value) return Promise.resolve();
-    try {
-      const usernameExists = await debouncedUsernameCheck(value);
-      if (usernameExists) {
-        return Promise.reject("Username already exists");
-      }
-    } catch {
-      return Promise.reject("Error validating username");
-    }
+    const usernameExists = await debouncedUsernameCheck(value);
+    if (usernameExists) return Promise.reject("Username already exists");
+    return Promise.resolve();
   };
 
   const handleRoleChange = (e: RadioChangeEvent) => {
     setRole(e.target.value.toLowerCase());
   };
-
   const onFinishSignup = async (values: IAuth) => {
     onBeforeSubmit?.();
     setLoading(true);
+  
     const formattedValues = {
       ...values,
       dateOfBirth: values.dateOfBirth
         ? dayjs(values.dateOfBirth).toDate()
         : undefined,
-      role: role,
     };
-
-    await signUp(formattedValues);
+  
+    console.log("Formatted signup values with role:", formattedValues);
+    await signUp(formattedValues); // Now the role is still available
     setLoading(false);
   };
-
+  
   return (
     <Spin spinning={loading} tip="Please hold on...">
       <Form
@@ -138,7 +111,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         className={styles.form}
         initialValues={{ role: "patient" }}
       >
-        {/* Role selection */}
         <Form.Item
           name="role"
           label="I am a:"
@@ -152,7 +124,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </Radio.Group>
         </Form.Item>
 
-        {/* Title */}
         <Form.Item
           name="title"
           rules={[{ required: true, message: "Please select your title!" }]}
@@ -165,7 +136,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </Select>
         </Form.Item>
 
-        {/* Name */}
         <Form.Item
           name="name"
           rules={[{ required: true, message: "Please input your name!" }]}
@@ -173,7 +143,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           <Input placeholder="First Name" />
         </Form.Item>
 
-        {/* Surname */}
         <Form.Item
           name="surname"
           rules={[{ required: true, message: "Please input your surname!" }]}
@@ -181,7 +150,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           <Input placeholder="Last Name" />
         </Form.Item>
 
-        {/* Phone number */}
         <Form.Item
           name="phoneNumber"
           rules={[
@@ -191,7 +159,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           <Input placeholder="Phone Number" />
         </Form.Item>
 
-        {/* Email */}
         <Form.Item
           name="emailAddress"
           validateTrigger="onBlur"
@@ -204,7 +171,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           <Input placeholder="Email" />
         </Form.Item>
 
-        {/* Username */}
         <Form.Item
           name="userName"
           validateTrigger="onBlur"
@@ -216,7 +182,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           <Input placeholder="Username" />
         </Form.Item>
 
-        {/* Password */}
         <Form.Item
           name="password"
           rules={[
@@ -260,7 +225,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                       <CheckCircleOutlined style={{ color: "green" }} />
                     ) : (
                       <CloseCircleOutlined style={{ color: "red" }} />
-                    )}
+                    )}{" "}
                     {key === "length" && "At least 8 characters"}
                     {key === "lowercase" && "At least one lowercase letter"}
                     {key === "uppercase" && "At least one uppercase letter"}
@@ -274,10 +239,8 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </div>
         </Form.Item>
 
-        {/* Additional fields based on role */}
         {role === "patient" && (
           <>
-            {/* Patient specific fields */}
             <Form.Item
               name="dateOfBirth"
               rules={[
@@ -289,6 +252,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 style={{ width: "100%" }}
               />
             </Form.Item>
+
             <Form.Item
               name="address"
               rules={[
@@ -297,47 +261,69 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             >
               <Input placeholder="Address" />
             </Form.Item>
-            {/* Other fields for patient */}
+
+            <Form.Item
+              name="city"
+              rules={[{ required: true, message: "Please input your city!" }]}
+            >
+              <Input placeholder="City" />
+            </Form.Item>
+
+            <Form.Item
+              name="province"
+              rules={[
+                { required: true, message: "Please input your province!" },
+              ]}
+            >
+              <Input placeholder="Province" />
+            </Form.Item>
+
+            <Form.Item
+              name="postalCode"
+              rules={[
+                { required: true, message: "Please input your postal code!" },
+              ]}
+            >
+              <Input placeholder="Postal Code" />
+            </Form.Item>
+
+            <Form.Item
+              name="country"
+              rules={[
+                { required: true, message: "Please input your country!" },
+              ]}
+            >
+              <Input placeholder="Country" />
+            </Form.Item>
+
+            <Form.Item
+              name="preferredContactMethod"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select your preferred contact method!",
+                },
+              ]}
+            >
+              <Select placeholder="Preferred Contact Method">
+                <Option value={1}>Email</Option>
+                <Option value={2}>Phone</Option>
+              </Select>
+            </Form.Item>
           </>
         )}
 
         {role === "provider" && (
-          <>
-            {/* Provider specific fields */}
-            <Form.Item
-              name="biography"
-              rules={[
-                { required: true, message: "Please input your biography!" },
-              ]}
-            >
-              <Input.TextArea placeholder="Biography" rows={4} />
-            </Form.Item>
-            {/* Other fields for provider */}
-          </>
+          <Form.Item
+            name="biography"
+            rules={[
+              { required: true, message: "Please input your biography!" },
+            ]}
+          >
+            <Input.TextArea placeholder="Biography" rows={4} />
+          </Form.Item>
         )}
 
-        {/* Terms of service */}
-        <Form.Item
-          name="agreeToTerms"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value
-                  ? Promise.resolve()
-                  : Promise.reject(
-                      new Error("You must agree to the terms and conditions")
-                    ),
-            },
-          ]}
-        >
-          <Checkbox>
-            I agree to the <a href="#">Terms of Service</a> and{" "}
-            <a href="#">Privacy Policy</a>
-          </Checkbox>
-        </Form.Item>
-
-        {/* Submit button */}
         <Form.Item>
           <Button
             type="primary"
