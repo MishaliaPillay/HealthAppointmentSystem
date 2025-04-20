@@ -36,7 +36,7 @@ namespace healthap.Domain.Persons
             int yearsOfExperience,
             int maxAppointmentsPerDay,
             string qualification,
-            string speciality,
+            string specialityName,
             int institutionId)
 
         {
@@ -73,7 +73,7 @@ namespace healthap.Domain.Persons
                     YearsOfExperience = yearsOfExperience,
                     MaxAppointmentsPerDay = maxAppointmentsPerDay,
                     Qualification = qualification,
-                    Speciality = speciality,           // ✅ Add this line
+                    SpecialityName = specialityName,  
                     InstitutionId = institutionId,
                     Availabilities = new List<ProviderAvailabilty>(),
                     Appointments = new List<Appointment>()

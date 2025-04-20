@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\healthap.Core\healthap.Core.csproj" />
+    <ProjectReference Include="..\healthap.EntityFrameworkCore\healthap.EntityFrameworkCore.csproj" />
   </ItemGroup>
 </Project>
