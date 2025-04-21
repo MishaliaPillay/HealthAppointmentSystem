@@ -1,8 +1,8 @@
 "use client";
 
 import { Layout } from "antd";
-import Sidebar from "@/components/provider-dashboard/sidebar";
-import Header from "@/components/provider-dashboard/header";
+import Sidebar from "@/components/dashboard/Sidebar";
+import Header from "@/components/dashboard/Header";
 import { useState } from "react";
 
 const { Content } = Layout;

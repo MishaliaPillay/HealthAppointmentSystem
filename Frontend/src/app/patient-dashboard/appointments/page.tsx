@@ -37,14 +37,16 @@ export default function AppointmentsPage() {
 
     return undefined;
   }, []);
-
+//TODO:KM
   // Mock data for appointments with more items for pagination
   const generateAppointmentsData = (): Appointment[] => {
+    //use Reflist
     const statuses: Array<"upcoming" | "completed" | "cancelled"> = [
       "upcoming",
       "completed",
       "cancelled",
     ];
+    
     const specialties = [
       "Cardiology",
       "Dermatology",
@@ -55,6 +57,8 @@ export default function AppointmentsPage() {
       "Ophthalmology",
       "Psychiatry",
     ];
+    //TODO:KM
+    //use get all providers using get all providers end point
     const doctors = [
       "Dr. Sarah Johnson",
       "Dr. Michael Chen",
@@ -69,7 +73,7 @@ export default function AppointmentsPage() {
       "Dr. Jessica Wright",
       "Dr. Thomas Lee",
     ];
-
+    //TODO:KM
     // Generate 50 appointments
     return Array.from({ length: 50 }, (_, i) => {
       const status = statuses[Math.floor(Math.random() * statuses.length)];

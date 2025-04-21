@@ -26,116 +26,109 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(UserReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
-  // Fetch all Users
+  // Get current user
+  const getCurrentUser = async (token: string): Promise<IUser | null> => {
+    dispatch(getCurrentUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations`;
+    return axios
+      .get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        if (response?.data?.result?.user) {
+          dispatch(getCurrentUserSuccess(response.data.result.user));
+          return response.data.result.user;
+        } else {
+          console.warn("No user data found in response");
+          dispatch(getCurrentUserError());
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current user:", error);
+        dispatch(getCurrentUserError());
+        return null;
+      });
+  };
+
+  // Fetch all users
   const getUsers = async () => {
-    dispatch(getUserPending);
-    const endpoint = `getusersAll`;
-    await instance
+    dispatch(getUserPending());
+    const endpoint = `https://localhost:44311/api/services/app/User/GetAll`;
+
+    return instance
       .get(endpoint)
       .then((response) => {
-        dispatch(getUserSuccess(response.data));
-        console.log(response.data);
+        dispatch(getUserSuccess(response.data?.result ?? []));
       })
       .catch((error) => {
+        console.error("Error fetching users:", error);
         dispatch(getUserError(error));
-        console.error(error);
       });
   };
-  // create User
+
+  // Create a user
   const createUser = async (user: IUser) => {
     dispatch(createUserPending());
-    const endpoint = `createuser/user`;
-    await instance
+    const endpoint = `https://localhost:44311/api/services/app/User/Create`;
+
+    return instance
       .post(endpoint, user)
       .then((response) => {
-        dispatch(createUserSuccess(response.data));
-        console.log(response.data);
+        dispatch(createUserSuccess(response.data?.result));
       })
       .catch((error) => {
+        console.error("Error creating user:", error);
         dispatch(createUserError(error));
-        console.error(error);
       });
   };
-  // Update existing User
+
+  // Update a user
   const updateUser = async (user: IUser) => {
     dispatch(updateUserPending());
-    const endpoint = `updateuser/user`;
-    await instance
-      .post(endpoint, user)
+    const endpoint = `https://localhost:44311/api/services/app/User/Update`;
+
+    return instance
+      .put(endpoint, user)
       .then((response) => {
-        dispatch(updateUserSuccess(response.data));
-        console.log(response.data);
+        dispatch(updateUserSuccess(response.data?.result));
       })
       .catch((error) => {
+        console.error("Error updating user:", error);
         dispatch(updateUserError(error));
-        console.error(error);
       });
   };
-  //Delete user
-  const deleteUser = async (id: string) => {
+
+  // Delete a user
+  const deleteUser = (id: string) => {
     dispatch(deleteUserPending());
-    const endpoint = `updateuser/user`;
-    await instance
-      .post(endpoint, id)
+    const endpoint = `https://localhost:44311/api/services/app/User/Delete?input=${id}`;
+
+    return instance
+      .delete(endpoint)
       .then((response) => {
-        dispatch(deleteUserSuccess(response.data));
-        console.log(response.data);
+        dispatch(deleteUserSuccess(response.data?.result));
       })
       .catch((error) => {
+        console.error("Error deleting user:", error);
         dispatch(deleteUserError(error));
-        console.error(error);
       });
   };
-  //getUser
+
+  // Get a specific user
   const getUser = async (id: string) => {
     dispatch(getUserPending());
-    const endpoint = `updateuser/${id}`;
-    await instance
-      .post(endpoint, id)
+    const endpoint = `https://localhost:44311/api/services/app/User/Get?input=${id}`;
+    return axios
+      .get(endpoint)
       .then((response) => {
-        dispatch(getUserSuccess(response.data));
-        console.log(response.data);
+        dispatch(getUserSuccess(response.data?.result));
       })
       .catch((error) => {
+        console.error("Error fetching user:", error);
         dispatch(getUserError(error));
-        console.error(error);
       });
   };
-  //getCurrentUser
- const getCurrentUser = (token: string): Promise<IUser | null> => {
-   dispatch(getCurrentUserPending());
-   const endpoint =
-     "https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations";
-   console.log("Trying to get the current user");
-   return axios
-     .get(endpoint, {
-       headers: {
-         Authorization: `Bearer ${token} `,
-       },
-     })
-     .then((response) => {
-       if (response) {
-         console.log(
-           "this is the response from get current user",
-           response.data.result.user
-         );
-         dispatch(getCurrentUserSuccess(response.data.result.user));
-         return response.data.result.user;
-       } else {
-         console.warn("No user data found in response");
-         dispatch(getCurrentUserError());
-         return null;
-       }
-     })
-     .catch((error) => {
-       console.error("Error fetching current user:", error);
-       dispatch(getCurrentUserError());
-       return null;
-     })
-     .finally(() => {
-       console.log("Done trying to process your getUser request");
-     });
- };
 
   return (
     <UserStateContext.Provider value={state}>
@@ -155,6 +148,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// Hook for user state
 export const useUserState = () => {
   const context = useContext(UserStateContext);
   if (!context) {
@@ -163,6 +157,7 @@ export const useUserState = () => {
   return context;
 };
 
+// Hook for user actions
 export const useUserActions = () => {
   const context = useContext(UserActionContext);
   if (!context) {

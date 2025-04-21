@@ -7,6 +7,18 @@ export const PatientReducer = handleActions<
   IPatientStateContext
 >(
   {
+    [PatientActionEnums.getCurrentPatientPending]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [PatientActionEnums.getCurrentPatientSuccess]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
+    [PatientActionEnums.getCurrentPatientError]: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
     [PatientActionEnums.getPatientsPending]: (state, action) => ({
       ...state,
       ...action.payload,

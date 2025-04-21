@@ -1654,6 +1654,9 @@ namespace healthap.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("DateAvailable")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 

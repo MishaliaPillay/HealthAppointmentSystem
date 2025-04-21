@@ -8,10 +8,10 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using healthap.Domain.Institution;
-using healthap.EntityFrameworkCore.Seed;
 using healthap.ExternalServices.GooglePlaces;
 using healthap.Services.Institutions.Dto;
 using Microsoft.EntityFrameworkCore;
+using healthap.EntityFrameworkCore.Seed;
 
 namespace healthap.Services.Institutions
 {
@@ -30,7 +30,7 @@ namespace healthap.Services.Institutions
         public InstitutionAppService(
             IRepository<Institution, int> repository,
             IGooglePlacesService googlePlacesService,
-            InstitutionDataSeeder institutionDataSeeder // Inject the seeder
+            InstitutionDataSeeder institutionDataSeeder
         ) : base(repository)
         {
             _googlePlacesService = googlePlacesService;
@@ -54,7 +54,6 @@ namespace healthap.Services.Institutions
                 throw;
             }
         }
-
 
         public async Task<PagedResultDto<InstitutionListDto>> SearchInstitutionsAsync(GetInstitutionListInput input)
         {
@@ -93,19 +92,12 @@ namespace healthap.Services.Institutions
             await Repository.InsertAsync(institution);
         }
 
-        //public async Task SeedFromGoogleAsync()
-        //{
-        //    await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
-        //    await CurrentUnitOfWork.SaveChangesAsync();
-        //}
-
         public async Task SeedFromGoogleAsync()
         {
             try
             {
                 Logger.Info("Starting institution seeding from Google Places...");
                 await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
-
                 Logger.Info("Completed institution seeding from Google Places");
             }
             catch (Exception ex)

@@ -24,7 +24,6 @@ export enum AbpTokenProperies {
   nbf = "nbf",
   exp = "exp",
   iss = "iss",
-  aud = "aud",
   nameidentifier = `${claims}nameidentifier`, // userId
   name = `${claims}name`,
   emailaddress = `${claims}emailaddress`,

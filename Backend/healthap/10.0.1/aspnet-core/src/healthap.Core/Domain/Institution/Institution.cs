@@ -30,7 +30,6 @@ namespace healthap.Domain.Institution
         public double Longitude { get; set; }
         public string GoogleMapsUrl { get; set; }
 
-
         //public Institution()
         //{
         //    Providers = new List<ProviderLocation>();
