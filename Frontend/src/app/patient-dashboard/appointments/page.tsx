@@ -67,7 +67,9 @@ export default function AppointmentsPage() {
     const providerList = await getProviders();
     if (Array.isArray(providerList)) {
       const providerMap = providerList.reduce((map, provider) => {
-        map[provider._id] = provider.user.name;
+         map[provider._id] = `${provider.user.surname} ${
+           provider.user.surname || ""
+         }`.trim();
         return map;
       }, {} as Record<string, string>);
       setProviders(providerMap);
@@ -78,8 +80,7 @@ export default function AppointmentsPage() {
 
   const filteredData = appointmentsData.filter((appointment) => {
     const matchesSearch = appointment.purpose
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
+      .includes(searchText);
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -121,8 +122,8 @@ export default function AppointmentsPage() {
     },
     {
       title: "Purpose",
-      dataIndex: "appointmentPurpose" as keyof IAppointment,
-      key: "appointmentPurpose",
+      dataIndex: "purpose" as keyof IAppointment,
+      key: "purpose",
     },
     {
       title: "Status",
