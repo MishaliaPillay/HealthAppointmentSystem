@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Abp.Domain.Entities.Auditing;
 using healthap.Domain.Appointments;
 using healthap.Domain.Persons;
-using healthap.MultiTenancy.Speciality;
+using healthap.MultiTenancy.speciality;
 
 namespace healthap.Domain.Institution
 {
