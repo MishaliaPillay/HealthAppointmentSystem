@@ -1,13 +1,13 @@
-"use client"
+"use client";
 import { IUser } from "../users-provider/models";
 import { IAppointment } from "../appointment-provider/context";
-import { ReflistConMethod } from "../../models/enums/ReflistConMethod"; // Import enum if needed
+import { ReflistConMethod } from "../../enums/ReflistConMethod"; // Import enum if needed
 export interface IPatientRegisteration {
   FirstName: string;
   LastName: string;
   Email: string;
   PhoneNumber: string;
-  Password:string;
+  Password: string;
   Role: string;
   DateOfBirth: Date;
   Address: string;
@@ -21,7 +21,7 @@ export interface IPatient {
   user: IUser;
   title: string;
   phoneNumber: string;
-  dateOfBirth: string; 
+  dateOfBirth: string;
   address: string;
   city: string;
   province: string;
@@ -29,7 +29,7 @@ export interface IPatient {
   country: string;
   preferredContactMethod?: number;
   appointments?: IAppointment[];
-  id?: string; 
+  id?: string;
 }
 export interface UpdatePatientDto {
   id?: string;
@@ -38,13 +38,12 @@ export interface UpdatePatientDto {
   emailAddress?: string;
   phoneNumber?: string;
   userName?: string;
-  password?: string; 
+  password?: string;
   title?: string;
   address?: string;
   city?: string;
   province?: string;
   postalCode?: string;
   country?: string;
-  preferredContactMethod?: ReflistConMethod; 
+  preferredContactMethod?: ReflistConMethod;
 }
-
