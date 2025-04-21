@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities.Auditing;
 using healthap.Authorization.Users;
-using System.ComponentModel.DataAnnotations.Schema;
 using healthap.Domain.Appointments;
-using System.ComponentModel.DataAnnotations;
 
 namespace healthap.Domain.Persons
 {
@@ -21,6 +21,9 @@ namespace healthap.Domain.Persons
         public int YearsOfExperience { get; set; }
         public int MaxAppointmentsPerDay { get; set; }
         public string Qualification { get; set; }
+        public string SpecialityName { get; set; }
+        public int InstitutionId { get; set; }
+        public virtual healthap.Domain.Institution.Institution Institution { get; set; }
         public virtual ICollection<ProviderAvailabilty>? Availabilities { get; set; } = null;
         public virtual ICollection<Appointment>? Appointments { get; set; } = null;
     }

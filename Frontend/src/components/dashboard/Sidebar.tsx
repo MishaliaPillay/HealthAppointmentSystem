@@ -4,7 +4,7 @@ import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   CalendarOutlined,
-  FileTextOutlined,
+HeartFilled,
   QuestionCircleOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import type { MenuProps } from "antd";
 import { useAuthActions } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
+
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -22,13 +23,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const router = useRouter();
-  const { signOut} = useAuthActions();
+  const { signOut } = useAuthActions();
 
   function signOutUser(): void {
-    signOut()
+    signOut();
     router.push("/");
   }
-  
 
   const pathname = usePathname();
 
@@ -46,19 +46,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       ),
     },
     {
-      key: "/patient-dashboard/medical-history",
-      icon: <FileTextOutlined />,
-      label: (
-        <Link href="/patient-dashboard/medical-history">Medical History</Link>
-      ),
+      key: "/patient-dashboard/face-scan",
+      icon: <HeartFilled/>,
+      label: <Link href="/patient-dashboard/face-scan">Well being</Link>,
     },
 
     {
       key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,
-      label: (
-        <Link href="/patient-dashboard/help">Help</Link>
-      ),
+      label: <Link href="/patient-dashboard/help">Help</Link>,
     },
     {
       key: "logout",

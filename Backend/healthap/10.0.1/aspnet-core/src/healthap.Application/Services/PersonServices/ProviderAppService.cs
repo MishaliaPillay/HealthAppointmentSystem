@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -9,7 +10,6 @@ using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace healthap.Services.PersonServices
 {
@@ -21,7 +21,7 @@ namespace healthap.Services.PersonServices
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
 
-        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager ,IMapper mapper) : base(repository)
+        public ProviderAppService(IRepository<Provider, Guid> repository, ProviderManager providerManager, IMapper mapper) : base(repository)
         {
             _providerManager = providerManager;
             _mapper = mapper;
@@ -40,7 +40,9 @@ namespace healthap.Services.PersonServices
                 input.Biography,
                 input.YearsOfExperience,
                 input.MaxAppointmentsPerDay,
-                input.Qualification
+                input.Qualification,
+                input.SpecialtyName,
+                input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }

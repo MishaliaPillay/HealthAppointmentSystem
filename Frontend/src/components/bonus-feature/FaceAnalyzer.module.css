@@ -1,0 +1,440 @@
+/* components/bonusfeatures/FaceAnalyzer.module.css */
+
+.container {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  overflow: hidden;
+}
+
+.header {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 1.25rem 1.5rem;
+}
+
+.title {
+  color: #1e40af;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusDot {
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 50%;
+}
+
+.statusReady {
+  background-color: #10b981;
+}
+
+.statusLoading {
+  background-color: #eab308;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.statusText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+  color: white;
+}
+
+.button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.buttonStart {
+  background-color: #2563eb;
+}
+
+.buttonStart:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.buttonStop {
+  background-color: #dc2626;
+}
+
+.buttonStop:hover {
+  background-color: #b91c1c;
+}
+
+.buttonScan {
+  background-color: #10b981;
+}
+
+.buttonScan:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.errorMessage {
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.errorMessage p {
+  color: #b91c1c;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .mainContent {
+    flex-direction: row;
+  }
+}
+
+.cameraContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .cameraContainer {
+    width: 50%;
+  }
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cameraIndicator {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.autoIndicator {
+  bottom: 2.5rem;
+  background-color: rgba(16, 185, 129, 0.8);
+}
+
+.cameraIndicatorDot {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 50%;
+  background-color: #ef4444;
+  animation: pulse 1.5s infinite;
+}
+
+.autoDot {
+  background-color: #10b981;
+}
+
+.cameraPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.cameraPlaceholderContent {
+  text-align: center;
+  color: #6b7280;
+}
+
+.cameraIcon {
+  margin: 0 auto;
+  height: 3rem;
+  width: 3rem;
+}
+
+.cameraPlaceholderText {
+  margin-top: 0.25rem;
+}
+
+.resultsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .resultsContainer {
+    width: 50%;
+  }
+}
+
+.resultCard {
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.resultCardTitle {
+  color: #1e40af;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.emotionResult {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.resultLabel {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.emotionText {
+  color: #2563eb;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 0.625rem;
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: #2563eb;
+  border-radius: 0.25rem;
+  transition: width 0.3s ease;
+}
+
+.confidenceValue {
+  text-align: right;
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.noDetection {
+  color: #d97706;
+  font-size: 0.875rem;
+}
+
+.placeholderMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+}
+
+.placeholderMessage p {
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+}
+
+.wellnessCard {
+  background-color: #eff6ff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.wellnessContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wellnessScoreContainer {
+  width: 100%;
+  height: 1rem;
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.wellnessBar {
+  height: 100%;
+  border-radius: 0.25rem;
+  transition: width 0.3s ease;
+}
+
+.scoreHigh {
+  background-color: #10b981;
+}
+
+.scoreGood {
+  background-color: #0ea5e9;
+}
+
+.scoreModerate {
+  background-color: #eab308;
+}
+
+.scoreLow {
+  background-color: #ef4444;
+}
+
+.scoreLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.wellnessTip {
+  background-color: white;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  border-left: 4px solid #2563eb;
+}
+
+.tipLabel {
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+}
+
+.tipContent {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.instructionsContainer {
+  margin-top: 1.5rem;
+  background-color: #eef2ff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.instructionsTitle {
+  color: #4338ca;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step {
+  background-color: white;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.stepNumber {
+  color: #4338ca;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.stepText {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.instructionsFooter {
+  margin-top: 1rem;
+  color: #4338ca;
+  font-size: 0.75rem;
+  font-style: italic;
+}
