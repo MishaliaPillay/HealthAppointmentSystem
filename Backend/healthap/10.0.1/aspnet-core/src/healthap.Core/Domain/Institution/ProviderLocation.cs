@@ -13,5 +13,4 @@ namespace healthap.Domain.Institution
         public virtual Institution Institution { get; set; }
         public virtual User Provider { get; set; }
     }
-
 }

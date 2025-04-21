@@ -11,32 +11,29 @@ import {
   Row,
   Col,
   Spin,
-  Select,
   Divider,
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import {
-  usePatientActions,
-  usePatientState,
-} from "@/providers/paitient-provider";
+  useProviderActions,
+  useProviderState,
+} from "@/providers/providerMedicPrac-provider";
 import { useUserActions } from "@/providers/users-provider";
-import { UpdatePatientDto } from "@/providers/paitient-provider/models";
-import { ReflistConMethod } from "../../../models/enums/ReflistConMethod";
+import { UpdateProvider } from "@/providers/providerMedicPrac-provider/models";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const [formValues, setFormValues] = useState<UpdatePatientDto | null>(null);
+  const [formValues, setFormValues] = useState<UpdateProvider | null>(null);
 
-  const { isPending, isError, isSuccess, currentPatient } = usePatientState();
+  const { isPending, isError, isSuccess, currentProvider } = useProviderState();
   const { getCurrentUser } = useUserActions();
-  const { getCurrentPatient, updatePatient } = usePatientActions();
+  const { getCurrentProvider, updateProvider } = useProviderActions();
 
   useEffect(() => {
-    fetchPatientOnReload();
+    fetchProviderOnReload();
   }, []);
 
   useEffect(() => {
@@ -45,48 +42,45 @@ const ProfilePage: React.FC = () => {
   }, [isPending, isError, isSuccess]);
 
   useEffect(() => {
-    if (currentPatient) {
-      const data: UpdatePatientDto = {
-        id: currentPatient.id,
-        name: currentPatient.user.name,
-        surname: currentPatient.user.surname,
-        emailAddress: currentPatient.user.emailAddress,
-        phoneNumber: currentPatient.phoneNumber,
-        userName: currentPatient.user.userName,
+    if (currentProvider) {
+      const data: UpdateProvider = {
+        id: currentProvider._id,
+        name: currentProvider.user.name,
+        surname: currentProvider.user.surname,
+        emailAddress: currentProvider.user.emailAddress,
+        phoneNumber: currentProvider.phoneNumber,
+        userName: currentProvider.user.userName,
         password: "",
-        title: currentPatient.title,
-        address: currentPatient.address,
-        city: currentPatient.city,
-        province: currentPatient.province,
-        postalCode: currentPatient.postalCode,
-        country: currentPatient.country,
-        preferredContactMethod: currentPatient.preferredContactMethod,
+        title: currentProvider.title,
+        yearsOfExperience: currentProvider.yearsOfExperience,
+        biography: currentProvider.biography,
+        qualification: currentProvider.qualification,
       };
       setFormValues(data);
       form.setFieldsValue(data);
     }
-  }, [currentPatient]);
+  }, [currentProvider]);
 
-  const fetchPatientOnReload = async (): Promise<void> => {
+  const fetchProviderOnReload = async (): Promise<void> => {
     const token = sessionStorage.getItem("jwt");
     if (!token) return;
 
     try {
       setLoading(true);
       const user = await getCurrentUser(token);
-      await getCurrentPatient(user.id);
+      await getCurrentProvider(user.id);
     } catch (err) {
-      console.error("Error fetching patient data:", err);
+      console.error("Error fetching Provider data:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const updatePatientProfile = async () => {
+  const updateProviderProfile = async () => {
     try {
       const values = await form.validateFields();
       if (!formValues?.id) return;
-      await updatePatient(formValues.id, {
+      await updateProvider(formValues.id, {
         ...formValues,
         ...values,
       });
@@ -123,7 +117,7 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {loading || !formValues ? (
-          <Spin spinning tip="Loading patient data..." />
+          <Spin spinning tip="Loading Provider data..." />
         ) : (
           <Form
             form={form}
@@ -166,49 +160,22 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Address" name="address">
+                <Form.Item label="yearsOfExperience" name="yearsOfExperience">
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="City" name="city">
+                <Form.Item label="biography" name="biography">
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Province" name="province">
+                <Form.Item label="qualification" name="qualification">
                   <Input />
-                </Form.Item>
-
-                <Form.Item label="Postal Code" name="postalCode">
-                  <Input />
-                </Form.Item>
-
-                <Form.Item label="Country" name="country">
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  label="Preferred Contact Method"
-                  name="preferredContactMethod"
-                >
-                  <Select
-                    onChange={(value) =>
-                      setFormValues((prev) => ({
-                        ...prev,
-                        preferredContactMethod: value,
-                      }))
-                    }
-                  >
-                    <Option value={ReflistConMethod.Email}>Email</Option>
-                    <Option value={ReflistConMethod.SMS}>SMS</Option>
-                  </Select>
                 </Form.Item>
               </Col>
             </Row>
-
             <Divider />
-
             <Form.Item style={{ textAlign: "center" }}>
-              <Button type="primary" onClick={updatePatientProfile}>
+              <Button type="primary" onClick={updateProviderProfile}>
                 Save Changes
               </Button>
             </Form.Item>

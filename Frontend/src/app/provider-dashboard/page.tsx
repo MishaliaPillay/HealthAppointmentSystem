@@ -9,18 +9,62 @@ import {
   Avatar,
   Badge,
   Tag,
+  Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
+import { useEffect, useState } from "react";
+
+import {
+  useProviderState,
+  useProviderActions,
+} from "@/providers/providerMedicPrac-provider";
+import { useUserActions} from "@/providers/users-provider";
+
 const { Title, Text } = Typography;
-import { useUserState } from "../../providers/users-provider";
 
 export default function ProviderDashboard() {
-  const { user } = useUserState();
+  const [loading, setLoading] = useState(true);
+
+  const { currentProvider, isPending, isError } = useProviderState();
+  const { getCurrentProvider } = useProviderActions();
+  const { getCurrentUser } = useUserActions();
+  
+  // Fetch user + provider on mount
+  useEffect(() => {
+    fetchProviderOnReload();
+  }, []);
+
+  // Track loading state
+  useEffect(() => {
+    setLoading(isPending);
+    if (isError) setLoading(false);
+  }, [isPending, isError]);
+
+  const fetchProviderOnReload = async (): Promise<void> => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) return;
+
+    try {
+      setLoading(true);
+      const user = await getCurrentUser(token);
+      await getCurrentProvider(user.id);
+    } catch (err) {
+      console.error("Error loading provider/user data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading || !currentProvider) {
+    return <Spin spinning tip="Loading provider data..." />;
+  }
 
   return (
     <div className={styles.dashboardContainer}>
       <Card className={styles.welcomeCard} variant="outlined">
-        <Title level={3}>Welcome back {user?.name}</Title>
+        <Title level={3}>
+          Welcome back {currentProvider.title} {currentProvider.user?.surname}
+        </Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 
@@ -62,6 +106,7 @@ export default function ProviderDashboard() {
         extra={<Button type="link">View All</Button>}
       >
         <div className={styles.appointmentList}>
+          {/* Hardcoded example appointments */}
           <PatientAppointmentCard
             id="1"
             patientInitials="JD"
@@ -81,16 +126,6 @@ export default function ProviderDashboard() {
             time="10:30 AM"
             status="scheduled"
             isNewPatient={true}
-          />
-          <PatientAppointmentCard
-            id="3"
-            patientInitials="RG"
-            patientName="Robert Garcia"
-            visitReason="Blood Pressure Review"
-            date="Friday, Apr 11, 2025"
-            time="1:15 PM"
-            status="scheduled"
-            isNewPatient={false}
           />
         </div>
       </Card>

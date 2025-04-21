@@ -6,9 +6,13 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import NotificationPopup, { Notification } from "../notification/page";
 import Link from "next/link";
+import { useUserState } from "@/providers/users-provider";
+import { useRouter } from "next/navigation";
+import { getRole } from "@/utils/decoder";
+import { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
+import NotificationPopup, { Notification } from "../notification/page";
 
 const { Header: AntHeader } = Layout;
 
@@ -18,15 +22,38 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
+  const router = useRouter();
+  const { currentUser } = useUserState();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+
+    const userRole = getRole(token);
+    setRole(userRole);
+  }, []);
+
+  const signOutUser = () => {
+    sessionStorage.removeItem("jwt");
+    router.push("/");
+  };
+
   const items: MenuProps["items"] = [
     {
       key: "profile",
-      label: <Link href="/patient-dashboard/profile">Profile</Link>,
+      label: <Link href={`/${role}-dashboard/profile`}>Profile</Link>,
     },
     {
       key: "logout",
-      label: "Logout",
-      onClick: () => console.log("logout"),
+      label: (
+        <Button type="text" onClick={signOutUser} style={{ padding: 0 }}>
+          Logout
+        </Button>
+      ),
     },
   ];
 
@@ -37,8 +64,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
       message: "Your appointment is scheduled for tomorrow",
       time: "2 hours ago",
       read: false,
-      severity: "info"
-    }
+      severity: "info",
+    },
   ];
 
   return (
@@ -62,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
         <Dropdown menu={{ items }} placement="bottomRight">
           <Space style={{ cursor: "pointer", color: "white" }}>
             <UserOutlined />
-            <span className="hidden sm:inline">John Doe</span>
+            <span className="hidden sm:inline">{currentUser?.name}</span>
           </Space>
         </Dropdown>
       </div>

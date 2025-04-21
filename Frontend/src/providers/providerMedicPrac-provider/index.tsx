@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { getAxiosInstace } from "../../app/utils/axiosInstance";
-import { IProvider } from "./models";
+import { IProvider, IProviderRegisteration } from "./models";
 import {
   INITIAL_STATE,
   ProviderActionContext,
@@ -9,6 +9,9 @@ import {
 import { ProviderReducer } from "./reducer";
 import { useContext, useReducer } from "react";
 import {
+  getCurrentProviderPending,
+  getCurrentProviderSuccess,
+  getCurrentProviderError,
   registerProviderPending,
   registerProviderError,
   registerProviderSuccess,
@@ -23,7 +26,8 @@ import {
   deleteProviderPending,
   deleteProviderSuccess,
 } from "./actions";
-
+import axios from "axios";
+import { UpdateProvider } from "../providerMedicPrac-provider/models";
 export const ProviderProvider = ({
   children,
 }: {
@@ -32,11 +36,36 @@ export const ProviderProvider = ({
   const [state, dispatch] = useReducer(ProviderReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
+  // Get current Provider
+  const getCurrentProvider = async (
+    userId: number
+  ): Promise<IProvider | null> => {
+    dispatch(getCurrentProviderPending());
+    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
+    return axios
+      .get(endpoint)
+      .then((response) => {
+        if (response?.data?.result) {
+          dispatch(getCurrentProviderSuccess(response.data.result));
+          return response.data.result;
+        } else {
+          console.warn("No Provider data found in response");
+          dispatch(getCurrentProviderError());
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current Provider:", error);
+        dispatch(getCurrentProviderError());
+        return null;
+      });
+  };
+
   //Register the Provider
-  const registerProvider = async (Provider: IProvider) => {
+  const registerProvider = async (Provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/register`;
-    await instance
+    const endpoint = `/Patient/Create`;
+    https: await instance
       .post(endpoint, Provider)
       .then((response) => {
         dispatch(registerProviderSuccess(response.data));
@@ -44,14 +73,14 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(registerProviderError());
-      })
+      });
   };
 
   //Get All Providers
   const getProviders = async () => {
     dispatch(getProvidersPending());
-    const endpoint = `providers`;
-    await instance
+    const endpoint = `/Patient/GetAll`;
+    https: await instance
       .post(endpoint)
       .then((response) => {
         dispatch(getProvidersSuccess(response.data));
@@ -59,13 +88,13 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getProvidersError());
-      })
+      });
   };
 
   //Get Provider
   const getProvider = async (ProviderId: string) => {
     dispatch(getProviderPending());
-    const endpoint = `Provider`;
+    const endpoint = `/Patient/Get`;
     await instance
       .post(endpoint, ProviderId)
       .then((response) => {
@@ -74,42 +103,50 @@ export const ProviderProvider = ({
       .catch((error) => {
         console.error(error);
         dispatch(getProviderError());
-      })
+      });
   };
 
   //Update Provider
-  const updateProvider = async (Provider: IProvider) => {
+  const updateProvider = async (
+    ProviderId: string,
+    ProviderData: UpdateProvider
+  ) => {
     dispatch(updateProviderPending());
-    const endpoint = `updateProvider`;
+    const payload = {
+      ...ProviderData,
+      id: ProviderId,
+    };
+    const endpoint = `/Provider/UpdateProvider`;
     await instance
-      .post(endpoint, Provider)
+      .put(endpoint, payload)
       .then((response) => {
         dispatch(updateProviderSuccess(response.data));
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Update error:", error.response?.data || error.message);
         dispatch(updateProviderError());
-      })
+      });
   };
 
   //Delete Provider
   const deleteProviderbyId = async (ProviderId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `${ProviderId}`;
+    const endpoint = `/Patient/Delete?ProviderId=${ProviderId}`;
     await instance
       .delete(endpoint)
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
       })
       .catch((error) => {
-        dispatch(deleteProviderSuccess(error.data));
-      })
+        dispatch(deleteProviderSuccess(error.data || "An error occurrred"));
+      });
   };
 
   return (
     <ProviderStateContext.Provider value={state}>
       <ProviderActionContext.Provider
         value={{
+          getCurrentProvider,
           registerProvider,
           getProviders,
           getProvider,

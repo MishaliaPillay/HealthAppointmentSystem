@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Abp.Domain.Entities.Auditing;
 using healthap.Domain.Appointments;
 using healthap.Domain.Persons;
-using healthap.MultiTenancy.speciality;
+using healthap.MultiTenancy.Speciality;
 
 namespace healthap.Domain.Institution
 {
@@ -29,7 +29,6 @@ namespace healthap.Domain.Institution
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string GoogleMapsUrl { get; set; }
-
 
         //public Institution()
         //{

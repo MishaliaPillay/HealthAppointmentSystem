@@ -7,6 +7,9 @@ export enum ProviderActionEnums {
   getProvidersPending = "GET_PROVIDERS_PENDING",
   getProvidersSuccess = "GET_PROVIDERS_SUCCESS",
   getProvidersError = "GET_PROVIDERS_ERROR",
+  getCurrentProviderPending = "GET_CURRENTPROVIDER_PENDING",
+  getCurrentProviderSuccess = "GET_CURRENTPROVIDER_SUCCESS",
+  getCurrentProviderError = "GET_CURRENTPROVIDER_ERROR",
 
   getProviderPending = "GET_PROVIDER_PENDING",
   getProviderSuccess = "GET_PPROVIDER_SUCCESS",
@@ -41,12 +44,36 @@ export const getProvidersSuccess = createAction<
   Providers,
 }));
 
+// Get Current Provider actions
+export const getCurrentProviderPending = createAction<IProviderStateContext>(
+  ProviderActionEnums.getCurrentProviderPending,
+  () => ({ isPending: true, isSuccess: false, isError: false })
+);
+
+export const getCurrentProviderSuccess = createAction<
+  IProviderStateContext,
+  IProvider
+>(
+  ProviderActionEnums.getCurrentProviderSuccess, // Fixed incorrect enum
+  (currentProvider: IProvider) => ({
+    isPending: false,
+    isSuccess: true,
+    isError: false,
+    currentProvider,
+  })
+);
+
+export const getCurrentProviderError = createAction<IProviderStateContext>(
+  ProviderActionEnums.getCurrentProviderError, // Fixed incorrect enum
+  () => ({ isPending: false, isSuccess: false, isError: true })
+);
+
 export const getProvidersError = createAction<IProviderStateContext>(
   ProviderActionEnums.getProvidersError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-//Get Single Paitient
+//Get Single Provider
 export const getProviderError = createAction<IProviderStateContext>(
   ProviderActionEnums.getProvidersError,
   () => ({ isPending: false, isSuccess: false, isError: true })

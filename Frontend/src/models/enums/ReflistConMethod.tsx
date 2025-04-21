@@ -1,4 +1,4 @@
-export enum ConMethodReflist{
-    Email = 1,
-    SMS = 2
+export enum ReflistConMethod {
+  Email = 1,
+  SMS = 2,
 }

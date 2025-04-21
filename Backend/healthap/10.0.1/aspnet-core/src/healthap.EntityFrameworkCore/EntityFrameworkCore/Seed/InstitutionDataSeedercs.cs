@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
@@ -30,18 +29,18 @@ namespace healthap.EntityFrameworkCore.Seed
         public async Task SeedInstitutionsFromGoogleBySuburbAsync()
         {
             var suburbs = new List<string>
-    {
-        "Sandton", "Lenasia", "Midrand", "Soweto", "Centurion",
-        "Pretoria", "Durban", "Cape Town", "East London", "Polokwane"
-    };
+            {
+                "Sandton", "Lenasia", "Midrand", "Soweto", "Centurion",
+                "Pretoria", "Durban", "Cape Town", "East London", "Polokwane"
+            };
 
             var typesWithKeywords = new Dictionary<string, string>
-    {
-        { "Hospital", "hospital" },
-        { "Doctor's Office", "doctor" },
-        { "Dental Clinic", "dentist" },
-        { "Healthcare Facility", "clinic" }
-    };
+            {
+                { "Hospital", "hospital" },
+                { "Doctor's Office", "doctor" },
+                { "Dental Clinic", "dentist" },
+                { "Healthcare Facility", "clinic" }
+            };
 
             foreach (var suburb in suburbs)
             {
@@ -56,7 +55,6 @@ namespace healthap.EntityFrameworkCore.Seed
 
                             foreach (var place in placeResults)
                             {
-
                                 var existingInstitution = await _repository.FirstOrDefaultAsync(i => i.PlaceId == place.PlaceId);
                                 if (existingInstitution == null)
                                 {
@@ -74,7 +72,6 @@ namespace healthap.EntityFrameworkCore.Seed
                                         Latitude = place.Latitude,
                                         Longitude = place.Longitude,
                                         GoogleMapsUrl = place.GoogleMapsUrl
-
                                     };
 
                                     await _repository.InsertAsync(institution);
@@ -84,13 +81,12 @@ namespace healthap.EntityFrameworkCore.Seed
                             await uow.CompleteAsync();
                         }
 
-                        //  delay to avoid hitting API rate limits
+                        // Delay to avoid hitting API rate limits
                         await Task.Delay(1000);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine($"Error seeding {facilityType} in {suburb}: {ex.Message}");
-
                     }
                 }
             }

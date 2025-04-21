@@ -15,7 +15,6 @@ export interface IAuthStateContext {
 export interface IAuthActionContext {
   signIn: (SignInRequest: ISignInRequest) => Promise<ISignInResponse>;
   signUp: (Auth: IAuth) => Promise<void>;
-  signOut: () => void;
 }
 
 // Initial state with default values

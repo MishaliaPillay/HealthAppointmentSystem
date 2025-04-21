@@ -3,31 +3,48 @@ import { handleActions } from "redux-actions";
 import { INITIAL_STATE, IUserStateContext } from "./context";
 import { UserActionEnums } from "./actions";
 
-export const UserReducer = handleActions<IUserStateContext, IUserStateContext>(
+export const UserReducer = handleActions<
+  IUserStateContext,
+  Partial<IUserStateContext>
+>(
   {
     [UserActionEnums.getUsersPending]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
     }),
     [UserActionEnums.getUsersSuccess]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
     }),
     [UserActionEnums.getUsersError]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
     }),
+
     [UserActionEnums.getUserPending]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
     }),
     [UserActionEnums.getUserSuccess]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
     }),
     [UserActionEnums.getUserError]: (state, action) => ({
       ...state,
-      ...action.payload,
+      ...(action.payload ?? {}),
+    }),
+
+    [UserActionEnums.getCurrentUserPending]: (state, action) => ({
+      ...state,
+      ...(action.payload ?? {}),
+    }),
+    [UserActionEnums.getCurrentUserSuccess]: (state, action) => ({
+      ...state,
+      ...(action.payload ?? {}),
+    }),
+    [UserActionEnums.getCurrentUserError]: (state, action) => ({
+      ...state,
+      ...(action.payload ?? {}),
     }),
   },
   INITIAL_STATE
