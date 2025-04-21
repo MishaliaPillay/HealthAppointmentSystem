@@ -21,7 +21,7 @@ import {
 } from "@/providers/paitient-provider";
 import { useUserActions } from "@/providers/users-provider";
 import { UpdatePatientDto } from "@/providers/paitient-provider/models";
-import { ReflistConMethod } from "../../../models/enums/ReflistConMethod";
+import { ReflistConMethod } from "../../../enums/ReflistConMethod";
 
 const { Title } = Typography;
 const { Option } = Select;

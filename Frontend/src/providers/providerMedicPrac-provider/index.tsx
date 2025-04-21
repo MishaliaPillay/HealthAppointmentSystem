@@ -15,19 +15,21 @@ import {
   registerProviderPending,
   registerProviderError,
   registerProviderSuccess,
-  getProviderPending,
   getProvidersPending,
   getProvidersSuccess,
   getProvidersError,
+  getProviderPending,
+  getProviderSuccess,
   getProviderError,
   updateProviderPending,
   updateProviderSuccess,
   updateProviderError,
   deleteProviderPending,
   deleteProviderSuccess,
+  deleteProviderError,
 } from "./actions";
-import axios from "axios";
 import { UpdateProvider } from "../providerMedicPrac-provider/models";
+
 export const ProviderProvider = ({
   children,
 }: {
@@ -41,15 +43,15 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
-    return axios
+    const endpoint = `/Provider/GetCurrentProvider?userId=${userId}`;
+
+    return instance
       .get(endpoint)
       .then((response) => {
-        if (response?.data?.result) {
+        if (response.data?.result) {
           dispatch(getCurrentProviderSuccess(response.data.result));
           return response.data.result;
         } else {
-          console.warn("No Provider data found in response");
           dispatch(getCurrentProviderError());
           return null;
         }
@@ -61,66 +63,68 @@ export const ProviderProvider = ({
       });
   };
 
-  //Register the Provider
-  const registerProvider = async (Provider: IProviderRegisteration) => {
+  // Register Provider
+  const registerProvider = async (provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/Patient/Create`;
-    https: await instance
-      .post(endpoint, Provider)
+    const endpoint = `/Provider/Create`;
+
+    return instance
+      .post(endpoint, provider)
       .then((response) => {
         dispatch(registerProviderSuccess(response.data));
+        return response.data;
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error registering provider:", error);
         dispatch(registerProviderError());
       });
   };
 
-  //Get All Providers
-  const getProviders = async () => {
-    dispatch(getProvidersPending());
-    const endpoint = `/Patient/GetAll`;
-    https: await instance
-      .post(endpoint)
-      .then((response) => {
-        dispatch(getProvidersSuccess(response.data));
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(getProvidersError());
-      });
-  };
+  // Get All Providers
+const getProviders = async (): Promise<IProvider[]> => {
+  dispatch(getProvidersPending());
+  return instance
+    .get("/Provider/GetAll")
+    .then((response) => {
+      dispatch(getProvidersSuccess(response.data.result));
+      return response.data.result; // Ensure it returns an array of providers
+    })
+    .catch((error) => {
+      console.error("Error fetching providers:", error);
+      dispatch(getProvidersError());
+      return [];
+    });
+};
 
-  //Get Provider
-  const getProvider = async (ProviderId: string) => {
-    dispatch(getProviderPending());
-    const endpoint = `/Patient/Get`;
-    await instance
-      .post(endpoint, ProviderId)
-      .then((response) => {
-        dispatch(getProvidersSuccess(response.data));
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(getProviderError());
-      });
-  };
-
-  //Update Provider
+  // Get Provider by ID
+const getProvider = async (providerId: string): Promise<IProvider | null> => {
+  dispatch(getProviderPending());
+  return instance
+    .get(`/Provider/Get?Id=${providerId}`)
+    .then((response) => {
+      dispatch(getProviderSuccess(response.data.result));
+      return response.data.result; // Ensure it returns provider data
+    })
+    .catch((error) => {
+      console.error("Error fetching provider by ID:", error);
+      dispatch(getProviderError());
+      return null;
+    });
+};
+  // Update Provider
   const updateProvider = async (
-    ProviderId: string,
-    ProviderData: UpdateProvider
+    providerId: string,
+    providerData: UpdateProvider
   ) => {
     dispatch(updateProviderPending());
-    const payload = {
-      ...ProviderData,
-      id: ProviderId,
-    };
     const endpoint = `/Provider/UpdateProvider`;
-    await instance
+    const payload = { ...providerData, id: providerId };
+
+    return instance
       .put(endpoint, payload)
       .then((response) => {
         dispatch(updateProviderSuccess(response.data));
+        return response.data;
       })
       .catch((error) => {
         console.error("Update error:", error.response?.data || error.message);
@@ -128,17 +132,20 @@ export const ProviderProvider = ({
       });
   };
 
-  //Delete Provider
-  const deleteProviderbyId = async (ProviderId: string) => {
+  // Delete Provider
+  const deleteProviderById = async (providerId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `/Patient/Delete?ProviderId=${ProviderId}`;
-    await instance
+    const endpoint = `/Provider/Delete?ProviderId=${providerId}`;
+
+    return instance
       .delete(endpoint)
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
+        return response.data;
       })
       .catch((error) => {
-        dispatch(deleteProviderSuccess(error.data || "An error occurrred"));
+        console.error("Error deleting provider:", error);
+        dispatch(deleteProviderError());
       });
   };
 
@@ -151,7 +158,7 @@ export const ProviderProvider = ({
           getProviders,
           getProvider,
           updateProvider,
-          deleteProviderbyId,
+          deleteProviderById,
         }}
       >
         {children}
@@ -159,6 +166,7 @@ export const ProviderProvider = ({
     </ProviderStateContext.Provider>
   );
 };
+
 export const useProviderState = () => {
   const context = useContext(ProviderStateContext);
   if (!context) {
@@ -171,7 +179,7 @@ export const useProviderActions = () => {
   const context = useContext(ProviderActionContext);
   if (!context) {
     throw new Error(
-      "ProviderActionContext must be used within a ProviderProvider"
+      "useProviderActions must be used within a ProviderProvider"
     );
   }
   return context;

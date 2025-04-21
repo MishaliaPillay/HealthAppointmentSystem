@@ -1,5 +1,6 @@
 "use client";
-import { IAppointment, IAppointmentStateContext } from "./context";
+import { IAppointmentStateContext } from "./context";
+import {IAppointment} from "./models"
 import { createAction } from "redux-actions";
 
 export enum AppointmentActionEnums {

@@ -1,212 +1,176 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Typography, Table, Tag, Button, Select, Input, Space } from "antd";
+import {
+  Typography,
+  Table,
+  Tag,
+  Button,
+  Select,
+  Input,
+  Space,
+  Spin,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
+import {
+  usePatientActions,
+  usePatientState,
+} from "@/providers/paitient-provider";
+import { useAppointmentActions } from "@/providers/appointment-provider";
+import { useUserActions } from "@/providers/users-provider";
+import { useProviderActions } from "@/providers/providerMedicPrac-provider";
+import { IAppointment } from "@/providers/appointment-provider/models";
 import styles from "./styles";
 
 const { Title } = Typography;
 const { Option } = Select;
-
-// Define the Appointment interface within this file if not imported
-interface Appointment {
-  id: string;
-  doctor: string;
-  specialty: string;
-  date: string;
-  time: string;
-  status: "upcoming" | "completed" | "cancelled";
-}
 
 export default function AppointmentsPage() {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200
-  );
+  const [loading, setLoading] = useState(false);
+  const [providers, setProviders] = useState<Record<string, string>>({});
 
-  // Handle window resize for responsiveness
+  const { isPending, isError, isSuccess, currentPatient } = usePatientState();
+  const { getCurrentPatient } = usePatientActions();
+  const { getAppointments } = useAppointmentActions();
+  const { getCurrentUser } = useUserActions();
+  const { getProviders } = useProviderActions();
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleResize = () => setWindowWidth(window.innerWidth);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
+    if (isPending) setLoading(true);
+    if (isError || isSuccess) setLoading(false);
+    if (!currentPatient) fetchPatientOnReload();
+  }, [isError, isPending, isSuccess, currentPatient]);
 
-    return undefined;
-  }, []);
-//TODO:KM
-  // Mock data for appointments with more items for pagination
-  const generateAppointmentsData = (): Appointment[] => {
-    //use Reflist
-    const statuses: Array<"upcoming" | "completed" | "cancelled"> = [
-      "upcoming",
-      "completed",
-      "cancelled",
-    ];
-    
-    const specialties = [
-      "Cardiology",
-      "Dermatology",
-      "General",
-      "Pediatrics",
-      "Neurology",
-      "Orthopedics",
-      "Ophthalmology",
-      "Psychiatry",
-    ];
-    //TODO:KM
-    //use get all providers using get all providers end point
-    const doctors = [
-      "Dr. Sarah Johnson",
-      "Dr. Michael Chen",
-      "Dr. Emily Wilson",
-      "Dr. David Rodriguez",
-      "Dr. Lisa Taylor",
-      "Dr. James Brown",
-      "Dr. Maria Garcia",
-      "Dr. John Smith",
-      "Dr. Karen Davis",
-      "Dr. Robert Kim",
-      "Dr. Jessica Wright",
-      "Dr. Thomas Lee",
-    ];
-    //TODO:KM
-    // Generate 50 appointments
-    return Array.from({ length: 50 }, (_, i) => {
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-      return {
-        id: (i + 1).toString(),
-        doctor: doctors[Math.floor(Math.random() * doctors.length)],
-        specialty: specialties[Math.floor(Math.random() * specialties.length)],
-        date: new Date(2025, 3 + Math.floor(i / 10), 1 + (i % 28))
-          .toISOString()
-          .split("T")[0],
-        time: `${9 + Math.floor(Math.random() * 8)}:${
-          Math.random() > 0.5 ? "30" : "00"
-        }`,
-        status: status,
-      };
-    });
+  const fetchPatientOnReload = async (): Promise<void> => {
+    const token = sessionStorage.getItem("jwt");
+    if (token) {
+      try {
+        const user = await getCurrentUser(token);
+        await getCurrentPatient(user.id);
+      } catch (err) {
+        console.error("Error loading patient:", err);
+      }
+    }
   };
 
-  const appointmentsData = generateAppointmentsData();
+  useEffect(() => {
+    getAppointments();
+    fetchProviders();
+  }, []);
 
-  // Filter the data based on search and status filter
+  const fetchProviders = async () => {
+    const providerList = await getProviders();
+    if (Array.isArray(providerList)) {
+      const providerMap = providerList.reduce((map, provider) => {
+        map[provider._id] = provider.user.name;
+        return map;
+      }, {} as Record<string, string>);
+      setProviders(providerMap);
+    }
+  };
+
+  const appointmentsData: IAppointment[] = currentPatient?.appointments || [];
+
   const filteredData = appointmentsData.filter((appointment) => {
-    const matchesSearch =
-      appointment.doctor.toLowerCase().includes(searchText.toLowerCase()) ||
-      appointment.specialty.toLowerCase().includes(searchText.toLowerCase());
+    const matchesSearch = appointment.purpose
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "all" || appointment.status === statusFilter;
+      statusFilter === "all" ||
+      appointment.appointmentStatus === Number(statusFilter);
 
     return matchesSearch && matchesStatus;
   });
 
-  // Define responsive columns based on screen size
-  const getColumns = () => {
-    // Base columns that always show
-    const baseColumns = [
-      {
-        title: "Doctor",
-        dataIndex: "doctor",
-        key: "doctor",
-        sorter: (a: Appointment, b: Appointment) =>
-          a.doctor.localeCompare(b.doctor),
-      },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (status: string) => (
-          <Tag
-            color={
-              status === "upcoming"
-                ? "blue"
-                : status === "completed"
-                ? "green"
-                : "red"
-            }
-            style={styles.statusTag}
-          >
-            {status.toUpperCase()}
+  const handleReschedule = (appointmentId: string) => {
+    console.log("Reschedule appointment:", appointmentId);
+  };
+
+  const handleCancel = (appointmentId: string) => {
+    console.log("Cancel appointment:", appointmentId);
+  };
+
+  const getColumns = () => [
+    {
+      title: "Date",
+      dataIndex: "appointmentDate" as keyof IAppointment,
+      key: "appointmentDate",
+      render: (date: Date) =>
+        new Date(date).toLocaleDateString("en-ZA", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+    },
+    {
+      title: "Time",
+      dataIndex: "appointmentTime" as keyof IAppointment,
+      key: "appointmentTime",
+    },
+    {
+      title: "Provider",
+      dataIndex: "providerId" as keyof IAppointment,
+      key: "providerId",
+      render: (id: string) => providers[id] || "Unknown Provider",
+    },
+    {
+      title: "Purpose",
+      dataIndex: "appointmentPurpose" as keyof IAppointment,
+      key: "appointmentPurpose",
+    },
+    {
+      title: "Status",
+      dataIndex: "appointmentStatus" as keyof IAppointment,
+      key: "appointmentStatus",
+      render: (status: AppointmentStatusReflist) => {
+        const colorMap: Record<AppointmentStatusReflist, string> = {
+          [AppointmentStatusReflist.Pending]: "blue",
+          [AppointmentStatusReflist.Confirmed]: "gold",
+          [AppointmentStatusReflist.Completed]: "green",
+          [AppointmentStatusReflist.Cancelled]: "red",
+          [AppointmentStatusReflist.NoShow]: "volcano",
+        };
+        return (
+          <Tag color={colorMap[status]} style={styles.statusTag}>
+            {AppointmentStatusReflist[status]?.toUpperCase()}
           </Tag>
-        ),
+        );
       },
-      {
-        title: "Action",
-        key: "action",
-        render: (_: unknown, record: Appointment) => (
-          <Space size="small">
-            <Button type="link" style={styles.actionButton}>
-              {record.status === "upcoming" ? "Reschedule" : "View Details"}
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_: unknown, record: IAppointment) => (
+        <Space size="small">
+          <Button
+            type="link"
+            onClick={() => handleReschedule(record.id!)}
+            style={styles.actionButton}
+          >
+            {record.appointmentStatus === AppointmentStatusReflist.Pending
+              ? "Reschedule"
+              : "View Details"}
+          </Button>
+          {record.appointmentStatus === AppointmentStatusReflist.Pending && (
+            <Button
+              type="link"
+              danger
+              onClick={() => handleCancel(record.id!)}
+              style={styles.actionButton}
+            >
+              Cancel
             </Button>
-            {record.status === "upcoming" && (
-              <Button type="link" danger style={styles.actionButton}>
-                Cancel
-              </Button>
-            )}
-          </Space>
-        ),
-      },
-    ];
-
-    // Add more columns for larger screens
-    if (windowWidth > styles.mobileBreakpoint) {
-      const additionalColumns = [
-        {
-          title: "Specialty",
-          dataIndex: "specialty",
-          key: "specialty",
-          render: (specialty: string) => specialty, // Adding render to match expected types
-        },
-        {
-          title: "Date",
-          dataIndex: "date",
-          key: "date",
-          sorter: (a: Appointment, b: Appointment) =>
-            a.date.localeCompare(b.date),
-        },
-        {
-          title: "Time",
-          dataIndex: "time",
-          key: "time",
-          render: (time: string) => time, // Adding render to match expected types
-        },
-      ];
-
-      // Insert additional columns after the first column
-      return [
-        baseColumns[0],
-        ...additionalColumns,
-        baseColumns[1],
-        baseColumns[2],
-      ];
-    }
-
-    return baseColumns;
-  };
-
-  // Expandable row config for mobile view
-  const expandableConfig = {
-    expandedRowRender: (record: Appointment) => (
-      <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-        <li>
-          <strong>Specialty:</strong> {record.specialty}
-        </li>
-        <li>
-          <strong>Date:</strong> {record.date}
-        </li>
-        <li>
-          <strong>Time:</strong> {record.time}
-        </li>
-      </ul>
-    ),
-    expandRowByClick: true,
-  };
+          )}
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div style={styles.container}>
@@ -218,7 +182,7 @@ export default function AppointmentsPage() {
         <div style={styles.headerControls}>
           <div style={styles.searchFilter}>
             <Input
-              placeholder="Search by doctor or specialty"
+              placeholder="Search by purpose"
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -232,36 +196,43 @@ export default function AppointmentsPage() {
               style={styles.filterSelect}
             >
               <Option value="all">All Status</Option>
-              <Option value="upcoming">Upcoming</Option>
-              <Option value="completed">Completed</Option>
-              <Option value="cancelled">Cancelled</Option>
+              {Object.keys(AppointmentStatusReflist)
+                .filter((key) => isNaN(Number(key)))
+                .map((statusKey) => (
+                  <Option
+                    key={statusKey}
+                    value={AppointmentStatusReflist[statusKey]}
+                  >
+                    {statusKey}
+                  </Option>
+                ))}
             </Select>
           </div>
         </div>
       </div>
 
       <div style={styles.responsiveTable}>
-        <Table
-          dataSource={filteredData}
-          columns={getColumns()}
-          rowKey="id"
-          pagination={{
-            current: currentPage,
-            pageSize: pageSize,
-            onChange: (page) => setCurrentPage(page),
-            onShowSizeChange: (_, size) => setPageSize(size),
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "20", "50"],
-            total: filteredData.length,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} items`,
-          }}
-          expandable={
-            windowWidth <= styles.mobileBreakpoint
-              ? expandableConfig
-              : undefined
-          }
-        />
+        {loading ? (
+          <Spin spinning tip="Loading appointments..." />
+        ) : (
+          <Table<IAppointment>
+            dataSource={filteredData}
+            columns={getColumns()}
+            rowKey="id"
+            locale={{ emptyText: "No appointments found." }}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              onChange: (page) => setCurrentPage(page),
+              onShowSizeChange: (_, size) => setPageSize(size),
+              showSizeChanger: true,
+              pageSizeOptions: ["5", "10", "20", "50"],
+              total: filteredData.length,
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+            }}
+          />
+        )}
       </div>
     </div>
   );

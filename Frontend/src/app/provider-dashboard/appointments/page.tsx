@@ -1,8 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Typography, Table, Tag, Button, Select, Input, Space } from "antd";
+import {
+  Typography,
+  Table,
+  Tag,
+  Button,
+  Select,
+  Input,
+  Space,
+  Spin,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { IAppointments } from "../../../providers/";
+import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
+import {
+  usePatientActions,
+  usePatientState,
+} from "@/providers/paitient-provider";
+import { useUserActions } from "@/providers/users-provider";
 import styles from "./styles";
 
 const { Title } = Typography;
@@ -23,9 +39,12 @@ export default function AppointmentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1200
   );
+  const { getCurrentUser } = useUserActions();
+
 
   // Handle window resize for responsiveness
   useEffect(() => {

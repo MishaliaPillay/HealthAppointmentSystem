@@ -1,4 +1,4 @@
-import { IAppointment } from "../appointment-provider/context";
+import { IAppointment } from "../appointment-provider/models";
 import { IUser } from "../users-provider/models";
 
 export interface IProvider {
