@@ -1,22 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 using Abp.Domain.Entities;
-using healthap.Authorization.Users;
+using healthap.Domain.Appointments;
 using healthap.Domain.Persons;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {
+    [AutoMap(typeof(ProviderAvailabilty))]
+
     public class ProviderAvailabiltyDto:EntityDto<Guid>
     {
+        [Required]
         public Guid ProviderId { get; set; }
-        public virtual Provider Provider { get; set; }
+        [Required]
+        public DateTime DateAvailable { get; set; }
+        [Required]
         public DayOfWeek DayOfWeek { get; set; }
+        [Required]
         public TimeSpan StartTime { get; set; }
+        [Required]
         public TimeSpan EndTime { get; set; }
+        [Required]
         public bool IsAvailable { get; set; }
     }
 }
