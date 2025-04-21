@@ -10,8 +10,10 @@ export interface IProvider {
   maxAppointmentsPerDay: number;
   qualification: string;
   appointments?: IAppointment[];
-  _id?: string;
+  availabilities?: { date: string; slot: string }[]; // Define availabilities as an array of objects
+  id?: string;
 }
+
 export interface IProviderRegisteration {
   user: IUser;
   title: string;

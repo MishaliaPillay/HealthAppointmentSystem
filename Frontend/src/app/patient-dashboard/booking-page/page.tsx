@@ -30,6 +30,26 @@ const specialties = [
   "Urology",
 ];
 
+interface IInstitution {
+  institutionId: number;
+  institutionName: string;
+  address: string;
+}
+
+interface Provider {
+  id: number;
+  userId: number;
+  userName: string;
+  fullName: string;
+  title: string;
+  biography: string;
+  phoneNumber: string;
+  maxAppointmentsPerDay: number;
+  qualification: string;
+  speciality: string;
+  yearsOfExperience: number;
+}
+
 const BookingComponent: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(
@@ -39,7 +59,12 @@ const BookingComponent: React.FC = () => {
     number | null
   >(null);
 
-  const { institutions, isPending: loadingInstitutions } = useLocationState();
+  const { institutions, isPending: loadingInstitutions } =
+    useLocationState() as unknown as {
+      institutions: IInstitution[];
+      isPending: boolean;
+    };
+
   const { providers, isPending: loadingProviders } =
     useProvidersInstitionState();
 
@@ -58,8 +83,7 @@ const BookingComponent: React.FC = () => {
     setCurrentStep(2);
   };
 
-  // Filter providers by the selected specialty
-  const filteredProviders = providers?.result.filter(
+  const filteredProviders: Provider[] | undefined = providers?.result.filter(
     (provider) => provider.speciality === selectedSpecialty
   );
 
@@ -71,7 +95,6 @@ const BookingComponent: React.FC = () => {
         <Step title="Doctor" />
       </Steps>
 
-      {/* Step 0 - Choose Specialty */}
       {currentStep === 0 && (
         <div>
           <h2 className="mb-4">Select a Specialty</h2>
@@ -90,7 +113,6 @@ const BookingComponent: React.FC = () => {
         </div>
       )}
 
-      {/* Step 1 - Show Institutions */}
       {currentStep === 1 && (
         <div>
           <h2 className="mb-4">
@@ -99,28 +121,23 @@ const BookingComponent: React.FC = () => {
           {loadingInstitutions ? (
             <Spin />
           ) : (
-            <div>
-              <Row gutter={[16, 16]}>
-                {(institutions || []).map((inst: any) => (
-                  <Col key={inst.institutionId} xs={24} sm={12} md={8}>
-                    <Card
-                      hoverable
-                      title={inst.institutionName}
-                      onClick={() =>
-                        handleInstitutionSelect(inst.institutionId)
-                      }
-                    >
-                      <p>Address: {inst.address}</p>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </div>
+            <Row gutter={[16, 16]}>
+              {(institutions || []).map((inst) => (
+                <Col key={inst.institutionId} xs={24} sm={12} md={8}>
+                  <Card
+                    hoverable
+                    title={inst.institutionName}
+                    onClick={() => handleInstitutionSelect(inst.institutionId)}
+                  >
+                    <p>Address: {inst.address}</p>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
           )}
         </div>
       )}
 
-      {/* Step 2 - Show Doctors */}
       {currentStep === 2 && (
         <div key={selectedInstitutionId}>
           <h2 className="mb-4">Doctors at Selected Institution</h2>
@@ -128,7 +145,7 @@ const BookingComponent: React.FC = () => {
             <Spin />
           ) : (
             <Row gutter={[16, 16]}>
-              {(filteredProviders || []).map((doc: any) => (
+              {(filteredProviders || []).map((doc: Provider) => (
                 <Col key={doc.userId} xs={24} sm={12} md={8}>
                   <Card title={doc.fullName}>
                     <p>Specialty: {doc.speciality}</p>

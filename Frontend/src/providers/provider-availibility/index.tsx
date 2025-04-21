@@ -1,15 +1,12 @@
 "use client";
-
-import { useContext, useReducer } from "react";
-import { getAxiosInstace } from "@/utils/axiosInstance";
-import { ProviderAvailabilityReducer } from "./reducer";
+import React, { useReducer, useContext } from "react";
 import {
+  ProviderAvailabilityStateContext,
+  ProviderAvailabilityActionContext,
   INITIAL_STATE,
   IProvidersAvailability,
-ProviderAvailabilityStateContext,
-  ProviderAvailabilityActionContext,
 } from "./context";
-
+import { ProviderAvailabilityReducer } from "./reducer";
 import {
   fetchAvailabilityPending,
   fetchAvailabilitySuccess,
@@ -21,6 +18,7 @@ import {
   updateAvailabilitySuccess,
   updateAvailabilityError,
 } from "./actions";
+import axios from "axios";
 
 export const ProviderAvailabilityProvider = ({
   children,
@@ -31,45 +29,44 @@ export const ProviderAvailabilityProvider = ({
     ProviderAvailabilityReducer,
     INITIAL_STATE
   );
-  const instance = getAxiosInstace();
 
   const fetchAvailabilityByProvider = async (providerId: string) => {
     dispatch(fetchAvailabilityPending());
-    const endpoint = `/api/services/app/ProviderAvailability/GetAvailabilityByProviderId?providerId=${providerId}`;
-
     try {
-      const response = await instance.get(endpoint);
-      dispatch(fetchAvailabilitySuccess(response.data));
+      const response = await axios.get(
+        `/api/services/app/ProviderAvailability/GetAvailabilityByProviderId?providerId=${providerId}`
+      );
+      dispatch(fetchAvailabilitySuccess({ result: response.data.result }));
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching provider availability:", error);
       dispatch(fetchAvailabilityError());
     }
   };
 
   const createAvailability = async (data: IProvidersAvailability) => {
     dispatch(createAvailabilityPending());
-    const endpoint = `/api/services/app/ProviderAvailability/CreateAvailability`;
-
     try {
-      await instance.post(endpoint, data);
+      await axios.post(
+        "https://localhost:44311/api/services/app/ProviderAvailability/CreateAvailability",
+        data
+      );
       dispatch(createAvailabilitySuccess());
-      fetchAvailabilityByProvider(data.providerId);
     } catch (error) {
-      console.error(error);
+      console.error("Error creating provider availability:", error);
       dispatch(createAvailabilityError());
     }
   };
 
   const updateAvailability = async (data: IProvidersAvailability) => {
     dispatch(updateAvailabilityPending());
-    const endpoint = `/api/services/app/ProviderAvailability/UpdateAvailability`;
-
     try {
-      await instance.put(endpoint, data);
+      await axios.put(
+        "/api/services/app/ProviderAvailability/UpdateAvailability",
+        data
+      );
       dispatch(updateAvailabilitySuccess());
-      fetchAvailabilityByProvider(data.providerId);
     } catch (error) {
-      console.error(error);
+      console.error("Error updating provider availability:", error);
       dispatch(updateAvailabilityError());
     }
   };
@@ -89,21 +86,21 @@ export const ProviderAvailabilityProvider = ({
   );
 };
 
-export const useProviderAvailabilityState = () => {
+export const useAvailabilityState = () => {
   const context = useContext(ProviderAvailabilityStateContext);
   if (!context) {
     throw new Error(
-      "useProviderAvailabilityState must be used within a ProviderAvailabilityProvider"
+      "useAvailabilityState must be used within a ProviderAvailabilityProvider"
     );
   }
   return context;
 };
 
-export const useProviderAvailabilityActions = () => {
+export const useAvailabilityActions = () => {
   const context = useContext(ProviderAvailabilityActionContext);
   if (!context) {
     throw new Error(
-      "useProviderAvailabilityActions must be used within a ProviderAvailabilityProvider"
+      "useAvailabilityActions must be used within a ProviderAvailabilityProvider"
     );
   }
   return context;

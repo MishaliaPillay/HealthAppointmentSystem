@@ -33,6 +33,6 @@ export interface IProviderAvailabilityActionContext {
 
 export const ProviderAvailabilityStateContext =
   createContext<IProviderAvailabilityStateContext>(INITIAL_STATE);
-  export const ProviderAvailabilityActionContext = createContext<
+export const ProviderAvailabilityActionContext = createContext<
   IProviderAvailabilityActionContext | undefined
 >(undefined);

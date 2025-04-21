@@ -1,4 +1,6 @@
 "use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Row,
@@ -12,13 +14,13 @@ import {
   Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
-import { useEffect, useState } from "react";
+import UpdateAvailabilityForm from "../../components/provider-availability/ProviderAvailabilityModal";
 
 import {
   useProviderState,
   useProviderActions,
 } from "@/providers/providerMedicPrac-provider";
-import { useUserActions} from "@/providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
 
 const { Title, Text } = Typography;
 
@@ -28,17 +30,21 @@ export default function ProviderDashboard() {
   const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
-  
-  // Fetch user + provider on mount
+
   useEffect(() => {
     fetchProviderOnReload();
   }, []);
 
-  // Track loading state
   useEffect(() => {
     setLoading(isPending);
     if (isError) setLoading(false);
   }, [isPending, isError]);
+
+  useEffect(() => {
+    if (currentProvider) {
+      console.log("Updated Current Provider Data:", currentProvider.id);
+    }
+  }, [currentProvider]);
 
   const fetchProviderOnReload = async (): Promise<void> => {
     const token = sessionStorage.getItem("jwt");
@@ -47,6 +53,7 @@ export default function ProviderDashboard() {
     try {
       setLoading(true);
       const user = await getCurrentUser(token);
+      console.log("User Data:", user);
       await getCurrentProvider(user.id);
     } catch (err) {
       console.error("Error loading provider/user data:", err);
@@ -56,21 +63,26 @@ export default function ProviderDashboard() {
   };
 
   if (loading || !currentProvider) {
-    return <Spin spinning tip="Loading provider data..." />;
+    return (
+      <div className={styles.spinnerContainer}>
+        <Spin tip="Loading provider data..." />
+      </div>
+    );
   }
 
   return (
     <div className={styles.dashboardContainer}>
-      <Card className={styles.welcomeCard} variant="outlined">
+      <Card className={styles.welcomeCard}>
         <Title level={3}>
-          Welcome back {currentProvider.title} {currentProvider.user?.surname}
+          Welcome back {currentProvider.title}{" "}
+          {currentProvider.user?.surname ?? ""}
         </Title>
         <Text>You have appointments scheduled today</Text>
       </Card>
 
       <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
-          <Card title="Quick Actions" variant="outlined">
+          <Card title="Quick Actions">
             <div className={styles.quickActions}>
               <Button type="primary" size="large" block>
                 View Today&apos;s Schedule
@@ -79,10 +91,14 @@ export default function ProviderDashboard() {
                 Manage Availability
               </Button>
             </div>
+            <div style={{ marginTop: "1rem" }}>
+              <UpdateAvailabilityForm providerId={currentProvider.id} />
+            </div>
           </Card>
         </Col>
+
         <Col xs={24} md={12}>
-          <Card title="Practice Stats" variant="outlined">
+          <Card title="Practice Stats">
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>
                 <Text>Today&apos;s Appointments: 5</Text>
@@ -102,12 +118,11 @@ export default function ProviderDashboard() {
       <Card
         title="Today's Appointments"
         className={styles.upcomingCard}
-        variant="outlined"
         extra={<Button type="link">View All</Button>}
       >
         <div className={styles.appointmentList}>
-          {/* Hardcoded example appointments */}
           <PatientAppointmentCard
+            key="1"
             id="1"
             patientInitials="JD"
             patientName="John Doe"
@@ -118,6 +133,7 @@ export default function ProviderDashboard() {
             isNewPatient={false}
           />
           <PatientAppointmentCard
+            key="2"
             id="2"
             patientInitials="AL"
             patientName="Amy Lee"
@@ -132,11 +148,7 @@ export default function ProviderDashboard() {
 
       <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
-          <Card
-            title="Pending Actions"
-            variant="outlined"
-            extra={<Badge count={3} />}
-          >
+          <Card title="Pending Actions" extra={<Badge count={3} />}>
             <div className={styles.actionsList}>
               <div className={styles.actionItem}>
                 <Text strong>Medical Records Review</Text>
@@ -156,7 +168,6 @@ export default function ProviderDashboard() {
         <Col xs={24} md={12}>
           <Card
             title="Recent Patient Notes"
-            variant="outlined"
             extra={<Button type="link">View All</Button>}
           >
             <div className={styles.notesList}>
@@ -209,6 +220,36 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
   status,
   isNewPatient,
 }) => {
+  const renderStatusActions = () => {
+    switch (status) {
+      case "scheduled":
+      case "checked-in":
+        return (
+          <>
+            <span className={styles[`status${capitalize(status)}`]}>
+              {capitalize(status)}
+            </span>
+            <Button size="small" type="primary">
+              Start
+            </Button>
+          </>
+        );
+      case "in-progress":
+        return (
+          <>
+            <span className={styles.statusInProgress}>In Progress</span>
+            <Button size="small">Complete</Button>
+          </>
+        );
+      case "completed":
+        return <span className={styles.statusCompleted}>Completed</span>;
+      case "cancelled":
+        return <span className={styles.statusCancelled}>Cancelled</span>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={styles.appointmentCard}>
       <div className={styles.appointmentInfo}>
@@ -227,36 +268,11 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
           </div>
         </div>
       </div>
-      <div className={styles.appointmentActions}>
-        {status === "scheduled" && (
-          <>
-            <span className={styles.statusScheduled}>Scheduled</span>
-            <Button size="small" type="primary">
-              Start
-            </Button>
-          </>
-        )}
-        {status === "checked-in" && (
-          <>
-            <span className={styles.statusCheckedIn}>Checked In</span>
-            <Button size="small" type="primary">
-              Start
-            </Button>
-          </>
-        )}
-        {status === "in-progress" && (
-          <>
-            <span className={styles.statusInProgress}>In Progress</span>
-            <Button size="small">Complete</Button>
-          </>
-        )}
-        {status === "completed" && (
-          <span className={styles.statusCompleted}>Completed</span>
-        )}
-        {status === "cancelled" && (
-          <span className={styles.statusCancelled}>Cancelled</span>
-        )}
-      </div>
+      <div className={styles.appointmentActions}>{renderStatusActions()}</div>
     </div>
   );
 };
+
+function capitalize(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

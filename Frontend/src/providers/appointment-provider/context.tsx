@@ -31,3 +31,5 @@ export const AppointmentStateContext =
 export const AppointmentActionContext = createContext<
   IAppointmentActionContext | undefined
 >(undefined);
+
+export { IAppointment };
