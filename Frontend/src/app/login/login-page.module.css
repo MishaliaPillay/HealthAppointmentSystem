@@ -1,7 +1,6 @@
-
 .formCard {
   width: 100%;
-  max-width: 400px;
+
   padding: 2rem;
 }
 
@@ -27,11 +26,14 @@
 .forgotLink {
   float: right;
 }
-
 .submitButton {
-  width: 100%;
+  width: 400%;
   height: 40px;
   font-size: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .socialButtons {
@@ -42,4 +44,24 @@
 
 .socialButton {
   flex: 1;
+}
+/* Add this in your page.module.css or a relevant CSS module */
+.signupGrid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile-first: single column */
+  gap: 1rem;
+}
+
+.fullWidth {
+  grid-column: 1; /* default for small screens — just use the one column */
+}
+
+@media (min-width: 768px) {
+  .signupGrid {
+    grid-template-columns: 1fr 1fr; /* 2 columns on medium+ screens */
+  }
+
+  .fullWidth {
+    grid-column: span 3; /* Now we can span 2 columns safely */
+  }
 }

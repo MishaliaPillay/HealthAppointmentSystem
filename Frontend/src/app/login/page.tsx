@@ -11,8 +11,15 @@ import SignupForm from "../../components/sign-up-form/page";
 
 const { Title } = Typography;
 
-export default function LoginSignup() {
-  const [activeTab, setActiveTab] = useState("login");
+interface LoginPageProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+export default function LoginSignup({
+  activeTab,
+  setActiveTab,
+}: LoginPageProps) {
   const [loading, setLoading] = useState(false);
   const { isSuccess, isError, isPending } = useAuthState();
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
@@ -32,7 +39,7 @@ export default function LoginSignup() {
       const role = getRole(token);
 
       if (authMode === "signup") {
-        // Don't redirect, just switch tab
+        // Switch to login tab
         setActiveTab("login");
       } else {
         // Login success → redirect to dashboard
@@ -47,7 +54,7 @@ export default function LoginSignup() {
 
       setLoading(false);
     }
-  }, [isPending, isError, isSuccess, router, authMode]);
+  }, [isPending, isError, isSuccess, router, authMode, setActiveTab]);
 
   return (
     <Spin spinning={loading} tip="Please hold on...">
@@ -63,7 +70,7 @@ export default function LoginSignup() {
 
         <Tabs
           activeKey={activeTab}
-          onChange={setActiveTab}
+          onChange={(key) => setActiveTab(key)}
           centered
           className={styles.tabs}
           items={[
