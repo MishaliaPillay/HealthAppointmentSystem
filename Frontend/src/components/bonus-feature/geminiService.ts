@@ -50,6 +50,10 @@ export const analyzeHealthImage = async (
       - Highlight areas that might benefit from professional medical attention
       - Consider general appearance, posture, and visible physical characteristics
       - Recooment if the person should see the medical professional or not and which one
+      - Whether professional medical consultation appears warranted
+      - Which type of healthcare professional might be most appropriate (if applicable)
+      - The apparent urgency level (Urgency level)
+
     `;
 
     // Generate content based on the image and the propmt

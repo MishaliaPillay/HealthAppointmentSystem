@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import { analyzeHealthImage } from "../geminiService";
+import { useStyles } from "../../../app/patient-dashboard/styles/aiStyle/style";
 
 export default function HealthAnalysisComponent() {
+  const { styles } = useStyles();
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [prompt, setPrompt] = useState("");
@@ -49,84 +51,23 @@ export default function HealthAnalysisComponent() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "56rem",
-        margin: "1.5rem auto",
-        backgroundColor: "white",
-        padding: "2rem",
-        borderRadius: "0.5rem",
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        border: "1px solid #dbeafe",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "1.875rem",
-          fontWeight: "700",
-          textAlign: "center",
-          marginBottom: "2rem",
-          color: "#2563eb",
-        }}
-      >
-        Health Image Analysis
-      </h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Health Image Analysis</h1>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1.5rem",
-        }}
-      >
+      <form onSubmit={handleSubmit} className={styles.form}>
         <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: "500",
-              marginBottom: "0.5rem",
-              color: "#1d4ed8",
-            }}
-          >
-            Upload an image:
-          </label>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <label
-              style={{
-                backgroundColor: "#2563eb",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.375rem",
-                cursor: "pointer",
-                transition: "background-color 0.2s",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1d4ed8")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = "#2563eb")
-              }
-            >
+          <label className={styles.label}>Upload an image:</label>
+          <div className={styles.fileInputContainer}>
+            <label className={styles.fileInputLabel}>
               Choose File
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                style={{ display: "none" }}
+                className={styles.fileInput}
               />
             </label>
-            <span
-              style={{
-                marginLeft: "0.75rem",
-                color: "#4b5563",
-              }}
-            >
+            <span className={styles.fileInputText}>
               {selectedImage ? selectedImage.name : "No file selected"}
             </span>
           </div>
@@ -134,150 +75,42 @@ export default function HealthAnalysisComponent() {
 
         {imagePreview && (
           <div>
-            <p
-              style={{
-                fontWeight: "500",
-                marginBottom: "0.5rem",
-                color: "#1d4ed8",
-              }}
-            >
-              Preview:
-            </p>
+            <p className={styles.previewContainer}>Preview:</p>
             <img
               src={imagePreview}
               alt="Preview"
-              style={{
-                maxHeight: "16rem",
-                borderRadius: "0.375rem",
-                border: "1px solid #bfdbfe",
-              }}
+              className={styles.previewImage}
             />
           </div>
         )}
 
         <div>
-          <label
-            style={{
-              display: "block",
-              fontWeight: "500",
-              marginBottom: "0.5rem",
-              color: "#1d4ed8",
-            }}
-          >
-            Additional context:
-          </label>
+          <label className={styles.label}>Additional context:</label>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            style={{
-              width: "100%",
-              border: "1px solid #bfdbfe",
-              padding: "0.75rem",
-              borderRadius: "0.375rem",
-              height: "8rem",
-              backgroundColor: "#eff6ff",
-              outline: "none",
-            }}
-            onFocus={(e) =>
-              (e.currentTarget.style.boxShadow =
-                "0 0 0 3px rgba(59, 130, 246, 0.2)")
-            }
-            onBlur={(e) => (e.currentTarget.style.boxShadow = "none")}
-            placeholder="Example: The person appears sad, due to energy loss"
+            className={styles.textarea}
+            placeholder="Example: The person appears sad, it may be due to energy loss"
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading || !selectedImage}
-          style={{
-            padding: "0.75rem 1.5rem",
-            borderRadius: "0.375rem",
-            fontWeight: "500",
-            color: "white",
-            backgroundColor:
-              isLoading || !selectedImage ? "#93c5fd" : "#2563eb",
-            cursor: isLoading || !selectedImage ? "not-allowed" : "pointer",
-            border: "none",
-            transition: "background-color 0.2s",
-            boxShadow:
-              isLoading || !selectedImage
-                ? "none"
-                : "0 1px 2px rgba(0, 0, 0, 0.05)",
-          }}
-          onMouseOver={(e) => {
-            if (!isLoading && selectedImage) {
-              e.currentTarget.style.backgroundColor = "#1d4ed8";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!isLoading && selectedImage) {
-              e.currentTarget.style.backgroundColor = "#2563eb";
-            }
-          }}
+          className={styles.button}
         >
           {isLoading ? "Analyzing..." : "Analyze Image"}
         </button>
       </form>
 
-      {error && (
-        <p
-          style={{
-            marginTop: "1rem",
-            color: "#dc2626",
-            backgroundColor: "#fee2e2",
-            padding: "0.75rem",
-            borderRadius: "0.375rem",
-            border: "1px solid #fecaca",
-          }}
-        >
-          {error}
-        </p>
-      )}
+      {error && <p className={styles.errorMessage}>{error}</p>}
 
       {analysis && (
-        <div
-          style={{
-            marginTop: "1.5rem",
-            padding: "1.25rem",
-            border: "1px solid #bfdbfe",
-            borderRadius: "0.375rem",
-            backgroundColor: "#eff6ff",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "600",
-              marginBottom: "0.75rem",
-              color: "#2563eb",
-            }}
-          >
-            Analysis Result
-          </h2>
-          <p
-            style={{
-              color: "#374151",
-              whiteSpace: "pre-line",
-            }}
-          >
-            {analysis}
-          </p>
-          <div
-            style={{
-              marginTop: "1rem",
-              backgroundColor: "#dbeafe",
-              padding: "1rem",
-              border: "1px solid #bfdbfe",
-              borderRadius: "0.375rem",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "#1e40af",
-              }}
-            >
+        <div className={styles.analysisContainer}>
+          <h2 className={styles.analysisTitle}>Analysis Result</h2>
+          <p className={styles.analysisText}>{analysis}</p>
+          <div className={styles.disclaimer}>
+            <p className={styles.disclaimerText}>
               <strong>Disclaimer:</strong> This analysis is for informational
               purposes only and does not constitute medical advice.
             </p>
