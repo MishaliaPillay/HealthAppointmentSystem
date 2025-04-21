@@ -11,8 +11,16 @@ import SignupForm from "../../components/sign-up-form/page";
 
 const { Title } = Typography;
 
-export default function LoginSignup() {
-  const [activeTab, setActiveTab] = useState("login");
+// Define the types for activeTab and setActiveTab
+interface LoginPageProps {
+  activeTab: "login" | "signup"; // activeTab can only be "login" or "signup"
+  setActiveTab: (tab: "login" | "signup") => void; // setActiveTab expects a string "login" or "signup"
+}
+
+export default function LoginSignup({
+  activeTab,
+  setActiveTab,
+}: LoginPageProps) {
   const [loading, setLoading] = useState(false);
   const { isSuccess, isError, isPending } = useAuthState();
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
@@ -32,10 +40,10 @@ export default function LoginSignup() {
       const role = getRole(token);
 
       if (authMode === "signup") {
-        // Don't redirect, just switch tab
+        // Switch to login tab after successful signup
         setActiveTab("login");
       } else {
-        // Login success → redirect to dashboard
+        // Login success → redirect to dashboard based on role
         if (role === "provider") {
           router.push("/provider-dashboard");
         } else if (role === "patient") {
@@ -47,7 +55,7 @@ export default function LoginSignup() {
 
       setLoading(false);
     }
-  }, [isPending, isError, isSuccess, router, authMode]);
+  }, [isPending, isError, isSuccess, router, authMode, setActiveTab]);
 
   return (
     <Spin spinning={loading} tip="Please hold on...">
@@ -63,7 +71,10 @@ export default function LoginSignup() {
 
         <Tabs
           activeKey={activeTab}
-          onChange={setActiveTab}
+          onChange={(key) => {
+            // Ensure the correct type is set
+            setActiveTab(key as "login" | "signup");
+          }}
           centered
           className={styles.tabs}
           items={[
