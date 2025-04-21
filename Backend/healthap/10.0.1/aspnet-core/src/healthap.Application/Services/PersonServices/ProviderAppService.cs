@@ -85,7 +85,7 @@ namespace healthap.Services.PersonServices
             if (provider == null)
                 throw new UserFriendlyException("Provider not found");
 
-            var updatedProvider = await _providerManager.UpdateproviderAsync(
+            var updatedProvider = await _providerManager.UpdateProviderAsync(
                 input.Id,
                 input.Name,
                 input.Surname,

@@ -112,7 +112,7 @@ namespace healthap.Domain.Persons
             return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
-        public async Task<Provider> UpdateproviderAsync(
+        public async Task<Provider> UpdateProviderAsync(
           Guid providerId,
           string? Name,
           string? surname,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Domain.Repositories;
@@ -15,7 +16,6 @@ namespace healthap.Services.AppointmentServices
         {
             _appointmentManager = appointmentManager;
         }
-
         //public override Task<AppointmentDto> CreateAsync(AppointmentDto input)
         //{
 
@@ -39,13 +39,16 @@ namespace healthap.Services.AppointmentServices
         public override async Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
             var startTime = input.AppointmentTime;
-            var endTime = startTime + TimeSpan.FromHours(1); // Fixed TimeSpan addition
+            var endTime = startTime.Add(TimeSpan.FromHours(1));
 
-            bool isAvailable = await _appointmentManager.IsTimeSlotAvailable(
-                input.ProviderId,
-                input.AppointmentDate,
-                startTime,
-                endTime
+            // Retrieve appointments first, then filter in memory
+            var appointments = await Repository.GetAllListAsync(a =>
+                a.ProviderId == input.ProviderId &&
+                a.AppointmentDate.Date == input.AppointmentDate.Date);
+
+            bool isAvailable = appointments.All(a =>
+                a.AppointmentTime < endTime &&
+                a.AppointmentTime > startTime - TimeSpan.FromHours(1)
             );
 
             if (!isAvailable)
@@ -54,8 +57,6 @@ namespace healthap.Services.AppointmentServices
             }
 
             var createdAppointment = await base.CreateAsync(input);
-
-            // Notification Logic :
 
             return createdAppointment;
         }
