@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using healthap.Domain.Institution;
 using Newtonsoft.Json;
@@ -134,13 +133,10 @@ namespace healthap.ExternalServices.GooglePlaces
             return "Medical Facility";
         }
 
-      
-            Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
-{
-                return SearchHealthcareLocationsAsync(query, region);
-            }
-
-       
+        Task<List<Institution>> IGooglePlacesService.SearchHealthcareInstitutionsAsync(string query, string region)
+        {
+            return SearchHealthcareLocationsAsync(query, region);
+        }
     }
 
     // Response models for Google Places API
@@ -203,5 +199,4 @@ namespace healthap.ExternalServices.GooglePlaces
         [JsonProperty("types")]
         public List<string> Types { get; set; }
     }
-
 }

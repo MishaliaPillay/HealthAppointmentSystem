@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities.Auditing;
 using healthap.Authorization.Users;
 
 namespace healthap.Domain.Institution
@@ -18,5 +13,4 @@ namespace healthap.Domain.Institution
         public virtual Institution Institution { get; set; }
         public virtual User Provider { get; set; }
     }
-
 }

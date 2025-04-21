@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -9,13 +11,7 @@ using healthap.Domain.Institution;
 using healthap.ExternalServices.GooglePlaces;
 using healthap.Services.Institutions.Dto;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
-using Abp.Authorization;
-using healthap.Authorization;
-using healthap.ExternalServices.GooglePlaces;
 using healthap.EntityFrameworkCore.Seed;
-
-using System;
 
 namespace healthap.Services.Institutions
 {
@@ -34,19 +30,29 @@ namespace healthap.Services.Institutions
         public InstitutionAppService(
             IRepository<Institution, int> repository,
             IGooglePlacesService googlePlacesService,
-            InstitutionDataSeeder institutionDataSeeder // Inject the seeder
+            InstitutionDataSeeder institutionDataSeeder
         ) : base(repository)
         {
             _googlePlacesService = googlePlacesService;
             _institutionDataSeeder = institutionDataSeeder;
         }
 
-        public async Task<ListResultDto<InstitutionListDto>> GetAllInstitutionsAsync()
+        public async Task<ListResultDto<InstitutionDto>> GetAllInstitutionsAsync()
         {
-            var institutions = await Repository.GetAllListAsync();
-            return new ListResultDto<InstitutionListDto>(
-                ObjectMapper.Map<List<InstitutionListDto>>(institutions)
-            );
+            try
+            {
+                var institutions = await Repository.GetAllListAsync();
+                Logger.Info($"Number of institutions retrieved: {institutions.Count}");
+
+                return new ListResultDto<InstitutionDto>(
+                    ObjectMapper.Map<List<InstitutionDto>>(institutions)
+                );
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error retrieving all institutions", ex);
+                throw;
+            }
         }
 
         public async Task<PagedResultDto<InstitutionListDto>> SearchInstitutionsAsync(GetInstitutionListInput input)
@@ -86,19 +92,12 @@ namespace healthap.Services.Institutions
             await Repository.InsertAsync(institution);
         }
 
-        //public async Task SeedFromGoogleAsync()
-        //{
-        //    await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
-        //    await CurrentUnitOfWork.SaveChangesAsync();
-        //}
-
         public async Task SeedFromGoogleAsync()
         {
             try
             {
                 Logger.Info("Starting institution seeding from Google Places...");
                 await _institutionDataSeeder.SeedInstitutionsFromGoogleBySuburbAsync();
-
                 Logger.Info("Completed institution seeding from Google Places");
             }
             catch (Exception ex)

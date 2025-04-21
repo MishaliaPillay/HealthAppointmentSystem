@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +21,6 @@ namespace healthap.Domain.Persons
             UserManager userManager,
             IRepository<Provider, Guid> providerRepository,
             IRepository<Provider, Guid> repository)
-
         {
             _userManager = userManager;
             _providerRepository = providerRepository;
@@ -39,11 +38,12 @@ namespace healthap.Domain.Persons
             string biography,
             int yearsOfExperience,
             int maxAppointmentsPerDay,
-            string qualification)
+            string qualification,
+            string specialityName,
+            int institutionId)
         {
             try
             {
-
                 // Create provider user entity
                 var user = new User
                 {
@@ -74,7 +74,9 @@ namespace healthap.Domain.Persons
                     YearsOfExperience = yearsOfExperience,
                     MaxAppointmentsPerDay = maxAppointmentsPerDay,
                     Qualification = qualification,
-                    ProviderAvailabilty = new List<ProviderAvailabilty>(),
+                    SpecialityName = specialityName,
+                    InstitutionId = institutionId,
+                    Availabilities = new List<ProviderAvailabilty>(),
                     Appointments = new List<Appointment>()
                 };
 
@@ -90,13 +92,13 @@ namespace healthap.Domain.Persons
                 throw new UserFriendlyException("An error occurred while creating the provider", ex);
             }
         }
+
         public async Task<Provider> GetProviderByIdWithUserAsync(Guid id)
         {
-            //returning an IQuerable that all/mutiple providers  with their users information and appointments nested  
+            //returning an IQueryable that includes providers with their users information and appointments nested  
             var query = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments);
             //returning only one provider with that id
             return await query.FirstOrDefaultAsync(p => p.Id == id);
-
         }
 
         public IQueryable<Provider> GetAllProvidersAsync()
@@ -109,6 +111,7 @@ namespace healthap.Domain.Persons
             var queryProvider = await _providerRepository.GetAllIncludingAsync(p => p.User, p => p.Appointments, p => p.ProviderAvailabilty);
             return await queryProvider.FirstOrDefaultAsync(p => p.UserId == userId);
         }
+
         public async Task<Provider> UpdateproviderAsync(
           Guid providerId,
           string? Name,
@@ -143,7 +146,7 @@ namespace healthap.Domain.Persons
             if (yearsOfExperienece.HasValue) provider.YearsOfExperience = yearsOfExperienece.Value;
             if (maxiumAppointmentsPerDay.HasValue) provider.MaxAppointmentsPerDay = maxiumAppointmentsPerDay.Value;
             if (!string.IsNullOrEmpty(qaulifcations)) provider.Qualification = qaulifcations;
-            if (!string.IsNullOrEmpty(speciality)) provider.Speciality = speciality;
+            if (!string.IsNullOrEmpty(speciality)) provider.SpecialityName = speciality;
 
             if (!string.IsNullOrEmpty(password))
             {
@@ -153,14 +156,11 @@ namespace healthap.Domain.Persons
                     throw new UserFriendlyException("Failed to update password: " + string.Join(", ", passwordResult.Errors));
             }
 
-
-
             await _providerRepository.UpdateAsync(provider);
             await _userManager.UpdateAsync(user);
 
             return provider;
         }
-
 
         public async Task<Provider> GetProviderByUserIdAsync(long userId)
         {
@@ -178,10 +178,5 @@ namespace healthap.Domain.Persons
 
             return provider;
         }
-    
-    
     }
-
-
-
 }

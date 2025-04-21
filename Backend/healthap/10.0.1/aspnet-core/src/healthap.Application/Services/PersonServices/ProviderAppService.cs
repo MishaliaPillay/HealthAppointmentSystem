@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -9,15 +10,11 @@ using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using Abp.Authorization;
-using NuGet.Protocol.Core.Types;
 
 namespace healthap.Services.PersonServices
 {
     public class ProviderAppService :
          AsyncCrudAppService<Provider, ProviderResponseDto, Guid, PagedAndSortedResultRequestDto, ProviderRequestDto, ProviderResponseDto>,
-
          IProviderAppService
     {
         private readonly ProviderManager _providerManager;
@@ -28,8 +25,8 @@ namespace healthap.Services.PersonServices
         {
             _providerManager = providerManager;
             _mapper = mapper;
-
         }
+
         public override async Task<ProviderResponseDto> CreateAsync(ProviderRequestDto input)
         {
             var provider = await _providerManager.CreateProviderAsync(
@@ -43,28 +40,31 @@ namespace healthap.Services.PersonServices
                 input.Biography,
                 input.YearsOfExperience,
                 input.MaxAppointmentsPerDay,
-                input.Qualification
+                input.Qualification,
+                input.SpecialtyName,
+                input.InstitutionId
             );
             return _mapper.Map<ProviderResponseDto>(provider);
         }
+
         public override async Task<ProviderResponseDto> GetAsync(EntityDto<Guid> input)
         {
-            var proivder = await _providerManager.GetProviderByIdWithUserAsync(input.Id);
-            if (proivder == null)
+            var provider = await _providerManager.GetProviderByIdWithUserAsync(input.Id);
+            if (provider == null)
             {
-                throw new UserFriendlyException("Paitient not found");
+                throw new UserFriendlyException("Provider not found");
             }
-            return _mapper.Map<ProviderResponseDto>(proivder);
-
+            return _mapper.Map<ProviderResponseDto>(provider);
         }
+
         public override async Task<PagedResultDto<ProviderResponseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _providerManager.GetAllProvidersAsync();
             var totalCount = await query.CountAsync();
-            //pagination:process of dividing a large set of data into smaller and more managebale chuncks 
+
             var providers = await query
-                .Skip(input.SkipCount)//how many records to skip
-                .Take(input.MaxResultCount)//the number of records that should be retrieved 
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
                 .ToListAsync();
 
             return new PagedResultDto<ProviderResponseDto>(
@@ -72,6 +72,7 @@ namespace healthap.Services.PersonServices
                 _mapper.Map<List<ProviderResponseDto>>(providers)
             );
         }
+
         public async Task<ProviderResponseDto> GetCurrentProviderAsync(long userId)
         {
             var provider = await _providerManager.GetProviderByUserIdAsync(userId);
@@ -80,12 +81,11 @@ namespace healthap.Services.PersonServices
 
         public async Task<ProviderResponseDto> UpdateproviderAsync(UpdateProviderDto input)
         {
-
             var provider = await _repository.GetAsync(input.Id);
             if (provider == null)
-                throw new UserFriendlyException("provider not found");
+                throw new UserFriendlyException("Provider not found");
 
-            var updatedprovider = await _providerManager.UpdateproviderAsync(
+            var updatedProvider = await _providerManager.UpdateproviderAsync(
                 input.Id,
                 input.Name,
                 input.Surname,
@@ -101,10 +101,7 @@ namespace healthap.Services.PersonServices
                 input.Speciality
             );
 
-            return _mapper.Map<ProviderResponseDto>(updatedprovider);
+            return _mapper.Map<ProviderResponseDto>(updatedProvider);
         }
-
-      
     }
-
 }
