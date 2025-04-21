@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
-import LoginPage from "./login/page";
+import LoginSignup from "../app/login/LoginSignup";
 import styles from "./page.module.css";
 import { useState } from "react";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
 
   return (
     <div className={styles.page}>
@@ -37,7 +37,7 @@ export default function Home() {
             </div>
           )}
           <div className={styles.formSide}>
-            <LoginPage activeTab={activeTab} setActiveTab={setActiveTab} />
+            <LoginSignup activeTab={activeTab} setActiveTab={setActiveTab} />
           </div>
         </div>
       </main>
