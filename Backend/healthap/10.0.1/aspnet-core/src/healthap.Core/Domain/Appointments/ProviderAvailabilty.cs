@@ -10,7 +10,6 @@ namespace healthap.Domain.Appointments
 {
     public class ProviderAvailabilty : FullAuditedEntity<Guid>
     {
-
         public DayOfWeek DayOfWeek { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
