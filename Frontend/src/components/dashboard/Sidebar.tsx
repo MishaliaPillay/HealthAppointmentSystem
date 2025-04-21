@@ -4,11 +4,12 @@ import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   CalendarOutlined,
-//HeartFilled,
   QuestionCircleOutlined,
   LogoutOutlined,
   ArrowLeftOutlined,
   FileTextOutlined,
+  SafetyCertificateOutlined,
+  FileProtectOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,7 +17,6 @@ import type { MenuProps } from "antd";
 import { useUserActions, useUserState } from "@/providers/users-provider";
 import { useEffect, useState } from "react";
 import { getRole } from "@/utils/decoder";
-//import { useAuthActions } from "@/providers/auth-provider";
 
 const { Sider } = Layout;
 
@@ -28,15 +28,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
-  //const { signOut } = useAuthActions();
-
-  // function signOutUser(): void {
-  //   signOut();
-  //   router.push("/");
-  // }
-
   const pathname = usePathname();
-
   const { getCurrentUser } = useUserActions();
   const { currentUser } = useUserState();
 
@@ -48,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     }
     const userRole = getRole(token);
     setRole(userRole);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -91,12 +83,33 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
               </Link>
             ),
           },
+          {
+            key: "/patient-dashboard/privacy-policy",
+            icon: <SafetyCertificateOutlined />,
+            label: <Link href="/patient-dashboard/privacy-policy">Privacy Policy</Link>,
+          },
+          {
+            key: "/patient-dashboard/terms-of-services",
+            icon: <FileProtectOutlined />,
+            label: <Link href="/patient-dashboard/terms-of-services">Terms of Service</Link>,
+          },
         ]
-      : []),
+      : [
+          {
+            key: "/provider-dashboard/privacy-policy",
+            icon: <SafetyCertificateOutlined />,
+            label: <Link href="/provider-dashboard/privacy-policy">Privacy Policy</Link>,
+          },
+          {
+            key: "/provider-dashboard/terms-of-service",
+            icon: <FileProtectOutlined />,
+            label: <Link href="/provider-dashboard/terms-of-service">Terms of Service</Link>,
+          },
+        ]),
     {
-      key: "/patient-dashboard/help",
+      key: `/${role}-dashboard/help`,
       icon: <QuestionCircleOutlined />,
-      label: <Link href="/patient-dashboard/help">Help</Link>,
+      label: <Link href={`/${role}-dashboard/help`}>Help</Link>,
     },
     {
       key: "back",
