@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     }
     const userRole = getRole(token);
     setRole(userRole);
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (!currentUser) {
