@@ -29,6 +29,7 @@ namespace healthap.Services.AppointmentServices
             {
                 var createdAvailability = await _availabilityManager.CreateAvailabilityIfNotExistsAsync(
                     input.ProviderId,
+                    input.DateAvailable,
                     input.DayOfWeek,
                     input.StartTime,
                     input.EndTime,
@@ -50,6 +51,7 @@ namespace healthap.Services.AppointmentServices
                 var updatedAvailability = await _availabilityManager.UpdateAvailabilityAsync(
                     input.Id,
                     input.DayOfWeek,
+                    input.DateAvailable,
                     input.StartTime,
                     input.EndTime,
                     input.IsAvailable

@@ -15,6 +15,8 @@ namespace healthap.Services.AppointmentServices.Dtos
         [Required]
         public Guid ProviderId { get; set; }
         [Required]
+        public DateTime DateAvailable { get; set; }
+        [Required]
         public DayOfWeek DayOfWeek { get; set; }
         [Required]
         public TimeSpan StartTime { get; set; }

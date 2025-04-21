@@ -24,14 +24,17 @@ namespace healthap.Domain.Appointments
 
         public async Task<ProviderAvailabilty> CreateAvailabilityIfNotExistsAsync(
             Guid providerId,
+            DateTime dateAvailable,
             DayOfWeek dayOfWeek,
             TimeSpan startTime,
             TimeSpan endTime,
             bool isAvailable)
         {
+            dateAvailable = dateAvailable.Date;
             var exists = await _repository.FirstOrDefaultAsync(x =>
                 x.ProviderId == providerId &&
                 x.DayOfWeek == dayOfWeek &&
+                x.DateAvailable== dateAvailable &&
                 x.StartTime == startTime &&
                 x.EndTime == endTime);
 
@@ -45,6 +48,7 @@ namespace healthap.Domain.Appointments
                 Id = Guid.NewGuid(),
                 ProviderId = providerId,
                 DayOfWeek = dayOfWeek,
+                DateAvailable= dateAvailable,
                 StartTime = startTime,
                 EndTime = endTime,
                 IsAvailable = isAvailable
@@ -56,10 +60,12 @@ namespace healthap.Domain.Appointments
         public async Task<ProviderAvailabilty> UpdateAvailabilityAsync(
             Guid id,
             DayOfWeek dayOfWeek,
-            TimeSpan startTime,
+            DateTime dateAvailable,
+            TimeSpan startTime, 
             TimeSpan endTime,
             bool isAvailable)
         {
+            dateAvailable=dateAvailable.Date;   
             var existing = await _repository.FirstOrDefaultAsync(x => x.Id == id);
 
             if (existing == null)
@@ -68,6 +74,7 @@ namespace healthap.Domain.Appointments
             }
 
             existing.DayOfWeek = dayOfWeek;
+            existing.DateAvailable = dateAvailable;
             existing.StartTime = startTime;
             existing.EndTime = endTime;
             existing.IsAvailable = isAvailable;
