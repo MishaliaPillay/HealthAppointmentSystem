@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (currentProvider) {
       const data: UpdateProvider = {
-        id: currentProvider._id,
+        id: currentProvider.id,
         name: currentProvider.user.name,
         surname: currentProvider.user.surname,
         emailAddress: currentProvider.user.emailAddress,
@@ -149,8 +149,12 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Password" name="password">
-                  <Input.Password placeholder="Enter new password (optional)" />
+                  <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: "Password is required!" }]}
+                  >
+                  <Input.Password placeholder="Enter new password (required)" />
                 </Form.Item>
               </Col>
 

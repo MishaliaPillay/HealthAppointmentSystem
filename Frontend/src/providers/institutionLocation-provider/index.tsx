@@ -55,7 +55,7 @@ export const LocationProvider = ({
     try {
       const response = await instance.get(endpoint);
       const result = response.data?.result || [];
-      console.log("Fetched institutions with specialty:", result);
+  
       dispatch(getInstitutionsWithSpecialtySuccess(result));
     } catch (error) {
       console.error("Failed to fetch institutions:", error);
@@ -82,14 +82,7 @@ export const LocationProvider = ({
     const endpoint = `/Institution/GetAllInstitutions`;
     await instance
       .get(endpoint)
-      .then((response) => {
-        // console.log(response);
-        console.log("Response data:", response?.data?.result?.items);
-        // if (response.data && response.data.length > 0) {
-        //   console.log("Data received!");
-        // } else {
-        //   console.log(" No data returned.");
-        // }
+      .then((response) => {       
         dispatch(getAllPlacesSuccess(response?.data?.result?.items));
       })
       .catch((error) => {

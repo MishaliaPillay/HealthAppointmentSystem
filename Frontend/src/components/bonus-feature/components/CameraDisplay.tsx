@@ -46,7 +46,6 @@ export const CameraDisplay = ({
           height: "100%",
         }}
         onPlay={handleVideoPlay}
-        // onLoadedMetadata={() => console.log("Video metadata loaded")}
       />
       <canvas
         ref={canvasRef}

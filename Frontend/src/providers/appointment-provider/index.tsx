@@ -1,14 +1,14 @@
 "use client";
 
-import React from "react";
-import { useContext, useReducer } from "react";
+import React, { useContext, useReducer } from "react";
+import { getAxiosInstace } from "@/utils/axiosInstance";
+import { IAppointment } from "./models";
+import { AppointmentReducer } from "./reducers";
 import {
   AppointmentActionContext,
   AppointmentStateContext,
-  IAppointment,
   INITIAL_STATE,
 } from "./context";
-import { AppointmentReducer } from "./reducers";
 import {
   bookAppointmentError,
   bookAppointmentPending,
@@ -26,7 +26,6 @@ import {
   updateAppointmentPending,
   updateAppointmentsSuccess,
 } from "./actions";
-import { getAxiosInstace } from "@/utils/axiosInstance";
 
 export const AppointmentProvider = ({
   children,
@@ -36,86 +35,84 @@ export const AppointmentProvider = ({
   const [state, dispatch] = useReducer(AppointmentReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
-  //token into the session storage
-  const getHeaders = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token found in session storage");
-    }
-    return {
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json",
-      },
-    };
-  };
-
-  // booking an Appointment
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
-    try {
-      const endpoint = `/rest of the url here`;
-      const response = await instance.post(endpoint, appointment, getHeaders());
-      dispatch(bookAppointmentSuccess(response.data));
-    } catch (error) {
-      console.error("Error booking an Appointment:", error);
-      dispatch(bookAppointmentError());
-    }
-  };
-  const getAppointments = async () => {
-    dispatch(getAllAppointmentPending());
-    try {
-      const endpoint = `/rest of the url here`;
-      const headers = getHeaders();
-      const response = await instance.get(endpoint, headers);
-      dispatch(getAllAppointmentSuccess(response.data.data));
-    } catch (error) {
-      console.error("fetching appointments failed", error);
-      dispatch(getAllAppointmentError());
-    }
+    const endpoint = "/Appointment/Create";
+
+    return instance
+      .post(endpoint, appointment)
+      .then((response) => dispatch(bookAppointmentSuccess(response.data)))
+      .catch((error) => {
+        console.error("Error booking an appointment:", error);
+        dispatch(bookAppointmentError());
+      });
   };
 
+const getAppointments = async (): Promise<IAppointment[]> => {
+  dispatch(getAllAppointmentPending());
+  const endpoint = "/Appointment/GetAll";
+
+  try {
+    const response = await instance.get(endpoint);
+
+    if (response.data?.data) {
+      dispatch(getAllAppointmentSuccess(response.data.data));
+      return response.data.data; // Ensure data is returned
+    } else {
+      dispatch(getAllAppointmentError());
+      return []; // Return an empty array if data is missing
+    }
+  } catch (error) {
+    console.error("Fetching appointments failed:", error);
+    dispatch(getAllAppointmentError());
+    return []; // Return an empty array on failure
+  }
+};
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-    try {
-      const endpoint = `rest url of the fetching appointment by id/${id}`;
-      const headers = getHeaders();
-      const response = await instance.get(endpoint, headers);
-      dispatch(getAppointmentSuccess(response.data));
-    } catch (error) {
-      console.error("fetching appointment by ID failed", error);
-      dispatch(getAppointmentError());
-    }
+    const endpoint = `/Appointment/Get/${id}`;
+
+    return instance
+      .get(endpoint)
+      .then((response) => dispatch(getAppointmentSuccess(response.data)))
+      .catch((error) => {
+        console.error("Fetching appointment by ID failed:", error);
+        dispatch(getAppointmentError());
+      });
   };
 
-  const updateAppointment = async (
-    id: string,
-    appointment: Partial<IAppointment>
-  ) => {
-    dispatch(updateAppointmentPending());
-    try {
-      const endpoint = `rest url of the updating appointment/${id}`;
-      const headers = getHeaders();
-      const response = await instance.put(endpoint, appointment, headers);
+ const updateAppointment = async (id: string, appointment: Partial<IAppointment>) => {
+  dispatch(updateAppointmentPending());
+  const endpoint = `/Appointment/Update`; // Corrected endpoint
+
+  const payload = {
+    ...appointment,
+    id, // Include ID in the request body, NOT the URL
+  };
+
+  return instance
+    .put(endpoint, payload)
+    .then((response) => {
       dispatch(updateAppointmentsSuccess(response.data));
-    } catch (error) {
-      console.error("updating appointment by ID failed", error);
+    })
+    .catch((error) => {
+      console.error("Updating appointment failed:", error.response?.data || error.message);
       dispatch(updateAppointmentError());
-    }
-  };
-
+    });
+};
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    try {
-      const endpoint = ` rest url of the deleting appointment/${id}`;
-      const headers = getHeaders();
-      const response = await instance.delete(endpoint, headers);
-      dispatch(deleteAppointmenttSuccess(response.data));
-    } catch (error) {
-      console.error("deleting appointment by ID failed", error);
-      dispatch(deleteAppointmentError());
-    }
+    const endpoint = `/Appointment/Delete/${id}`;
+
+    return instance
+      .delete(endpoint)
+      .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
+      .catch((error) => {
+        console.error("Deleting appointment by ID failed:", error);
+        dispatch(deleteAppointmentError());
+      });
   };
+
   return (
     <AppointmentStateContext.Provider value={state}>
       <AppointmentActionContext.Provider
@@ -135,20 +132,18 @@ export const AppointmentProvider = ({
 
 export const useAppointmentState = () => {
   const context = useContext(AppointmentStateContext);
-  if (!context) {
+  if (!context)
     throw new Error(
-      "useAppointmentState must be used within a AppointmentProvider"
+      "useAppointmentState must be used within an AppointmentProvider"
     );
-  }
   return context;
 };
 
 export const useAppointmentActions = () => {
   const context = useContext(AppointmentActionContext);
-  if (!context) {
+  if (!context)
     throw new Error(
-      "AppointmentActionContext must be used within a AppointmentProvider"
+      "useAppointmentActions must be used within an AppointmentProvider"
     );
-  }
   return context;
 };
