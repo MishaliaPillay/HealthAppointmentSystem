@@ -233,9 +233,14 @@ export default function ProviderAppointmentsPage() {
         title="Edit Appointment"
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
-        onOk={handleUpdateAppointment}
+        onOk={() =>
+          document
+            .getElementById("appointment-form")
+            ?.dispatchEvent(new Event("submit", { bubbles: true }))
+        }
       >
         <Form
+          id="appointment-form"
           initialValues={selectedAppointment}
           onFinish={handleUpdateAppointment}
         >
