@@ -9,8 +9,7 @@ import { UserProvider } from "../providers/users-provider";
 import { CheckUserProvider } from "@/providers/check-user-provider";
 import { AppointmentProvider } from "@/providers/appointment-provider";
 import { LocationProvider } from "@/providers/institutionLocation-provider";
-import { ProvidersInstituionProvider } from "@/providers/providerInstituion-provider";
-import { ProviderAvailabilityProvider } from "@/providers/provider-availibility";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
