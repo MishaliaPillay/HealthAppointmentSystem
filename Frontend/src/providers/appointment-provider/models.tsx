@@ -6,4 +6,6 @@ export interface IAppointment {
   appointmentTime: string;
   purpose: string;
   appointmentStatus: AppointmentStatusReflist;
+  providerId: string;
+  patientId:string
 }

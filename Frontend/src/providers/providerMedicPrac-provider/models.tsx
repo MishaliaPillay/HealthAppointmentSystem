@@ -10,7 +10,7 @@ export interface IProvider {
   maxAppointmentsPerDay: number;
   qualification: string;
   appointments?: IAppointment[];
-  _id?: string;
+  id?: string;
 }
 export interface IProviderRegisteration {
   user: IUser;

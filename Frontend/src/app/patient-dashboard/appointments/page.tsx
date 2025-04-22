@@ -67,7 +67,7 @@ export default function AppointmentsPage() {
     const providerList = await getProviders();
     if (Array.isArray(providerList)) {
       const providerMap = providerList.reduce((map, provider) => {
-         map[provider._id] = `${provider.user.surname} ${
+         map[provider.id] = `${provider.user.surname} ${
            provider.user.surname || ""
          }`.trim();
         return map;

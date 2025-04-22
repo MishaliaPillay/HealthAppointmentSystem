@@ -48,21 +48,26 @@ export const AppointmentProvider = ({
       });
   };
 
-  const getAppointments = async () => {
-    dispatch(getAllAppointmentPending());
-    const endpoint = "/Appointment/GetAll";
+const getAppointments = async (): Promise<IAppointment[]> => {
+  dispatch(getAllAppointmentPending());
+  const endpoint = "/Appointment/GetAll";
 
-    return instance
-      .get(endpoint)
-      .then((response) =>
-        dispatch(getAllAppointmentSuccess(response.data.data))
-      )
-      .catch((error) => {
-        console.error("Fetching appointments failed:", error);
-        dispatch(getAllAppointmentError());
-      });
-  };
+  try {
+    const response = await instance.get(endpoint);
 
+    if (response.data?.data) {
+      dispatch(getAllAppointmentSuccess(response.data.data));
+      return response.data.data; // Ensure data is returned
+    } else {
+      dispatch(getAllAppointmentError());
+      return []; // Return an empty array if data is missing
+    }
+  } catch (error) {
+    console.error("Fetching appointments failed:", error);
+    dispatch(getAllAppointmentError());
+    return []; // Return an empty array on failure
+  }
+};
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
     const endpoint = `/Appointment/Get/${id}`;

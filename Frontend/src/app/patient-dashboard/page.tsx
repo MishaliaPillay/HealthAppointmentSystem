@@ -121,28 +121,6 @@ export default function Dashboard() {
           </Card>
         </Col>
       </Row>
-      {/* 
-      <Card
-        title="Upcoming Appointments"
-        className={styles.upcomingCard}
-        variant="outlined"
-      >
-        <div className={styles.appointmentList}>
-          {currentPatient.appointments?.map((appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              doctorInitials={appointment.doctorInitials}
-              doctorName={appointment.doctorName}
-              specialty={appointment.specialty}
-              date={appointment.date}
-              time={appointment.time}
-              status={appointment.status}
-            />
-          )) || <Text>No upcoming appointments.</Text>}
-        </div>
-      </Card> 
-
-      {/* Booking Modal */}
       <Modal
         title="Book an Appointment"
         open={showBookingModal}

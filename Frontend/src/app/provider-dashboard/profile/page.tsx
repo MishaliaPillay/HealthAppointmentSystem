@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (currentProvider) {
       const data: UpdateProvider = {
-        id: currentProvider._id,
+        id: currentProvider.id,
         name: currentProvider.user.name,
         surname: currentProvider.user.surname,
         emailAddress: currentProvider.user.emailAddress,
