@@ -3,12 +3,10 @@
 import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
-  CalendarOutlined,
-//HeartFilled,
+  ScheduleOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
   ArrowLeftOutlined,
-  FileTextOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,7 +14,6 @@ import type { MenuProps } from "antd";
 import { useUserActions, useUserState } from "@/providers/users-provider";
 import { useEffect, useState } from "react";
 import { getRole } from "@/utils/decoder";
-//import { useAuthActions } from "@/providers/auth-provider";
 
 const { Sider } = Layout;
 
@@ -28,13 +25,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
-  //const { signOut } = useAuthActions();
-
-  // function signOutUser(): void {
-  //   signOut();
-  //   router.push("/");
-  // }
-
   const pathname = usePathname();
 
   const { getCurrentUser } = useUserActions();
@@ -66,7 +56,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     router.push("/");
   };
 
-  // Full menu list including Back button
   const menuItems: MenuProps["items"] = [
     {
       key: `/${role}-dashboard/profile`,
@@ -75,24 +64,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     },
     {
       key: `/${role}-dashboard/appointments`,
-      icon: <CalendarOutlined />,
+      icon: <ScheduleOutlined />,
       label: (
         <Link href={`/${role}-dashboard/appointments`}>My Appointments</Link>
       ),
     },
-    ...(role === "patient"
-      ? [
-          {
-            key: "/patient-dashboard/medical-history",
-            icon: <FileTextOutlined />,
-            label: (
-              <Link href="/patient-dashboard/medical-history">
-                Medical History
-              </Link>
-            ),
-          },
-        ]
-      : []),
     {
       key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,

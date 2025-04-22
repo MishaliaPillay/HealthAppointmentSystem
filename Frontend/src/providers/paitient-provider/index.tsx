@@ -41,7 +41,7 @@ export const PatientProvider = ({
     userId: number
   ): Promise<IPatient | null> => {
     dispatch(getCurrentPatientPending());
-    const endpoint = `https://localhost:44311/api/services/app/Patient/GetCurrentPatient?userId=${userId}`;
+    const endpoint = `https://healthappointmentsystem-2.onrender.com/api/services/app/Patient/GetCurrentPatient?userId=${userId}`;
     return axios
       .get(endpoint)
       .then((response) => {
@@ -64,7 +64,7 @@ export const PatientProvider = ({
   // Register the patient
   const registerPatient = async (Patient: IPatientRegisteration) => {
     dispatch(registerPatientPending());
-    const endpoint = `/Patient/Create`;
+    const endpoint = `/api/services/app/Patient/Create`;
     await instance
       .post(endpoint, Patient)
       .then((response) => {
@@ -79,7 +79,7 @@ export const PatientProvider = ({
   // Get All Patients
   const getPatients = async () => {
     dispatch(getPatientsPending());
-    const endpoint = `/Patient/GetAll`;
+    const endpoint = `/api/services/app/Patient/GetAll`;
     await instance
       .get(endpoint)
       .then((response) => {
@@ -94,7 +94,7 @@ export const PatientProvider = ({
   // Get Patient
   const getPatient = async (patientId: string) => {
     dispatch(getPatientPending());
-    const endpoint = `/Patient/Get?Id=${patientId}`;
+    const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
     await instance
       .get(endpoint)
       .then((response) => {
@@ -106,29 +106,31 @@ export const PatientProvider = ({
       });
   };
 
-  
- const updatePatient = async (patientId: string, patientData: UpdatePatientDto) => {
-  dispatch(updatePatientPending());
-   const payload = {
-     ...patientData,
-     id: patientId,
-   };
-  const endpoint = `/Patient/UpdatePatient`;  
-  await instance
-    .put(endpoint, payload)
-    .then((response) => {
-      dispatch(updatePatientSuccess(response.data));
-    })
-    .catch((error) => {
-      console.error("Update error:", error.response?.data || error.message);
-      dispatch(updatePatientError());
-    });
-};
+  const updatePatient = async (
+    patientId: string,
+    patientData: UpdatePatientDto
+  ) => {
+    dispatch(updatePatientPending());
+    const payload = {
+      ...patientData,
+      id: patientId,
+    };
+    const endpoint = `/api/services/app/Patient/UpdatePatient`;
+    await instance
+      .put(endpoint, payload)
+      .then((response) => {
+        dispatch(updatePatientSuccess(response.data));
+      })
+      .catch((error) => {
+        console.error("Update error:", error.response?.data || error.message);
+        dispatch(updatePatientError());
+      });
+  };
 
   // Delete Patient
   const deletePatientbyId = async (patientId: string) => {
     dispatch(deletePatientPending());
-    const endpoint = `/Delete?Id=${patientId}`;
+    const endpoint = `/api/services/app/Patient/Delete?Id=${patientId}`;
     await instance
       .delete(endpoint)
       .then((response) => {

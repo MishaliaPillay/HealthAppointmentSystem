@@ -1,4 +1,4 @@
-import { IAppointment } from "../appointment-provider/context";
+import { IAppointment } from "../appointment-provider/models";
 import { IUser } from "../users-provider/models";
 
 export interface IProvider {
@@ -10,7 +10,7 @@ export interface IProvider {
   maxAppointmentsPerDay: number;
   qualification: string;
   appointments?: IAppointment[];
-  _id?: string;
+  id?: string;
 }
 export interface IProviderRegisteration {
   user: IUser;

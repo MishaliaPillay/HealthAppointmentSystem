@@ -15,12 +15,15 @@ export interface IProviderStateContext {
 
 // Actions that will be performed on Providerss
 export interface IProviderActionContext {
-  getProviders: () => void;
-  getProvider: (id: string) => void;
+  getProviders: () => Promise<IProvider[]>; // Fetch all Providers
+  getProvider: (id: string) => Promise<IProvider | null>; // Fetch a single Provider
   registerProvider: (Provider: IProviderRegisteration) => Promise<void>;
-  updateProvider: (ProviderId: string, providerData: UpdateProvider) => void;
-  deleteProviderbyId: (ProviderId: string) => void; //letting user delete their own profile
-  getCurrentProvider: (userId: number) => Promise<IProvider>; // Fixed camelCase name
+  updateProvider: (
+    ProviderId: string,
+    providerData: UpdateProvider
+  ) => Promise<void>;
+  deleteProviderById: (ProviderId: string) => Promise<void>; // Let users delete their profile
+  getCurrentProvider: (userId: number) => Promise<IProvider>; // Fetch Current Provider
 }
 // Initial state with default values
 export const INITIAL_STATE: IProviderStateContext = {

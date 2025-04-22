@@ -48,14 +48,14 @@ export const LocationProvider = ({
   const getInstitutionsWithSpecialty = async (specialty: string) => {
     dispatch(getInstitutionsWithSpecialtyPending());
 
-    const endpoint = `/ProviderInstution/GetInstitutionsWithProvidersBySpecialty?specialty=${encodeURIComponent(
+    const endpoint = `api/services/ProviderInstution/GetInstitutionsWithProvidersBySpecialty?specialty=${encodeURIComponent(
       specialty
     )}`;
 
     try {
       const response = await instance.get(endpoint);
       const result = response.data?.result || [];
-      console.log("Fetched institutions with specialty:", result);
+  
       dispatch(getInstitutionsWithSpecialtySuccess(result));
     } catch (error) {
       console.error("Failed to fetch institutions:", error);
@@ -79,17 +79,10 @@ export const LocationProvider = ({
 
   const getAllPlaces = async () => {
     dispatch(getAllPlacesPending());
-    const endpoint = `/Institution/GetAllInstitutions`;
+    const endpoint = `/api/services/app/Institution/GetAll`;
     await instance
       .get(endpoint)
-      .then((response) => {
-        // console.log(response);
-        console.log("Response data:", response?.data?.result?.items);
-        // if (response.data && response.data.length > 0) {
-        //   console.log("Data received!");
-        // } else {
-        //   console.log(" No data returned.");
-        // }
+      .then((response) => {       
         dispatch(getAllPlacesSuccess(response?.data?.result?.items));
       })
       .catch((error) => {

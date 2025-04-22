@@ -1,16 +1,7 @@
 "use client";
-import { AppointmentStatusReflist } from "@/models/enums/ReflistAppointStatus";
 import { createContext } from "react";
+import { IAppointment } from "./models";
 
-//Appointment Interface
-
-export interface IAppointment {
-  id?: string;
-  appointmentDate: Date;
-  appointmentTime: string;
-  appointmentPurpose: string;
-  AppointmentStatus: AppointmentStatusReflist;
-}
 //Appointment Context shape Interface
 export interface IAppointmentStateContext {
   readonly isPending: boolean;

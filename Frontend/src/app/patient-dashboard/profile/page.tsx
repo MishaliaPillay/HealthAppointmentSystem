@@ -21,7 +21,7 @@ import {
 } from "@/providers/paitient-provider";
 import { useUserActions } from "@/providers/users-provider";
 import { UpdatePatientDto } from "@/providers/paitient-provider/models";
-import { ReflistConMethod } from "../../../models/enums/ReflistConMethod";
+import { ReflistConMethod } from "../../../enums/ReflistConMethod";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -104,6 +104,8 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+
+
   return (
     <div>
       <Title level={2}>Profile</Title>
@@ -155,8 +157,12 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Password" name="password">
-                  <Input.Password placeholder="Enter new password (optional)" />
+                  <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[{ required: true, message: "Password is required!" }]}
+                >
+                    <Input.Password placeholder="Enter new password (required)"/>
                 </Form.Item>
               </Col>
 

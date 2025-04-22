@@ -29,7 +29,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Get current user
   const getCurrentUser = async (token: string): Promise<IUser | null> => {
     dispatch(getCurrentUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations`;
+    const endpoint = `https://healthappointmentsystem-2.onrender.com/api/services/app/Session/GetCurrentLoginInformations`;
     return axios
       .get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
@@ -54,7 +54,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Fetch all users
   const getUsers = async () => {
     dispatch(getUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/User/GetAll`;
+    const endpoint = `/api/services/app/User/GetAll`;
 
     return instance
       .get(endpoint)
@@ -70,7 +70,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Create a user
   const createUser = async (user: IUser) => {
     dispatch(createUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/User/Create`;
+    const endpoint = `/api/services/app/User/Create`;
 
     return instance
       .post(endpoint, user)
@@ -86,7 +86,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Update a user
   const updateUser = async (user: IUser) => {
     dispatch(updateUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/User/Update`;
+    const endpoint = `/api/services/app/User/Update`;
 
     return instance
       .put(endpoint, user)
@@ -102,7 +102,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Delete a user
   const deleteUser = (id: string) => {
     dispatch(deleteUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/User/Delete?input=${id}`;
+    const endpoint = `/api/services/app/User/Delete?input=${id}`;
 
     return instance
       .delete(endpoint)
@@ -118,7 +118,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Get a specific user
   const getUser = async (id: string) => {
     dispatch(getUserPending());
-    const endpoint = `https://localhost:44311/api/services/app/User/Get?input=${id}`;
+    const endpoint = `/api/services/app/User/Get?input=${id}`;
     return axios
       .get(endpoint)
       .then((response) => {

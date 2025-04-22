@@ -9,15 +9,21 @@ import {
 import NotificationPopup, { Notification } from "../notification/page";
 import Link from "next/link";
 import type { MenuProps } from "antd";
-
+import { useRouter } from "next/navigation";
 const { Header: AntHeader } = Layout;
 
 interface HeaderProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }
+  
 
 const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
+  const router = useRouter();
+  const signOutUser = () => {
+    sessionStorage.removeItem("jwt");
+    router.push("/");
+  };
   const items: MenuProps["items"] = [
     {
       key: "profile",
@@ -26,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
     {
       key: "logout",
       label: "Logout",
-      onClick: () => console.log("logout"),
+      onClick: signOutUser,
     },
   ];
 

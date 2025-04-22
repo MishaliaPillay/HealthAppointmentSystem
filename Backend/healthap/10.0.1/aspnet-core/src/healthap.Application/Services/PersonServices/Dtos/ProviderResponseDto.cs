@@ -17,9 +17,7 @@ namespace healthap.Services.PersonServices.Dtos
         public int YearsOfExperience { get; set; }
         public int MaxAppointmentsPerDay { get; set; }
         public string Qualification { get; set; }
-
-
-        public string Specialty { get; set; }
+        public string SpecialtyName { get; set; }
 
 
         public List<ProviderAvailabiltyDto> Availabilities { get; set; }
