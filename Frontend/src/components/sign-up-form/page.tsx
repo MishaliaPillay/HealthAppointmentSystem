@@ -10,6 +10,8 @@ import {
   DatePicker,
   RadioChangeEvent,
   Spin,
+  message,
+  Modal,
 } from "antd";
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
@@ -23,7 +25,7 @@ import { useAuthActions } from "@/providers/auth-provider";
 import { useCheckuserActions } from "@/providers/check-user-provider";
 import { RuleObject } from "antd/lib/form";
 
-import styles from "../../app/page.module.css";
+import styles from "../../app/login/login-page.module.css";
 import {
   useLocationState,
   useLocationActions,
@@ -59,12 +61,16 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const [adminPasswordModalVisible, setAdminPasswordModalVisible] =
+    useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
 
   const { signUp } = useAuthActions();
   const { userExists } = useCheckuserActions();
   const { institutions = [], isPending } = useLocationState();
   const { getAllPlaces } = useLocationActions();
   const [form] = Form.useForm();
+  const ADMIN_PASSWORD = "123qwe"; // Hardcoded for now
 
   useEffect(() => {
     getAllPlaces();
@@ -112,7 +118,14 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   };
 
   const handleRoleChange = (e: RadioChangeEvent) => {
-    setRole(e.target.value.toLowerCase());
+    const selectedRole = e.target.value.toLowerCase();
+
+    if (selectedRole === "provider") {
+      setAdminPasswordModalVisible(true);
+    } else {
+      setRole("patient");
+      form.setFieldsValue({ role: "PATIENT" });
+    }
   };
 
   const onFinishSignup = async (values: IAuth) => {
@@ -142,6 +155,11 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         initialValues={{ role: "patient" }}
       >
         <div className={styles.signupGrid}>
+          {/* Account Type Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>Account Type</h3>
+          </div>
+
           <Form.Item
             name="role"
             label="I am a:"
@@ -155,6 +173,11 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
               <Radio value="PROVIDER">Medical practitioner</Radio>
             </Radio.Group>
           </Form.Item>
+
+          {/* Personal Information Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>Personal Information</h3>
+          </div>
 
           <Form.Item
             name="title"
@@ -191,6 +214,11 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             <Input placeholder="Phone Number" />
           </Form.Item>
 
+          {/* Account Information Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>Account Information</h3>
+          </div>
+
           <Form.Item
             name="emailAddress"
             validateTrigger="onBlur"
@@ -216,6 +244,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
 
           <Form.Item
             name="password"
+            className={styles.fullWidth}
             rules={[
               { required: true, message: "Please input your password!" },
               { min: 8, message: "Password must be at least 8 characters!" },
@@ -231,51 +260,40 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                   setShowTooltip(e.target.value.length > 0);
                 }}
                 onBlur={() => setShowTooltip(false)}
+                onFocus={() => password && setShowTooltip(true)}
               />
               {showTooltip && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    background: "#fff",
-                    border: "1px solid #ccc",
-                    padding: "10px",
-                    borderRadius: "5px",
-                    boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                    width: "100%",
-                    zIndex: 10,
-                  }}
-                >
+                <div className={styles.passwordStrengthTooltip}>
                   <p>Password must contain:</p>
                   {Object.entries(passwordChecks).map(([key, valid]) => (
-                    <p
-                      key={key}
-                      style={{
-                        color: valid ? "green" : "red",
-                        marginBottom: 4,
-                      }}
-                    >
+                    <div key={key} className={styles.passwordCheck}>
                       {valid ? (
-                        <CheckCircleOutlined style={{ color: "green" }} />
+                        <CheckCircleOutlined className={styles.valid} />
                       ) : (
-                        <CloseCircleOutlined style={{ color: "red" }} />
-                      )}{" "}
-                      {key === "length" && "At least 8 characters"}
-                      {key === "lowercase" && "At least one lowercase letter"}
-                      {key === "uppercase" && "At least one uppercase letter"}
-                      {key === "number" && "At least one number"}
-                      {key === "specialChar" &&
-                        "At least one special character (!@#$%^&*)"}
-                    </p>
+                        <CloseCircleOutlined className={styles.invalid} />
+                      )}
+                      <span className={valid ? styles.valid : styles.invalid}>
+                        {key === "length" && "At least 8 characters"}
+                        {key === "lowercase" && "At least one lowercase letter"}
+                        {key === "uppercase" && "At least one uppercase letter"}
+                        {key === "number" && "At least one number"}
+                        {key === "specialChar" &&
+                          "At least one special character (!@#$%^&*)"}
+                      </span>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
           </Form.Item>
 
+          {/* Patient Specific Fields */}
           {role === "patient" && (
             <>
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>Patient Details</h3>
+              </div>
+
               <Form.Item
                 name="dateOfBirth"
                 rules={[
@@ -292,7 +310,27 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
               </Form.Item>
 
               <Form.Item
+                name="preferredContactMethod"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select your preferred contact method!",
+                  },
+                ]}
+              >
+                <Select placeholder="Preferred Contact Method">
+                  <Option value={1}>Email</Option>
+                  <Option value={2}>Phone</Option>
+                </Select>
+              </Form.Item>
+
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>Address Information</h3>
+              </div>
+
+              <Form.Item
                 name="address"
+                className={styles.fullWidth}
                 rules={[
                   { required: true, message: "Please input your address!" },
                 ]}
@@ -327,39 +365,50 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
 
               <Form.Item
                 name="country"
+                className={styles.fullWidth}
                 rules={[
                   { required: true, message: "Please input your country!" },
                 ]}
               >
                 <Input placeholder="Country" />
               </Form.Item>
-
-              <Form.Item
-                name="preferredContactMethod"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select your preferred contact method!",
-                  },
-                ]}
-              >
-                <Select placeholder="Preferred Contact Method">
-                  <Option value={1}>Email</Option>
-                  <Option value={2}>Phone</Option>
-                </Select>
-              </Form.Item>
             </>
           )}
 
+          {/* Provider Specific Fields */}
           {role === "provider" && (
             <>
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>
+                  Professional Information
+                </h3>
+              </div>
+
               <Form.Item
-                name="biography"
+                name="specialtyName"
                 rules={[
-                  { required: true, message: "Please input your biography!" },
+                  { required: true, message: "Please select your specialty!" },
                 ]}
               >
-                <Input.TextArea placeholder="Biography" rows={4} />
+                <Select placeholder="Select Specialty" showSearch>
+                  {specialties.map((spec) => (
+                    <Option key={spec} value={spec}>
+                      {spec}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="qualification"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter your qualification!",
+                  },
+                ]}
+              >
+                <Input placeholder="Qualification" />
               </Form.Item>
 
               <Form.Item
@@ -387,34 +436,18 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
               </Form.Item>
 
               <Form.Item
-                name="qualification"
+                name="biography"
+                className={styles.fullWidth}
                 rules={[
-                  {
-                    required: true,
-                    message: "Please enter your qualification!",
-                  },
+                  { required: true, message: "Please input your biography!" },
                 ]}
               >
-                <Input placeholder="Qualification" />
-              </Form.Item>
-
-              <Form.Item
-                name="specialtyName"
-                rules={[
-                  { required: true, message: "Please select your specialty!" },
-                ]}
-              >
-                <Select placeholder="Select Specialty" showSearch>
-                  {specialties.map((spec) => (
-                    <Option key={spec} value={spec}>
-                      {spec}
-                    </Option>
-                  ))}
-                </Select>
+                <Input.TextArea placeholder="Professional Biography" rows={4} />
               </Form.Item>
 
               <Form.Item
                 name="institutionId"
+                className={styles.fullWidth}
                 rules={[
                   {
                     required: true,
@@ -439,9 +472,11 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                   optionRender={(option) => {
                     const inst = option.data.inst;
                     return (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <strong>{inst.description}</strong>
-                        <span style={{ fontSize: 12, color: "gray" }}>
+                      <div className={styles.institutionOption}>
+                        <span className={styles.institutionName}>
+                          {inst.description}
+                        </span>
+                        <span className={styles.institutionAddress}>
                           {inst.address} • {inst.city}, {inst.state}
                         </span>
                       </div>
@@ -459,7 +494,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             </>
           )}
 
-          <Form.Item>
+          <Form.Item className={styles.fullWidth}>
             <Button
               type="primary"
               htmlType="submit"
@@ -472,6 +507,40 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Admin Password Required"
+        open={adminPasswordModalVisible}
+        onOk={() => {
+          if (adminPasswordInput === ADMIN_PASSWORD) {
+            setRole("provider");
+            form.setFieldsValue({ role: "PROVIDER" });
+            setAdminPasswordModalVisible(false);
+            setAdminPasswordInput("");
+          } else {
+            message.error(
+              "Incorrect admin password. Defaulting to patient account."
+            );
+            setRole("patient");
+            form.setFieldsValue({ role: "PATIENT" });
+            setAdminPasswordModalVisible(false);
+            setAdminPasswordInput("");
+          }
+        }}
+        onCancel={() => {
+          setRole("patient");
+          form.setFieldsValue({ role: "PATIENT" });
+          setAdminPasswordModalVisible(false);
+          setAdminPasswordInput("");
+        }}
+        okText="Continue"
+        cancelText="Cancel"
+      >
+        <Input.Password
+          placeholder="Enter admin password"
+          value={adminPasswordInput}
+          onChange={(e) => setAdminPasswordInput(e.target.value)}
+        />
+      </Modal>
     </Spin>
   );
 }
