@@ -10,6 +10,8 @@ import {
   DatePicker,
   RadioChangeEvent,
   Spin,
+  message,
+  Modal,
 } from "antd";
 import debounce from "lodash.debounce";
 import dayjs from "dayjs";
@@ -59,12 +61,16 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const [adminPasswordModalVisible, setAdminPasswordModalVisible] =
+    useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
 
   const { signUp } = useAuthActions();
   const { userExists } = useCheckuserActions();
   const { institutions = [], isPending } = useLocationState();
   const { getAllPlaces } = useLocationActions();
   const [form] = Form.useForm();
+  const ADMIN_PASSWORD = "123qwe"; // Hardcoded for now
 
   useEffect(() => {
     getAllPlaces();
@@ -112,7 +118,14 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   };
 
   const handleRoleChange = (e: RadioChangeEvent) => {
-    setRole(e.target.value.toLowerCase());
+    const selectedRole = e.target.value.toLowerCase();
+
+    if (selectedRole === "provider") {
+      setAdminPasswordModalVisible(true);
+    } else {
+      setRole("patient");
+      form.setFieldsValue({ role: "PATIENT" });
+    }
   };
 
   const onFinishSignup = async (values: IAuth) => {
@@ -130,7 +143,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     setLoading(false);
   };
 
-  // Update the return statement in your SignupForm component to add section headers
   return (
     <Spin spinning={loading} tip="Please hold on...">
       <Form
@@ -495,6 +507,40 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Admin Password Required"
+        open={adminPasswordModalVisible}
+        onOk={() => {
+          if (adminPasswordInput === ADMIN_PASSWORD) {
+            setRole("provider");
+            form.setFieldsValue({ role: "PROVIDER" });
+            setAdminPasswordModalVisible(false);
+            setAdminPasswordInput("");
+          } else {
+            message.error(
+              "Incorrect admin password. Defaulting to patient account."
+            );
+            setRole("patient");
+            form.setFieldsValue({ role: "PATIENT" });
+            setAdminPasswordModalVisible(false);
+            setAdminPasswordInput("");
+          }
+        }}
+        onCancel={() => {
+          setRole("patient");
+          form.setFieldsValue({ role: "PATIENT" });
+          setAdminPasswordModalVisible(false);
+          setAdminPasswordInput("");
+        }}
+        okText="Continue"
+        cancelText="Cancel"
+      >
+        <Input.Password
+          placeholder="Enter admin password"
+          value={adminPasswordInput}
+          onChange={(e) => setAdminPasswordInput(e.target.value)}
+        />
+      </Modal>
     </Spin>
   );
 }
