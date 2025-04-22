@@ -72,7 +72,7 @@ export default function LoginSignup({
             </div>
             <div className={styles.imageWrapper}>
               <Image
-                src="/images/home.jpg"
+                src="/images/healthpeopl.png"
                 alt="Healthcare Professional"
                 width={380}
                 height={320}
@@ -84,8 +84,8 @@ export default function LoginSignup({
               <h1 className={styles.brandTitle}>Welcome</h1>
               <p className={styles.brandDescription}>
                 Your secure gateway to smarter healthcare. Easily connect with
-                providers, manage appointments, and stay in control of your health
-                — all in one place.
+                providers, manage appointments, and stay in control of your
+                health — all in one place.
               </p>
             </div>
           </div>
@@ -110,14 +110,18 @@ export default function LoginSignup({
                       key: "login",
                       label: "Login",
                       children: (
-                        <LoginForm onBeforeSubmit={() => setAuthMode("login")} />
+                        <LoginForm
+                          onBeforeSubmit={() => setAuthMode("login")}
+                        />
                       ),
                     },
                     {
                       key: "signup",
                       label: "Sign Up",
                       children: (
-                        <SignupForm onBeforeSubmit={() => setAuthMode("signup")} />
+                        <SignupForm
+                          onBeforeSubmit={() => setAuthMode("signup")}
+                        />
                       ),
                     },
                   ]}

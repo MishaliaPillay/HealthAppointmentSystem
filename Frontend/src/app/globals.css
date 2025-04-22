@@ -1,3 +1,59 @@
+/* Form error styles */
+:global(.ant-form-item-has-error .ant-input),
+:global(.ant-form-item-has-error .ant-input-affix-wrapper),
+:global(.ant-form-item-has-error .ant-input:hover),
+:global(.ant-form-item-has-error .ant-input-affix-wrapper:hover) {
+  border-color: #ff4d4f;
+}
+
+:global(.ant-form-item-has-error .ant-input:focus),
+:global(.ant-form-item-has-error .ant-input-affix-wrapper:focus),
+:global(.ant-form-item-has-error .ant-input-affix-wrapper-focused) {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+}
+
+/* Additional form styles */
+:global(.ant-input),
+:global(.ant-input-affix-wrapper),
+:global(.ant-select-selector),
+:global(.ant-picker) {
+  border-radius: 8px;
+  border: 1px solid #d0f4f1;
+  transition: all 0.2s;
+}
+
+:global(.ant-input:focus),
+:global(.ant-input-affix-wrapper:focus),
+:global(.ant-input-affix-wrapper-focused),
+:global(.ant-select-focused .ant-select-selector),
+:global(.ant-picker-focused) {
+  border-color: #177f80;
+  box-shadow: 0 0 0 2px rgba(23, 127, 128, 0.2);
+}
+
+:global(.ant-select-item-option-selected) {
+  background-color: #d0f4f1 !important;
+}
+
+:global(.ant-radio-checked .ant-radio-inner) {
+  border-color: #177f80;
+  background-color: #177f80;
+}
+
+:global(.ant-radio:hover .ant-radio-inner) {
+  border-color: #177f80;
+}
+
+:global(.ant-radio-wrapper:hover .ant-radio-inner) {
+  border-color: #177f80;
+}
+
+:global(.ant-form-item-explain-error) {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
