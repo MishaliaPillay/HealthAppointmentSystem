@@ -90,11 +90,11 @@ export default function AppointmentsPage() {
   });
 
   const handleReschedule = (appointmentId: string) => {
-    console.log("Reschedule appointment:", appointmentId);
+   
   };
 
   const handleCancel = (appointmentId: string) => {
-    console.log("Cancel appointment:", appointmentId);
+    
   };
 
   const getColumns = () => [

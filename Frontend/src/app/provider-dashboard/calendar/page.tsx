@@ -20,11 +20,9 @@ import dayjs from "dayjs";
 import {
   ClockCircleOutlined,
   UserOutlined,
-  PhoneOutlined,
-  MailOutlined,
 } from "@ant-design/icons";
 import styles from "./ProviderCalendar.module.css";
-import { Appointment } from "@/interfaces/provider-interface";
+import { IAppointment } from "../../../providers/appointment-provider/models";
 
 const { Title, Text } = Typography;
 
@@ -113,7 +111,7 @@ const ProviderCalendarPage = () => {
   const [mode, setMode] = useState<CalendarMode>("month");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment>(null);
+    useState<IAppointment>(null);
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
 
   const getAppointmentsForDate = (date: Dayjs) => {
@@ -150,7 +148,7 @@ const ProviderCalendarPage = () => {
     );
   };
 
-  const handleAppointmentClick = (appointment: Appointment) => {
+  const handleAppointmentClick = (appointment: IAppointment) => {
     setSelectedAppointment(appointment);
     setDrawerOpen(true);
   };
@@ -346,44 +344,26 @@ const ProviderCalendarPage = () => {
           <div>
             <div className={styles.drawerSection}>
               <Tag
-                color={appointmentTypes[selectedAppointment.type].color}
+                color={appointmentTypes[selectedAppointment.purpose].color}
                 className={styles.detailTag}
               >
-                {appointmentTypes[selectedAppointment.type].label}
+                {appointmentTypes[selectedAppointment.purpose].label}
               </Tag>
-              <Title level={4}>{selectedAppointment.patientName}</Title>
+              <Title level={4}>{selectedAppointment.appointmentStatus}</Title>
               <Text type="secondary">
-                Patient ID: {selectedAppointment.patientId}
+                Patient ID: {selectedAppointment.appointmentTime}
               </Text>
             </div>
 
             <div className={styles.drawerSection}>
               <Title level={5}>Appointment Time</Title>
               <Text>
-                {dayjs(selectedAppointment.date).format("dddd, MMMM D, YYYY")}
+                {dayjs(selectedAppointment.appointmentDate).format("dddd, MMMM D, YYYY")}
                 <br />
-                {selectedAppointment.time} ({selectedAppointment.duration}{" "}
+                {selectedAppointment.appointmentTime} ({selectedAppointment.appointmentTime}{" "}
                 minutes)
               </Text>
             </div>
-
-            <div className={styles.drawerSection}>
-              <Title level={5}>Contact Information</Title>
-              <p>
-                <PhoneOutlined className={styles.contactIcon} />{" "}
-                {selectedAppointment.patientPhone}
-              </p>
-              <p>
-                <MailOutlined className={styles.contactIcon} />{" "}
-                {selectedAppointment.patientEmail}
-              </p>
-            </div>
-
-            <div className={styles.drawerSection}>
-              <Title level={5}>Notes</Title>
-              <Text>{selectedAppointment.notes}</Text>
-            </div>
-
             <div className={styles.drawerActions}>
               <Button type="default">Cancel Appointment</Button>
               <Button type="primary">Reschedule</Button>

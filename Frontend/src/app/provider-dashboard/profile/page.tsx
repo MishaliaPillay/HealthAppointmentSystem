@@ -149,8 +149,12 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Password" name="password">
-                  <Input.Password placeholder="Enter new password (optional)" />
+                  <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: "Password is required!" }]}
+                  >
+                  <Input.Password placeholder="Enter new password (required)" />
                 </Form.Item>
               </Col>
 

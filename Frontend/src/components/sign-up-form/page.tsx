@@ -124,7 +124,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         : undefined,
     };
 
-    console.log("Formatted signup values with role:", formattedValues);
+    
     await signUp(formattedValues); // Now the role is still available
     setLoading(false);
   };

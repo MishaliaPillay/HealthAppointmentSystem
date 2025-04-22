@@ -3,39 +3,41 @@
 import { useState, useEffect } from "react";
 import {
   Typography,
-  Table,
-  Tag,
   Button,
   Select,
   Input,
   Space,
   Spin,
+  Modal,
+  Form,
+  Table,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
-import { useAppointmentActions } from "@/providers/appointment-provider";
-import { useUserActions } from "@/providers/users-provider";
 import {
   useProviderActions,
   useProviderState,
 } from "@/providers/providerMedicPrac-provider";
+import { useAppointmentActions } from "@/providers/appointment-provider";
+import { useUserActions } from "@/providers/users-provider";
 import { IAppointment } from "@/providers/appointment-provider/models";
 import styles from "./styles";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-export default function DoctorAppointmentsPage() {
+export default function ProviderAppointmentsPage() {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [patientsMap, setPatientsMap] = useState<Record<string, string>>({});
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<IAppointment | null>(null);
 
-  const { isPending, isSuccess, isError, currentProvider } = useProviderState();
-  const { getCurrentProvider, getProviders } = useProviderActions();
-  const { getAppointments } = useAppointmentActions();
+  const { isPending, isError, isSuccess, currentProvider } = useProviderState();
+  const { getCurrentProvider } = useProviderActions();
+  const { getAppointments, deleteAppointment, updateAppointment } =
+    useAppointmentActions();
   const { getCurrentUser } = useUserActions();
 
   useEffect(() => {
@@ -58,22 +60,7 @@ export default function DoctorAppointmentsPage() {
 
   useEffect(() => {
     getAppointments();
-    fetchPatientNames();
   }, []);
-
-  const fetchPatientNames = async () => {
-    const appointments = currentProvider?.appointments ?? [];
-    const uniquePatientIds = Array.from(
-      new Set(appointments.map((appt) => appt.appointmentDate))
-    );
-
-    // Simulate loading patient names (replace with real API if available)
-    const map: Record<string, string> = {};
-    uniquePatientIds.forEach((id) => {
-      map[id] = `Patient ${id.slice(-4)}`; // mock name
-    });
-    setPatientsMap(map);
-  };
 
   const appointmentsData: IAppointment[] = currentProvider?.appointments || [];
 
@@ -81,26 +68,53 @@ export default function DoctorAppointmentsPage() {
     const matchesSearch = appointment.purpose
       ?.toLowerCase()
       .includes(searchText.toLowerCase());
-
     const matchesStatus =
       statusFilter === "all" ||
       appointment.appointmentStatus === Number(statusFilter);
-
     return matchesSearch && matchesStatus;
   });
 
-  const handleReschedule = (appointmentId: string) => {
-    console.log("Reschedule appointment:", appointmentId);
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this appointment?",
+      content: "This action cannot be undone.",
+      onOk: async () => {
+        await deleteAppointment(appointmentId);
+        getAppointments();
+      },
+    });
   };
 
-  const handleCancel = (appointmentId: string) => {
-    console.log("Cancel appointment:", appointmentId);
+  const handleEditAppointment = (appointment: IAppointment) => {
+    setSelectedAppointment(appointment);
+    setEditModalVisible(true);
+  };
+
+  const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
+    if (!selectedAppointment) return;
+
+    const cleanValues = { ...values };
+    // Remove any React elements accidentally included
+    Object.keys(cleanValues).forEach((key) => {
+      if (typeof cleanValues[key] === "object" && cleanValues[key] !== null) {
+        cleanValues[key] = JSON.parse(JSON.stringify(cleanValues[key])); // Deep clone without circular refs
+      }
+    });
+
+    await updateAppointment(selectedAppointment.id, cleanValues);
+    setEditModalVisible(false);
+    getAppointments(); // Refresh list
+  };
+
+  const handleStatusChange = async (id: string, newStatus: number) => {
+    await updateAppointment(id, { appointmentStatus: newStatus });
+    getAppointments();
   };
 
   const getColumns = () => [
     {
       title: "Date",
-      dataIndex: "appointmentDate" as keyof IAppointment,
+      dataIndex: "appointmentDate",
       key: "appointmentDate",
       render: (date: Date) =>
         new Date(date).toLocaleDateString("en-ZA", {
@@ -111,63 +125,57 @@ export default function DoctorAppointmentsPage() {
     },
     {
       title: "Time",
-      dataIndex: "appointmentTime" as keyof IAppointment,
+      dataIndex: "appointmentTime",
       key: "appointmentTime",
     },
     {
       title: "Patient",
-      dataIndex: "patientId" as keyof IAppointment,
+      dataIndex: "patientId",
       key: "patientId",
-      render: (id: string) => patientsMap[id] || "Unknown Patient",
+      render: (id: string) => `Patient ID: ${id}`,
     },
     {
       title: "Purpose",
-      dataIndex: "appointmentPurpose" as keyof IAppointment,
-      key: "appointmentPurpose",
+      dataIndex: "purpose",
+      key: "purpose",
     },
     {
       title: "Status",
-      dataIndex: "appointmentStatus" as keyof IAppointment,
+      dataIndex: "appointmentStatus",
       key: "appointmentStatus",
-      render: (status: AppointmentStatusReflist) => {
-        const colorMap: Record<AppointmentStatusReflist, string> = {
-          [AppointmentStatusReflist.Pending]: "blue",
-          [AppointmentStatusReflist.Confirmed]: "gold",
-          [AppointmentStatusReflist.Completed]: "green",
-          [AppointmentStatusReflist.Cancelled]: "red",
-          [AppointmentStatusReflist.NoShow]: "volcano",
-        };
-        return (
-          <Tag color={colorMap[status]} style={styles.statusTag}>
-            {AppointmentStatusReflist[status]?.toUpperCase()}
-          </Tag>
-        );
-      },
+      render: (status, record) => (
+        <Select
+          defaultValue={status}
+          onChange={(value) => handleStatusChange(record.id, value)}
+        >
+          {Object.keys(AppointmentStatusReflist)
+            .filter((key) => isNaN(Number(key)))
+            .map((statusKey) => (
+              <Option
+                key={statusKey}
+                value={AppointmentStatusReflist[statusKey]}
+              >
+                {statusKey}
+              </Option>
+            ))}
+        </Select>
+      ),
     },
     {
-      title: "Action",
-      key: "action",
+      title: "Actions",
+      key: "actions",
       render: (_: unknown, record: IAppointment) => (
         <Space size="small">
+          <Button type="link" onClick={() => handleEditAppointment(record)}>
+            Edit
+          </Button>
           <Button
             type="link"
-            onClick={() => handleReschedule(record.id!)}
-            style={styles.actionButton}
+            danger
+            onClick={() => handleDeleteAppointment(record.id)}
           >
-            {record.appointmentStatus === AppointmentStatusReflist.Pending
-              ? "Reschedule"
-              : "View Details"}
+            Delete
           </Button>
-          {record.appointmentStatus === AppointmentStatusReflist.Pending && (
-            <Button
-              type="link"
-              danger
-              onClick={() => handleCancel(record.id!)}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-          )}
         </Space>
       ),
     },
@@ -177,7 +185,7 @@ export default function DoctorAppointmentsPage() {
     <div style={styles.container}>
       <div style={styles.header}>
         <Title level={2} style={styles.titleText}>
-          My Appointments
+          My Provider Appointments
         </Title>
 
         <div style={styles.headerControls}>
@@ -189,7 +197,6 @@ export default function DoctorAppointmentsPage() {
               onChange={(e) => setSearchText(e.target.value)}
               style={styles.searchInput}
             />
-
             <Select
               defaultValue="all"
               value={statusFilter}
@@ -212,29 +219,37 @@ export default function DoctorAppointmentsPage() {
         </div>
       </div>
 
-      <div style={styles.responsiveTable}>
-        {loading ? (
-          <Spin spinning tip="Loading appointments..." />
-        ) : (
-          <Table<IAppointment>
-            dataSource={filteredData}
-            columns={getColumns()}
-            rowKey="id"
-            locale={{ emptyText: "No appointments found." }}
-            pagination={{
-              current: currentPage,
-              pageSize: pageSize,
-              onChange: (page) => setCurrentPage(page),
-              onShowSizeChange: (_, size) => setPageSize(size),
-              showSizeChanger: true,
-              pageSizeOptions: ["5", "10", "20", "50"],
-              total: filteredData.length,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} items`,
-            }}
-          />
-        )}
-      </div>
+      <Spin spinning={loading} tip="Loading appointments...">
+        <Table<IAppointment>
+          dataSource={filteredData}
+          columns={getColumns()}
+          rowKey="id"
+          locale={{ emptyText: "No appointments found." }}
+        />
+      </Spin>
+
+      {/* Edit Appointment Modal */}
+      <Modal
+        title="Edit Appointment"
+        open={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onOk={handleUpdateAppointment}
+      >
+        <Form
+          initialValues={selectedAppointment}
+          onFinish={handleUpdateAppointment}
+        >
+          <Form.Item label="Purpose" name="purpose">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Date" name="appointmentDate">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Time" name="appointmentTime">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
