@@ -39,32 +39,22 @@ export default function RootLayout({
     <ConfigProvider theme={HealthColors}>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          {/* <AuthProvider>
-          <ProviderProvider>
-            <PatientProvider>
-              <UserProvider>{children}</UserProvider>
-            </PatientProvider>
-          </ProviderProvider>
-        </AuthProvider> */}
           <AuthProvider>
-            {" "}
-           
-              <UserProvider>
-                <ProviderProvider>
-                  <PatientProvider>
-                    <CheckUserProvider>
+            <UserProvider>
+              <ProviderProvider>
+                <PatientProvider>
+                  <CheckUserProvider>
                     <AppointmentProvider>
-                         <ProvidersInstituionProvider>
+                      <ProvidersInstituionProvider>
                         <ProviderAvailabilityProvider>
                           {children}
-                    </AppointmentProvider>
                         </ProviderAvailabilityProvider>
                       </ProvidersInstituionProvider>
-                    </CheckUserProvider>
-                  </PatientProvider>
-                </ProviderProvider>
-              </UserProvider>
-            
+                    </AppointmentProvider>
+                  </CheckUserProvider>
+                </PatientProvider>
+              </ProviderProvider>
+            </UserProvider>
           </AuthProvider>
         </body>
       </html>

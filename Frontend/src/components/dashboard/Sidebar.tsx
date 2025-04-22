@@ -3,12 +3,10 @@
 import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
-  CalendarOutlined,
-  //HeartFilled,
+  ScheduleOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
   ArrowLeftOutlined,
-  HeartOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,8 +14,6 @@ import type { MenuProps } from "antd";
 import { useUserActions, useUserState } from "@/providers/users-provider";
 import { useEffect, useState } from "react";
 import { getRole } from "@/utils/decoder";
-import { BookMarked } from "lucide-react";
-//import { useAuthActions } from "@/providers/auth-provider";
 
 const { Sider } = Layout;
 
@@ -73,24 +69,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         <Link href={`/${role}-dashboard/appointments`}>My Appointments</Link>
       ),
     },
-    ...(role === "patient"
-      ? [
-          {
-            key: "/patient-dashboard/face-scan",
-            icon: <HeartOutlined />,
-            label: <Link href="/patient-dashboard/face-scan">Well Being</Link>,
-          },
-          {
-            key: "/patient-dashboard/booking-page",
-            icon: <BookMarked />,
-            label: (
-              <Link href="/patient-dashboard/booking-page">
-                Book Appointments
-              </Link>
-            ),
-          },
-        ]
-      : []),
     {
       key: "/patient-dashboard/help",
       icon: <QuestionCircleOutlined />,
