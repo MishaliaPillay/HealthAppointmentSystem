@@ -27,6 +27,7 @@ import {
   deleteProviderPending,
   deleteProviderSuccess,
   deleteProviderError,
+  deleteProviderError,
 } from "./actions";
 import { UpdateProvider } from "../providerMedicPrac-provider/models";
 
@@ -48,6 +49,7 @@ export const ProviderProvider = ({
       .get(endpoint)
       .then((response) => {
         if (response.data?.result) {
+        if (response.data?.result) {
           dispatch(getCurrentProviderSuccess(response.data.result));
           return response.data.result;
         } else {
@@ -64,6 +66,8 @@ export const ProviderProvider = ({
 
   // Register Provider
   const registerProvider = async (provider: IProviderRegisteration) => {
+  // Register Provider
+  const registerProvider = async (provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
     const endpoint = `/api/services/Provider/Create`;
 
@@ -72,8 +76,10 @@ export const ProviderProvider = ({
       .then((response) => {
         dispatch(registerProviderSuccess(response.data));
         return response.data;
+        return response.data;
       })
       .catch((error) => {
+        console.error("Error registering provider:", error);
         console.error("Error registering provider:", error);
         dispatch(registerProviderError());
       });
@@ -114,6 +120,8 @@ export const ProviderProvider = ({
   const updateProvider = async (
     providerId: string,
     providerData: UpdateProvider
+    providerId: string,
+    providerData: UpdateProvider
   ) => {
     dispatch(updateProviderPending());
     const endpoint = `/api/services/Provider/UpdateProvider`;
@@ -124,6 +132,7 @@ export const ProviderProvider = ({
       .then((response) => {
         dispatch(updateProviderSuccess(response.data));
         return response.data;
+        return response.data;
       })
       .catch((error) => {
         console.error("Update error:", error.response?.data || error.message);
@@ -131,6 +140,8 @@ export const ProviderProvider = ({
       });
   };
 
+  // Delete Provider
+  const deleteProviderById = async (providerId: string) => {
   // Delete Provider
   const deleteProviderById = async (providerId: string) => {
     dispatch(deleteProviderPending());
@@ -141,8 +152,11 @@ export const ProviderProvider = ({
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
         return response.data;
+        return response.data;
       })
       .catch((error) => {
+        console.error("Error deleting provider:", error);
+        dispatch(deleteProviderError());
         console.error("Error deleting provider:", error);
         dispatch(deleteProviderError());
       });

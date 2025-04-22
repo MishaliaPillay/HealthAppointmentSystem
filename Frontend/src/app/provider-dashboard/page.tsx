@@ -14,8 +14,8 @@ import {
   Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
-//import UpdateAvailabilityForm from "../../components/provider-availability/ProviderAvailabilityModal";
-
+import { useEffect, useState } from "react";
+import withAuth from "../../hoc/withAuth"
 import {
   useProviderState,
   useProviderActions,
@@ -24,7 +24,7 @@ import { useUserActions } from "@/providers/users-provider";
 
 const { Title, Text } = Typography;
 
-export default function ProviderDashboard() {
+function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
 
   const { currentProvider, isPending, isError } = useProviderState();
@@ -270,7 +270,4 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
     </div>
   );
 };
-
-function capitalize(text: string) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
+export default withAuth(ProviderDashboard);

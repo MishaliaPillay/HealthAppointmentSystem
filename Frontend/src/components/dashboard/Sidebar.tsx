@@ -29,13 +29,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
-  //const { signOut } = useAuthActions();
-
-  // function signOutUser(): void {
-  //   signOut();
-  //   router.push("/");
-  // }
-
   const pathname = usePathname();
 
   const { getCurrentUser } = useUserActions();
@@ -67,7 +60,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     router.push("/");
   };
 
-  // Full menu list including Back button
   const menuItems: MenuProps["items"] = [
     {
       key: `/${role}-dashboard/profile`,
@@ -76,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     },
     {
       key: `/${role}-dashboard/appointments`,
-      icon: <CalendarOutlined />,
+      icon: <ScheduleOutlined />,
       label: (
         <Link href={`/${role}-dashboard/appointments`}>My Appointments</Link>
       ),

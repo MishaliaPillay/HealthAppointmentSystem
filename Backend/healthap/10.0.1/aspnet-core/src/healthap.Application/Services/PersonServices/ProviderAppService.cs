@@ -98,7 +98,7 @@ namespace healthap.Services.PersonServices
                 input.YearsOfExperience,
                 input.MaxiumAppointmentsPerDay,
                 input.Qualifications,
-                input.Speciality
+                input.SpecialityName
             );
 
             return _mapper.Map<ProviderResponseDto>(updatedProvider);

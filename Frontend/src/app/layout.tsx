@@ -7,7 +7,7 @@ import { ProviderProvider } from "../providers/providerMedicPrac-provider";
 import { PatientProvider } from "../providers/paitient-provider";
 import { UserProvider } from "../providers/users-provider";
 import { CheckUserProvider } from "@/providers/check-user-provider";
-import { LocationProvider } from "@/providers/institutionLocation-provider";
+import { AppointmentProvider } from "@/providers/appointment-provider";
 import { ProvidersInstituionProvider } from "@/providers/providerInstituion-provider";
 import { ProviderAvailabilityProvider } from "@/providers/provider-availibility";
 const geistSans = Geist({
@@ -48,21 +48,23 @@ export default function RootLayout({
         </AuthProvider> */}
           <AuthProvider>
             {" "}
-            <LocationProvider>
+           
               <UserProvider>
                 <ProviderProvider>
                   <PatientProvider>
                     <CheckUserProvider>
-                      <ProvidersInstituionProvider>
+                    <AppointmentProvider>
+                         <ProvidersInstituionProvider>
                         <ProviderAvailabilityProvider>
                           {children}
+                    </AppointmentProvider>
                         </ProviderAvailabilityProvider>
                       </ProvidersInstituionProvider>
                     </CheckUserProvider>
                   </PatientProvider>
                 </ProviderProvider>
               </UserProvider>
-            </LocationProvider>
+            
           </AuthProvider>
         </body>
       </html>

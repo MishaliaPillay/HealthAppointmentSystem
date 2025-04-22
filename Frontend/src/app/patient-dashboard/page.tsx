@@ -17,10 +17,9 @@ import {
   usePatientActions,
   usePatientState,
 } from "@/providers/paitient-provider";
-
 import { useUserActions } from "@/providers/users-provider";
-
-export default function Dashboard() {
+import withAuth from "../../hoc/withAuth"
+function Dashboard () {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [Loading, setLoading] = useState(false);
 
@@ -103,11 +102,6 @@ export default function Dashboard() {
                 </Text>
               </div>
               <Progress
-                // percent={
-                //   (currentPatient.appointments?.length /
-                //     currentPatient.MaxAppointmentsPerDay) *
-                //     100 || 0
-                // }
                 strokeColor="#52c41a"
                 showInfo={false}
               />
@@ -121,28 +115,6 @@ export default function Dashboard() {
           </Card>
         </Col>
       </Row>
-      {/* 
-      <Card
-        title="Upcoming Appointments"
-        className={styles.upcomingCard}
-        variant="outlined"
-      >
-        <div className={styles.appointmentList}>
-          {currentPatient.appointments?.map((appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              doctorInitials={appointment.doctorInitials}
-              doctorName={appointment.doctorName}
-              specialty={appointment.specialty}
-              date={appointment.date}
-              time={appointment.time}
-              status={appointment.status}
-            />
-          )) || <Text>No upcoming appointments.</Text>}
-        </div>
-      </Card> 
-
-      {/* Booking Modal */}
       <Modal
         title="Book an Appointment"
         open={showBookingModal}
@@ -155,3 +127,4 @@ export default function Dashboard() {
     </div>
   );
 }
+export default withAuth(Dashboard);
