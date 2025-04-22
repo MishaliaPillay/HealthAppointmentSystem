@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@google/generative-ai": "^0.24.0",
     "@react-google-maps/api": "^2.20.6",
     "@reduxjs/toolkit": "^2.7.0",
     "antd": "^5.24.7",
@@ -39,5 +40,8 @@
     "eslint-config-next": "15.2.4",
     "lodash.debounce": "^4.0.8",
     "typescript": "^5"
+  },
+  "overrides": {
+    "node-fetch": "^2.6.9"
   }
 }
