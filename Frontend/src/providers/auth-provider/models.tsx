@@ -21,6 +21,7 @@ export interface IAuth {
   yearsOfExperience?: string;
   maxAppointmentsPerDay?: string;
   qualification?: string;
+  specialtyName?: string;
 }
 
 export interface ISignInRequest {

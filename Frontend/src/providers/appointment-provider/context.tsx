@@ -1,6 +1,6 @@
 "use client";
 import { createContext } from "react";
-import { IAppointment } from "./models"
+import { IAppointment } from "./models";
 
 //Appointment Context shape Interface
 export interface IAppointmentStateContext {
@@ -31,5 +31,3 @@ export const AppointmentStateContext =
 export const AppointmentActionContext = createContext<
   IAppointmentActionContext | undefined
 >(undefined);
-
-export { IAppointment };

@@ -37,7 +37,7 @@ export const AppointmentProvider = ({
 
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
-    const endpoint = "/Appointment/Create";
+    const endpoint = "/api/services/app/Appointment/Create";
 
     return instance
       .post(endpoint, appointment)
@@ -50,7 +50,7 @@ export const AppointmentProvider = ({
 
   const getAppointments = async () => {
     dispatch(getAllAppointmentPending());
-    const endpoint = "/Appointment/GetAll";
+    const endpoint = "/api/services/app/Appointment/GetAll";
 
     return instance
       .get(endpoint)
@@ -65,7 +65,7 @@ export const AppointmentProvider = ({
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-    const endpoint = `/Appointment/Get/${id}`;
+    const endpoint = `/api/services/app/Appointment/Get/${id}`;
 
     return instance
       .get(endpoint)
@@ -81,7 +81,7 @@ export const AppointmentProvider = ({
     appointment: Partial<IAppointment>
   ) => {
     dispatch(updateAppointmentPending());
-    const endpoint = `/Appointment/Update/${id}`;
+    const endpoint = `/api/services/app/Appointment/Update/${id}`;
 
     return instance
       .put(endpoint, appointment)
@@ -94,7 +94,7 @@ export const AppointmentProvider = ({
 
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    const endpoint = `/Appointment/Delete/${id}`;
+    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
 
     return instance
       .delete(endpoint)

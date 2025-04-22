@@ -24,7 +24,7 @@ export const ProvidersInstituionProvider = ({
   //Get Providers in Intitution by the id
   const getProviderInInstitution = async (institutionId: number) => {
     dispatch(getProvidersInInstitutionPending());
-    const endpoint = `ProviderInstution/GetProvidersInInstitution?institutionId=${institutionId}`;
+    const endpoint = `/api/services/ProviderInstution/GetProvidersInInstitution?institutionId=${institutionId}`;
 
     await instance
       .get(endpoint)

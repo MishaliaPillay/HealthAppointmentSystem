@@ -14,7 +14,7 @@ import {
   Spin,
 } from "antd";
 import styles from "./providerdashdash.module.css";
-import UpdateAvailabilityForm from "../../components/provider-availability/ProviderAvailabilityModal";
+//import UpdateAvailabilityForm from "../../components/provider-availability/ProviderAvailabilityModal";
 
 import {
   useProviderState,
@@ -42,7 +42,7 @@ export default function ProviderDashboard() {
 
   useEffect(() => {
     if (currentProvider) {
-      console.log("Updated Current Provider Data:", currentProvider.id);
+      console.log("Updated Current Provider Data:", currentProvider._id);
     }
   }, [currentProvider]);
 
@@ -91,9 +91,7 @@ export default function ProviderDashboard() {
                 Manage Availability
               </Button>
             </div>
-            <div style={{ marginTop: "1rem" }}>
-              <UpdateAvailabilityForm providerId={currentProvider.id} />
-            </div>
+            <div style={{ marginTop: "1rem" }}></div>
           </Card>
         </Col>
 

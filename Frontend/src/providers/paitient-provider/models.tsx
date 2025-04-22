@@ -1,6 +1,6 @@
 "use client";
 import { IUser } from "../users-provider/models";
-import { IAppointment } from "../appointment-provider/context";
+import { IAppointment } from "../appointment-provider/models";
 import { ReflistConMethod } from "../../enums/ReflistConMethod"; // Import enum if needed
 export interface IPatientRegisteration {
   FirstName: string;

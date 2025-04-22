@@ -34,7 +34,7 @@ export const ProviderAvailabilityProvider = ({
     dispatch(fetchAvailabilityPending());
     try {
       const response = await axios.get(
-        `/api/services/app/ProviderAvailability/GetAvailabilityByProviderId?providerId=${providerId}`
+        `https://healthappointmentsystem-2.onrender.com/api/services/app/ProviderAvailability/GetAvailabilityByProviderId?providerId=${providerId}`
       );
       dispatch(fetchAvailabilitySuccess({ result: response.data.result }));
     } catch (error) {
@@ -47,7 +47,7 @@ export const ProviderAvailabilityProvider = ({
     dispatch(createAvailabilityPending());
     try {
       await axios.post(
-        "https://localhost:44311/api/services/app/ProviderAvailability/CreateAvailability",
+        "https://healthappointmentsystem-2.onrender.com/api/services/app/ProviderAvailability/CreateAvailability",
         data
       );
       dispatch(createAvailabilitySuccess());
@@ -61,7 +61,7 @@ export const ProviderAvailabilityProvider = ({
     dispatch(updateAvailabilityPending());
     try {
       await axios.put(
-        "/api/services/app/ProviderAvailability/UpdateAvailability",
+        "https://healthappointmentsystem-2.onrender.com/api/services/app/ProviderAvailability/UpdateAvailability",
         data
       );
       dispatch(updateAvailabilitySuccess());
