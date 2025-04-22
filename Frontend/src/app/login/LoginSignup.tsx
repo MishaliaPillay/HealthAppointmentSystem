@@ -72,7 +72,7 @@ export default function LoginSignup({
             </div>
             <div className={styles.imageWrapper}>
               <Image
-                src="/images/healthpeopl.png"
+                src="/images/healthpeople.png"
                 alt="Healthcare Professional"
                 width={380}
                 height={320}
