@@ -13,7 +13,7 @@ import {
 } from "antd";
 import styles from "./providerdashdash.module.css";
 import { useEffect, useState } from "react";
-
+import withAuth from "../../hoc/withAuth"
 import {
   useProviderState,
   useProviderActions,
@@ -22,7 +22,7 @@ import { useUserActions} from "@/providers/users-provider";
 
 const { Title, Text } = Typography;
 
-export default function ProviderDashboard() {
+function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
 
   const { currentProvider, isPending, isError } = useProviderState();
@@ -260,3 +260,4 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
     </div>
   );
 };
+export default withAuth(ProviderDashboard);
