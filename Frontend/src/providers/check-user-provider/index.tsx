@@ -21,7 +21,7 @@ export const CheckUserProvider = ({
     dispatch(userCheckPending());
 
     const endpoint =
-      "https://localhost:44311/api/services/app/User/CheckUserExists";
+      "https://healthappointmentsystem-2.onrender.com/api/services/app/User/CheckUserExists";
     return axios
       .post<IUserExists>(endpoint, UserCheck)
       .then((response) => {

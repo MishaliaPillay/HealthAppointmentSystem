@@ -84,15 +84,15 @@ export const getProviderPending = createAction<IProviderStateContext>(
   () => ({ isPending: true, isSuccess: false, isError: false })
 );
 
-export const getProviderSuccess = createAction<IProviderStateContext, IProvider>(
-  ProviderActionEnums.getProviderSuccess,
-  (Provider: IProvider) => ({
-    isPending: false,
-    isSuccess: true,
-    isError: false,
-    Provider,
-  })
-);
+export const getProviderSuccess = createAction<
+  IProviderStateContext,
+  IProvider
+>(ProviderActionEnums.getProviderSuccess, (Provider: IProvider) => ({
+  isPending: false,
+  isSuccess: true,
+  isError: false,
+  Provider,
+}));
 
 //Registering The Provider
 export const registerProviderPending = createAction<IProviderStateContext>(

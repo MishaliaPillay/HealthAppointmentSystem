@@ -43,8 +43,7 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `/Provider/GetCurrentProvider?userId=${userId}`;
-
+    const endpoint = `/api/services/Provider/GetCurrentProvider?userId=${userId}`;
     return instance
       .get(endpoint)
       .then((response) => {
@@ -66,58 +65,60 @@ export const ProviderProvider = ({
   // Register Provider
   const registerProvider = async (provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/Provider/Create`;
+    const endpoint = `/api/services/Provider/Create`;
 
     return instance
       .post(endpoint, provider)
       .then((response) => {
         dispatch(registerProviderSuccess(response.data));
         return response.data;
+        return response.data;
       })
       .catch((error) => {
+        console.error("Error registering provider:", error);
         console.error("Error registering provider:", error);
         dispatch(registerProviderError());
       });
   };
 
   // Get All Providers
-const getProviders = async (): Promise<IProvider[]> => {
-  dispatch(getProvidersPending());
-  return instance
-    .get("/Provider/GetAll")
-    .then((response) => {
-      dispatch(getProvidersSuccess(response.data.result));
-      return response.data.result; // Ensure it returns an array of providers
-    })
-    .catch((error) => {
-      console.error("Error fetching providers:", error);
-      dispatch(getProvidersError());
-      return [];
-    });
-};
+  const getProviders = async (): Promise<IProvider[]> => {
+    dispatch(getProvidersPending());
+    return instance
+      .get("/api/services/Provider/GetAll")
+      .then((response) => {
+        dispatch(getProvidersSuccess(response.data.result));
+        return response.data.result; // Ensure it returns an array of providers
+      })
+      .catch((error) => {
+        console.error("Error fetching providers:", error);
+        dispatch(getProvidersError());
+        return [];
+      });
+  };
 
   // Get Provider by ID
-const getProvider = async (providerId: string): Promise<IProvider | null> => {
-  dispatch(getProviderPending());
-  return instance
-    .get(`/Provider/Get?Id=${providerId}`)
-    .then((response) => {
-      dispatch(getProviderSuccess(response.data.result));
-      return response.data.result; // Ensure it returns provider data
-    })
-    .catch((error) => {
-      console.error("Error fetching provider by ID:", error);
-      dispatch(getProviderError());
-      return null;
-    });
-};
+  const getProvider = async (providerId: string): Promise<IProvider | null> => {
+    dispatch(getProviderPending());
+    return instance
+      .get(`/api/services/Provider/Get?Id=${providerId}`)
+      .then((response) => {
+        dispatch(getProviderSuccess(response.data.result));
+        return response.data.result; // Ensure it returns provider data
+      })
+      .catch((error) => {
+        console.error("Error fetching provider by ID:", error);
+        dispatch(getProviderError());
+        return null;
+      });
+  };
   // Update Provider
   const updateProvider = async (
     providerId: string,
     providerData: UpdateProvider
   ) => {
     dispatch(updateProviderPending());
-    const endpoint = `/Provider/UpdateProvider`;
+    const endpoint = `/api/services/Provider/UpdateProvider`;
     const payload = { ...providerData, id: providerId };
 
     return instance
@@ -135,15 +136,18 @@ const getProvider = async (providerId: string): Promise<IProvider | null> => {
   // Delete Provider
   const deleteProviderById = async (providerId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `/Provider/Delete?ProviderId=${providerId}`;
+    const endpoint = `/api/services/Provider/Delete?ProviderId=${providerId}`;
 
     return instance
       .delete(endpoint)
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
         return response.data;
+        return response.data;
       })
       .catch((error) => {
+        console.error("Error deleting provider:", error);
+        dispatch(deleteProviderError());
         console.error("Error deleting provider:", error);
         dispatch(deleteProviderError());
       });

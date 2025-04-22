@@ -399,7 +399,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
               </Form.Item>
 
               <Form.Item
-                name="specialty"
+                name="specialtyName"
                 rules={[
                   { required: true, message: "Please select your specialty!" },
                 ]}

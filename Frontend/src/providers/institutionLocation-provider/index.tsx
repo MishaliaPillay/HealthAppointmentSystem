@@ -48,7 +48,7 @@ export const LocationProvider = ({
   const getInstitutionsWithSpecialty = async (specialty: string) => {
     dispatch(getInstitutionsWithSpecialtyPending());
 
-    const endpoint = `/ProviderInstution/GetInstitutionsWithProvidersBySpecialty?specialty=${encodeURIComponent(
+    const endpoint = `api/services/ProviderInstution/GetInstitutionsWithProvidersBySpecialty?specialty=${encodeURIComponent(
       specialty
     )}`;
 
@@ -79,7 +79,7 @@ export const LocationProvider = ({
 
   const getAllPlaces = async () => {
     dispatch(getAllPlacesPending());
-    const endpoint = `/Institution/GetAllInstitutions`;
+    const endpoint = `/api/services/app/Institution/GetAll`;
     await instance
       .get(endpoint)
       .then((response) => {       

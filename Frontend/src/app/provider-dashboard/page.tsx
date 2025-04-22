@@ -13,22 +13,22 @@ import {
 } from "antd";
 import styles from "./providerdashdash.module.css";
 import { useEffect, useState } from "react";
-import withAuth from "../../hoc/withAuth"
+
 import {
   useProviderState,
   useProviderActions,
 } from "@/providers/providerMedicPrac-provider";
-import { useUserActions} from "@/providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
 
 const { Title, Text } = Typography;
 
-function ProviderDashboard() {
+export default function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
 
   const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
-  
+
   // Fetch user + provider on mount
   useEffect(() => {
     fetchProviderOnReload();
@@ -260,4 +260,3 @@ const PatientAppointmentCard: React.FC<PatientAppointmentCardProps> = ({
     </div>
   );
 };
-export default withAuth(ProviderDashboard);

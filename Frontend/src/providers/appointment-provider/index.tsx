@@ -37,7 +37,7 @@ export const AppointmentProvider = ({
 
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
-    const endpoint = "/Appointment/Create";
+    const endpoint = "/api/services/app/Appointment/Create";
 
     return instance
       .post(endpoint, appointment)
@@ -48,29 +48,24 @@ export const AppointmentProvider = ({
       });
   };
 
-const getAppointments = async (): Promise<IAppointment[]> => {
-  dispatch(getAllAppointmentPending());
-  const endpoint = "/Appointment/GetAll";
+  const getAppointments = async () => {
+    dispatch(getAllAppointmentPending());
+    const endpoint = "/api/services/app/Appointment/GetAll";
 
-  try {
-    const response = await instance.get(endpoint);
+    return instance
+      .get(endpoint)
+      .then((response) =>
+        dispatch(getAllAppointmentSuccess(response.data.data))
+      )
+      .catch((error) => {
+        console.error("Fetching appointments failed:", error);
+        dispatch(getAllAppointmentError());
+      });
+  };
 
-    if (response.data?.data) {
-      dispatch(getAllAppointmentSuccess(response.data.data));
-      return response.data.data; // Ensure data is returned
-    } else {
-      dispatch(getAllAppointmentError());
-      return []; // Return an empty array if data is missing
-    }
-  } catch (error) {
-    console.error("Fetching appointments failed:", error);
-    dispatch(getAllAppointmentError());
-    return []; // Return an empty array on failure
-  }
-};
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-    const endpoint = `/Appointment/Get/${id}`;
+    const endpoint = `/api/services/app/Appointment/Get/${id}`;
 
     return instance
       .get(endpoint)
@@ -81,28 +76,25 @@ const getAppointments = async (): Promise<IAppointment[]> => {
       });
   };
 
- const updateAppointment = async (id: string, appointment: Partial<IAppointment>) => {
-  dispatch(updateAppointmentPending());
-  const endpoint = `/Appointment/Update`; // Corrected endpoint
+  const updateAppointment = async (
+    id: string,
+    appointment: Partial<IAppointment>
+  ) => {
+    dispatch(updateAppointmentPending());
+    const endpoint = `/api/services/app/Appointment/Update/${id}`;
 
-  const payload = {
-    ...appointment,
-    id, // Include ID in the request body, NOT the URL
+    return instance
+      .put(endpoint, appointment)
+      .then((response) => dispatch(updateAppointmentsSuccess(response.data)))
+      .catch((error) => {
+        console.error("Updating appointment by ID failed:", error);
+        dispatch(updateAppointmentError());
+      });
   };
 
-  return instance
-    .put(endpoint, payload)
-    .then((response) => {
-      dispatch(updateAppointmentsSuccess(response.data));
-    })
-    .catch((error) => {
-      console.error("Updating appointment failed:", error.response?.data || error.message);
-      dispatch(updateAppointmentError());
-    });
-};
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    const endpoint = `/Appointment/Delete/${id}`;
+    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
 
     return instance
       .delete(endpoint)
