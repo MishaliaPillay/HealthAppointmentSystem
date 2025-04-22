@@ -5,40 +5,42 @@ import {
   Typography,
   Button,
   Select,
-  Input,
   Space,
   Spin,
   Modal,
-  Form,
   Table,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
 import {
   useProviderActions,
   useProviderState,
 } from "@/providers/providerMedicPrac-provider";
 import { useAppointmentActions } from "@/providers/appointment-provider";
-import { useUserActions } from "@/providers/users-provider";
+import { useUserActions, useUserState } from "@/providers/users-provider";
 import { IAppointment } from "@/providers/appointment-provider/models";
 import styles from "./styles";
+import { usePatientActions } from "@/providers/paitient-provider";
 
-const { Title } = Typography;
 const { Option } = Select;
 
 export default function ProviderAppointmentsPage() {
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchText] = useState("");
+  const [statusFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<IAppointment | null>(null);
+  const [appointments, setAppointments] = useState<IAppointment[]>([]);
 
   const { isPending, isError, isSuccess, currentProvider } = useProviderState();
+  const { getPatient } = usePatientActions();
   const { getCurrentProvider } = useProviderActions();
   const { getAppointments, deleteAppointment, updateAppointment } =
     useAppointmentActions();
   const { getCurrentUser } = useUserActions();
+
+  const { currentUser } = useUserState();
 
   useEffect(() => {
     if (isPending) setLoading(true);
@@ -58,13 +60,36 @@ export default function ProviderAppointmentsPage() {
     }
   };
 
+  const loadAppointments = async () => {
+    const fetchedAppointments = currentProvider?.appointments || [];
+
+    const enhancedAppointmentsData = await Promise.all(
+      fetchedAppointments.map(async (appointment) => {
+        try {
+          //const response = await getPatient(appointment.patientId);
+          const response = (await getAppointments());
+          console.log("Here is the response for getPatient:", response);
+          return {
+            ...appointment,
+            patientName: response || "Unknown",
+          };
+        } catch (error) {
+          console.error(
+            `Failed to fetch patient ${appointment.patientId}:`,
+            error
+          );
+          return { ...appointment, patientName: "Unknown" };
+        }
+      })
+    );
+
+    setAppointments(enhancedAppointmentsData);
+  };
   useEffect(() => {
-    getAppointments();
-  }, []);
+    loadAppointments();
+  }, [currentProvider]);
 
-  const appointmentsData: IAppointment[] = currentProvider?.appointments || [];
-
-  const filteredData = appointmentsData.filter((appointment) => {
+  const filteredData = appointments.filter((appointment) => {
     const matchesSearch = appointment.purpose
       ?.toLowerCase()
       .includes(searchText.toLowerCase());
@@ -80,7 +105,7 @@ export default function ProviderAppointmentsPage() {
       content: "This action cannot be undone.",
       onOk: async () => {
         await deleteAppointment(appointmentId);
-        getAppointments();
+        setAppointments(appointments.filter((a) => a.id !== appointmentId));
       },
     });
   };
@@ -93,22 +118,23 @@ export default function ProviderAppointmentsPage() {
   const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
     if (!selectedAppointment) return;
 
-    const cleanValues = { ...values };
-    // Remove any React elements accidentally included
-    Object.keys(cleanValues).forEach((key) => {
-      if (typeof cleanValues[key] === "object" && cleanValues[key] !== null) {
-        cleanValues[key] = JSON.parse(JSON.stringify(cleanValues[key])); // Deep clone without circular refs
-      }
-    });
-
-    await updateAppointment(selectedAppointment.id, cleanValues);
+    await updateAppointment(selectedAppointment.id, values);
     setEditModalVisible(false);
-    getAppointments(); // Refresh list
+
+    setAppointments((prevAppointments) =>
+      prevAppointments.map((app) =>
+        app.id === selectedAppointment.id ? { ...app, ...values } : app
+      )
+    );
   };
 
   const handleStatusChange = async (id: string, newStatus: number) => {
     await updateAppointment(id, { appointmentStatus: newStatus });
-    getAppointments();
+    setAppointments((prev) =>
+      prev.map((app) =>
+        app.id === id ? { ...app, appointmentStatus: newStatus } : app
+      )
+    );
   };
 
   const getColumns = () => [
@@ -130,9 +156,9 @@ export default function ProviderAppointmentsPage() {
     },
     {
       title: "Patient",
-      dataIndex: "patientId",
-      key: "patientId",
-      render: (id: string) => `Patient ID: ${id}`,
+      dataIndex: "patientName",
+      key: "patientName",
+      render: (name: string) => `Patient Name: ${name}`,
     },
     {
       title: "Purpose",
@@ -183,42 +209,6 @@ export default function ProviderAppointmentsPage() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <Title level={2} style={styles.titleText}>
-          My Provider Appointments
-        </Title>
-
-        <div style={styles.headerControls}>
-          <div style={styles.searchFilter}>
-            <Input
-              placeholder="Search by purpose"
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={styles.searchInput}
-            />
-            <Select
-              defaultValue="all"
-              value={statusFilter}
-              onChange={(value) => setStatusFilter(value)}
-              style={styles.filterSelect}
-            >
-              <Option value="all">All Status</Option>
-              {Object.keys(AppointmentStatusReflist)
-                .filter((key) => isNaN(Number(key)))
-                .map((statusKey) => (
-                  <Option
-                    key={statusKey}
-                    value={AppointmentStatusReflist[statusKey]}
-                  >
-                    {statusKey}
-                  </Option>
-                ))}
-            </Select>
-          </div>
-        </div>
-      </div>
-
       <Spin spinning={loading} tip="Loading appointments...">
         <Table<IAppointment>
           dataSource={filteredData}
@@ -227,34 +217,6 @@ export default function ProviderAppointmentsPage() {
           locale={{ emptyText: "No appointments found." }}
         />
       </Spin>
-
-      {/* Edit Appointment Modal */}
-      <Modal
-        title="Edit Appointment"
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={() =>
-          document
-            .getElementById("appointment-form")
-            ?.dispatchEvent(new Event("submit", { bubbles: true }))
-        }
-      >
-        <Form
-          id="appointment-form"
-          initialValues={selectedAppointment}
-          onFinish={handleUpdateAppointment}
-        >
-          <Form.Item label="Purpose" name="purpose">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Date" name="appointmentDate">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Time" name="appointmentTime">
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 }

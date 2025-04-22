@@ -43,7 +43,8 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `/api/services/Provider/GetCurrentProvider?userId=${userId}`;
+    // const endpoint = `/api/services/Provider/GetCurrentProvider?userId=${userId}`;
+    const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
     return instance
       .get(endpoint)
       .then((response) => {
@@ -65,8 +66,8 @@ export const ProviderProvider = ({
   // Register Provider
   const registerProvider = async (provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/api/services/Provider/Create`;
-
+    // const endpoint = `/api/services/Provider/Create`;
+    const endpoint = `/Provider/Create`;
     return instance
       .post(endpoint, provider)
       .then((response) => {
@@ -80,37 +81,44 @@ export const ProviderProvider = ({
         dispatch(registerProviderError());
       });
   };
+ 
 
   // Get All Providers
   const getProviders = async (): Promise<IProvider[]> => {
     dispatch(getProvidersPending());
-    return instance
-      .get("/api/services/Provider/GetAll")
-      .then((response) => {
-        dispatch(getProvidersSuccess(response.data.result));
-        return response.data.result; // Ensure it returns an array of providers
-      })
-      .catch((error) => {
-        console.error("Error fetching providers:", error);
-        dispatch(getProvidersError());
-        return [];
-      });
+    return (
+      instance
+        //.get("/api/services/Provider/GetAll")
+        .get("/Provider/GetAll")
+        .then((response) => {
+          dispatch(getProvidersSuccess(response.data.result));
+          return response.data.result; // Ensure it returns an array of providers
+        })
+        .catch((error) => {
+          console.error("Error fetching providers:", error);
+          dispatch(getProvidersError());
+          return [];
+        })
+    );
   };
 
   // Get Provider by ID
   const getProvider = async (providerId: string): Promise<IProvider | null> => {
     dispatch(getProviderPending());
-    return instance
-      .get(`/api/services/Provider/Get?Id=${providerId}`)
-      .then((response) => {
-        dispatch(getProviderSuccess(response.data.result));
-        return response.data.result; // Ensure it returns provider data
-      })
-      .catch((error) => {
-        console.error("Error fetching provider by ID:", error);
-        dispatch(getProviderError());
-        return null;
-      });
+    return (
+      instance
+        //.get(`/api/services/Provider/Get?Id=${providerId}`)
+        .get(`/Provider/Get?Id=${providerId}`)
+        .then((response) => {
+          dispatch(getProviderSuccess(response.data.result));
+          return response.data.result; // Ensure it returns provider data
+        })
+        .catch((error) => {
+          console.error("Error fetching provider by ID:", error);
+          dispatch(getProviderError());
+          return null;
+        })
+    );
   };
   // Update Provider
   const updateProvider = async (
@@ -118,7 +126,8 @@ export const ProviderProvider = ({
     providerData: UpdateProvider
   ) => {
     dispatch(updateProviderPending());
-    const endpoint = `/api/services/Provider/UpdateProvider`;
+    //const endpoint = `/api/services/Provider/UpdateProvider`;
+    const endpoint = `/Provider/UpdateProvider`;
     const payload = { ...providerData, id: providerId };
 
     return instance
@@ -136,8 +145,8 @@ export const ProviderProvider = ({
   // Delete Provider
   const deleteProviderById = async (providerId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `/api/services/Provider/Delete?ProviderId=${providerId}`;
-
+    //const endpoint = `/api/services/Provider/Delete?ProviderId=${providerId}`;
+    const endpoint = `/Provider/Delete?ProviderId=${providerId}`;
     return instance
       .delete(endpoint)
       .then((response) => {

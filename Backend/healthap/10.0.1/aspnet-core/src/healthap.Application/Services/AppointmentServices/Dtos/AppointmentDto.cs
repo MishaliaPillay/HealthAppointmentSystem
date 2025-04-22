@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using healthap.Domain.Appointments;
+using healthap.Services.PersonServices.Dtos;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {
@@ -19,8 +20,13 @@ namespace healthap.Services.AppointmentServices.Dtos
         public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
         [Required]
         public Guid ProviderId { get; set; }
+
         [Required]
         public Guid PatientId { get; set; }
+        public ProviderResponseDto? Provider { get; set; }
+        public PatientResponseDto? Patient { get; set; }
+
+
 
     }
 }

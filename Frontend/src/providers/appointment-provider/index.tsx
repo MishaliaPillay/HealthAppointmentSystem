@@ -48,24 +48,27 @@ export const AppointmentProvider = ({
       });
   };
 
-  const getAppointments = async () => {
+  const getAppointments = async (): Promise<IAppointment[] | null> => {
     dispatch(getAllAppointmentPending());
-    const endpoint = "/api/services/app/Appointment/GetAll";
-
+    // const endpoint = "/api/services/app/Appointment/GetAll";
+    const endpoint = "/Appointment/GetAll";
     return instance
       .get(endpoint)
-      .then((response) =>
-        dispatch(getAllAppointmentSuccess(response.data.data))
-      )
+      .then((response) => {
+        dispatch(getAllAppointmentSuccess(response.data.data));
+        return response.data.data;
+      })
       .catch((error) => {
         console.error("Fetching appointments failed:", error);
         dispatch(getAllAppointmentError());
+        return null;
       });
   };
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Get/${id}`;
+    const endpoint = `/Appointment/Get/${id}`;
+    //const endpoint = `/api/services/app/Appointment/Get/${id}`;
 
     return instance
       .get(endpoint)
@@ -81,7 +84,8 @@ export const AppointmentProvider = ({
     appointment: Partial<IAppointment>
   ) => {
     dispatch(updateAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Update/${id}`;
+    const endpoint = `/Appointment/Update`;
+    //const endpoint = `/api/services/app/Appointment/Update/${id}`;
 
     return instance
       .put(endpoint, appointment)
@@ -94,8 +98,8 @@ export const AppointmentProvider = ({
 
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
-
+    //const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+    const endpoint = `/Appointment/Delete/${id}`;
     return instance
       .delete(endpoint)
       .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))

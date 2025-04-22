@@ -1,4 +1,6 @@
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
+import { IProvider } from "../providerMedicPrac-provider/models";
+import { IPatient } from "../paitient-provider/models";
 
 export interface IAppointment {
   id?: string;
@@ -7,5 +9,7 @@ export interface IAppointment {
   purpose: string;
   appointmentStatus: AppointmentStatusReflist;
   providerId: string;
-  patientId:string
+  patientId: string;
+  Provider: IProvider;
+  Patient: IPatient;
 }

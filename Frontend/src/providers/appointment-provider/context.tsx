@@ -20,7 +20,7 @@ export const INITIAL_STATE: IAppointmentStateContext = {
 // These actions will be implemented in the provider component
 export interface IAppointmentActionContext {
   bookAppointment: (appointment: IAppointment) => void;
-  getAppointments: () => void; // Fetch all Appointments
+  getAppointments: () => Promise<IAppointment[]>// Fetch all Appointments
   getAppointmentById: (id: string) => void; // Fetch a single Appointment  by the ID
   updateAppointment: (id: string, appointment: Partial<IAppointment>) => void;
   deleteAppointment: (id: string) => void;
