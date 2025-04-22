@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Tabs, Typography, Spin } from "antd";
+import Image from "next/image";
+import { Heart } from "lucide-react";
 import styles from "./login-page.module.css";
 import { useAuthState } from "@/providers/auth-provider";
 import { toast } from "react-toastify";
@@ -58,43 +60,73 @@ export default function LoginSignup({
   }, [isPending, isError, isSuccess, router, authMode, setActiveTab]);
 
   return (
-    <Spin spinning={loading} tip="Please hold on...">
-      <div className={styles.formCard}>
-        <Title level={2} className={styles.title}>
-          {activeTab === "login" ? "Welcome Back!" : "Create Account"}
-        </Title>
-        <Title level={4} className={styles.subtitle}>
-          {activeTab === "login"
-            ? "Log in to connect with healthcare professionals"
-            : "Join our platform to connect patients with healthcare professionals"}
-        </Title>
-
-        <Tabs
-          activeKey={activeTab}
-          onChange={(key) => {
-            // Ensure the correct type is set
-            setActiveTab(key as "login" | "signup");
-          }}
-          centered
-          className={styles.tabs}
-          items={[
-            {
-              key: "login",
-              label: "Login",
-              children: (
-                <LoginForm onBeforeSubmit={() => setAuthMode("login")} />
-              ),
-            },
-            {
-              key: "signup",
-              label: "Sign Up",
-              children: (
-                <SignupForm onBeforeSubmit={() => setAuthMode("signup")} />
-              ),
-            },
-          ]}
-        />
-      </div>
-    </Spin>
+    <div className={styles.page}>
+      <main className={styles.main}>
+        <div className={styles.authContainer}>
+          <div className={styles.brandSide}>
+            <div className={styles.logoWrapper}>
+              <div className={styles.logoIcon}>
+                <Heart className={styles.icon} fill="white" />
+              </div>
+              <span className={styles.logoText}>HealthConnect</span>
+            </div>
+            <div className={styles.imageWrapper}>
+              <Image
+                src="/images/home.jpg"
+                alt="Healthcare Professional"
+                width={380}
+                height={320}
+                priority
+                className={styles.image}
+              />
+            </div>
+            <div className={styles.brandContent}>
+              <h1 className={styles.brandTitle}>Welcome</h1>
+              <p className={styles.brandDescription}>
+                Your secure gateway to smarter healthcare. Easily connect with
+                providers, manage appointments, and stay in control of your health
+                — all in one place.
+              </p>
+            </div>
+          </div>
+          <div className={styles.formSide}>
+            <Spin spinning={loading} tip="Please hold on...">
+              <div className={styles.formCard}>
+                <Title level={2} className={styles.title}>
+                  {activeTab === "login" ? "Welcome Back!" : "Create Account"}
+                </Title>
+                <Title level={4} className={styles.subtitle}>
+                  {activeTab === "login"
+                    ? "Log in to connect with healthcare professionals"
+                    : "Join our platform to connect patients with healthcare professionals"}
+                </Title>
+                <Tabs
+                  activeKey={activeTab}
+                  onChange={setActiveTab}
+                  centered
+                  className={styles.tabs}
+                  items={[
+                    {
+                      key: "login",
+                      label: "Login",
+                      children: (
+                        <LoginForm onBeforeSubmit={() => setAuthMode("login")} />
+                      ),
+                    },
+                    {
+                      key: "signup",
+                      label: "Sign Up",
+                      children: (
+                        <SignupForm onBeforeSubmit={() => setAuthMode("signup")} />
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+            </Spin>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
