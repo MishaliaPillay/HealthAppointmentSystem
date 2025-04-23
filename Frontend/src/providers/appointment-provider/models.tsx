@@ -15,9 +15,10 @@ export interface IAppointment {
 }
 
 export interface IAppointmentApiResponse {
-  appointmentDate: string; // ISO string, e.g. "2025-04-21T14:51:02.731"
-  appointmentTime: string; // e.g. "12:51:00"
+  appointmentDate: string; 
+  appointmentTime: string; 
   purpose: string;
+  id?: string;
   appointmentStatus: number;
   appointments: IAppointment;
   provider: IProvider;

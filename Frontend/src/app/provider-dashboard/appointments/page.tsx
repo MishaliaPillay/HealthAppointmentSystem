@@ -34,7 +34,7 @@ export default function ProviderAppointmentsPage() {
   const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
-    useState<IAppointment | null>(null);
+    useState<IAppointmentApiResponse | null>(null);
   const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
     []
   );
@@ -115,13 +115,20 @@ export default function ProviderAppointmentsPage() {
     });
   };
 
-  const handleEditAppointment = (appointment: IAppointment) => {
+  const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
       setSelectedAppointment({
         ...appointment,
-        id: (appointment).id, 
+        id: (appointment).appointments.id, 
       });
       setEditModalVisible(true);
   };
+  // const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
+  //   setSelectedAppointment({
+  //     ...appointment,
+  //     appointments: appointment.id,
+  //   });
+  //   setEditModalVisible(true);
+  // };
 
   const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
     if (!selectedAppointment) return;
