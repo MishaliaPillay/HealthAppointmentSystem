@@ -7,7 +7,6 @@ import {
   PatientStateContext,
 } from "./context";
 import { PatientReducer } from "./reducer";
-import axios from "axios";
 import { useContext, useReducer } from "react";
 import {
   getCurrentPatientPending,
@@ -41,8 +40,8 @@ export const PatientProvider = ({
     userId: number
   ): Promise<IPatient | null> => {
     dispatch(getCurrentPatientPending());
-    const endpoint = `https://healthappointmentsystem-2.onrender.com/api/services/app/Patient/GetCurrentPatient?userId=${userId}`;
-    return axios
+    const endpoint = `/api/services/Patient/GetCurrentPatient?userId=${userId}`;
+    return instance
       .get(endpoint)
       .then((response) => {
         if (response?.data?.result) {
@@ -64,7 +63,6 @@ export const PatientProvider = ({
   // Get Patient
 const getPatient = async (patientId: string): Promise<IPatient | null> => {
   dispatch(getPatientPending());
-  //const endpoint = `https://localhost:44311/api/services/app/Patient/Get?Id=${patientId}`;
   const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
   return instance
     .get(endpoint)
