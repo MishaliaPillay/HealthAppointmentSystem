@@ -10,10 +10,10 @@ namespace healthap.Domain.Appointments
     {
         [Required]
         [ForeignKey("ProviderId")] public Guid ProviderId { get; set; }
-        public Provider Provider { get; set; }
+        //public Provider Provider { get; set; }
         [Required]
         [ForeignKey("PatientId")] public Guid PatientId { get; set; }
-        public Patient Patient { get; set; }
+        //public Patient Patient { get; set; }
         [Required]
         public DateTime AppointmentDate { get; set; } // Holds the date part of the appointment
         [Required]

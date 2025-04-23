@@ -40,11 +40,11 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
         });
 
         // Appointment → Provider (Restrict delete)
-        modelBuilder.Entity<Appointment>()
-            .HasOne(a => a.Provider)
-            .WithMany(p => p.Appointments)
-            .HasForeignKey(a => a.ProviderId)
-            .OnDelete(DeleteBehavior.Restrict);
+        //modelBuilder.Entity<Appointment>()
+        //    .HasOne(a => a.Provider)
+        //    .WithMany(p => p.Appointments)
+        //    .HasForeignKey(a => a.ProviderId)
+        //    .OnDelete(DeleteBehavior.Restrict);
 
         // ProviderAvailability → Provider (Optional cascade or restrict)
         modelBuilder.Entity<ProviderAvailabilty>()

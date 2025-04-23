@@ -23,8 +23,8 @@ namespace healthap.Services.AppointmentServices.Dtos
 
         [Required]
         public Guid PatientId { get; set; }
-        public ProviderResponseDto? Provider { get; set; }
-        public PatientResponseDto? Patient { get; set; }
+        //public ProviderResponseDto? Provider { get; set; }
+        //public PatientResponseDto? Patient { get; set; }
 
 
 

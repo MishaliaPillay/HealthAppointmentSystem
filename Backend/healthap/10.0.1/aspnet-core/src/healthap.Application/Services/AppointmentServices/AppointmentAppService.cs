@@ -7,21 +7,29 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using AutoMapper;
+using healthap.Authorization.Users;
 using healthap.Domain.Appointments;
+using healthap.Domain.Persons;
 using healthap.Services.AppointmentServices.Dtos;
-using healthap.Services.AppointmentServices.Mappings;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 
 namespace healthap.Services.AppointmentServices
 {
-    public class AppointmentAppService : AsyncCrudAppService<Appointment, AppointmentDto, Guid , PagedAndSortedResultRequestDto>, IAppointmentAppService
+    public class AppointmentAppService : AsyncCrudAppService<Appointment, AppointmentDto, Guid>, IAppointmentAppService
     {
         private readonly AppointmentManager _appointmentManager;
+        private readonly IRepository<Patient, Guid> _patientRepository;
+        private readonly IRepository<Provider, Guid> _providerRepository;
+        IRepository<Appointment, Guid> _appointmentRepository;
+
         private readonly IMapper _mapper;
-        public AppointmentAppService(IRepository<Appointment, Guid> repository, AppointmentManager appointmentManager, IMapper mapper) : base(repository)
+        public AppointmentAppService(IRepository<Appointment, Guid> repository, IRepository<Provider, Guid> providerRepository, IRepository<Patient, Guid> patientRepository, AppointmentManager appointmentManager) : base(repository)
         {
             _appointmentManager = appointmentManager;
-            _mapper = mapper;
+            _providerRepository = providerRepository;
+            _patientRepository = patientRepository;
+            _appointmentRepository = repository;
         }
         public override async Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
@@ -55,28 +63,84 @@ namespace healthap.Services.AppointmentServices
             return createdAppointment;
         }
 
+        //public override async Task<PagedResultDto<AppointmentDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        //{
+        //    var query = _appointmentManager.GetAllAppointments();
+        //    var totalCount = await query.CountAsync();
+        //    var appointments = await query
+        //        .Skip(input.SkipCount)
+        //        .Take(input.MaxResultCount)
+        //        .ToListAsync();
+        //    var result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
+        //    return new PagedResultDto<AppointmentDto>(totalCount, result);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public override async Task<PagedResultDto<AppointmentDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        //}
+
+
+
+        public async Task<IList<AppointResponseDto>> GetAppointments()
         {
-            var query = _appointmentManager.GetAllAppointments();
-            var totalCount = await query.CountAsync();
-            var appointments = await query.ToListAsync();
-            var appointmentMapper = new AppointmentMapper();
+            var appointQuery = await _appointmentRepository.GetAllAsync();
 
-            var appointmentList = new List<AppointmentDto>();
-            
-            foreach( var appointment in appointments )
+            // Get all patient and provider IDs used in the appointments
+            var patientIds = appointQuery.Select(a => a.PatientId).Distinct().ToList();
+            var providerIds = appointQuery.Select(a => a.ProviderId).Distinct().ToList();
+
+            // Get only the necessary patients and providers
+            var patients = await _patientRepository.GetAllIncludingAsync(p => p.User);
+            var filteredPatients = patients.Where(p => patientIds.Contains(p.Id)).ToList();
+
+            var providers = await _providerRepository.GetAllIncludingAsync(p => p.User);
+            var filteredProviders = providers.Where(p => providerIds.Contains(p.Id)).ToList();
+
+            List<AppointResponseDto> appontResponseList = new List<AppointResponseDto>();
+
+            foreach (var appointment in appointQuery)
             {
-                appointmentList.Add(appointmentMapper.MapAppointment(appointment));
+                var patient = filteredPatients.FirstOrDefault(p => p.Id == appointment.PatientId);
+                var provider = filteredProviders.FirstOrDefault(p => p.Id == appointment.ProviderId);
+
+                var appointResp = new AppointResponseDto
+                {
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentTime = appointment.AppointmentTime,
+                    Purpose = appointment.Purpose,
+                    AppointmentStatus = appointment.AppointmentStatus,
+                    Patient = patient,
+                    Provider = provider
+                };
+
+                appontResponseList.Add(appointResp);
             }
 
-            return new PagedResultDto<AppointmentDto>(totalCount, appointmentList);
+            return appontResponseList;
         }
+        //public async Task<IList<AppointResponseDto>> GetAppointments()
+        //{
+        //    var appointQuery = await _appointmentRepository.GetAllAsync();
+        //    List<AppointResponseDto> appontResponseList= new List<AppointResponseDto>();
+           
+        //    foreach (var appointment in appointQuery)
+        //    {
+        //        var patients = await _patientRepository.GetAllIncludingAsync(p => p.User);
+        //        var patient= await patients.FirstOrDefaultAsync(p => p.Id == appointment.PatientId);
+
+        //        var providers = await _providerRepository.GetAllIncludingAsync(p => p.User);
+        //        var provider= await providers.FirstOrDefaultAsync(p => p.Id == appointment.ProviderId);
+
+        //        var appointResp = new AppointResponseDto
+        //        {
+        //            AppointmentDate = appointment.AppointmentDate,
+        //            AppointmentTime = appointment.AppointmentTime,
+        //            Purpose = appointment.Purpose,
+        //            AppointmentStatus = appointment.AppointmentStatus,
+        //            Patient = patient,
+        //            Provider = provider
+        //        };
+        //        appontResponseList.Add(appointResp);
+        //    }
+        //    return appontResponseList;
+        //}
 
     }
 }
