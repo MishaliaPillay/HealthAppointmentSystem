@@ -61,8 +61,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
     {
       id: "1",
       title: "Appointment Reminder",
-      message: "Your appointment is scheduled for tomorrow",
-      time: "2 hours ago",
+      message: "",
+      time: "",
       read: false,
       severity: "info",
     },
