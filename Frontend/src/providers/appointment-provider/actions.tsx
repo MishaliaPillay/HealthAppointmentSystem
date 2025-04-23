@@ -1,6 +1,6 @@
 "use client";
 import { IAppointmentStateContext } from "./context";
-import {IAppointment} from "./models"
+import { IAppointment, IAppointments } from "./models";
 import { createAction } from "redux-actions";
 
 export enum AppointmentActionEnums {
@@ -43,11 +43,11 @@ export const bookAppointmentSuccess = createAction<
   IAppointment
 >(
   AppointmentActionEnums.bookAppointmentSuccess,
-  (appointment: IAppointment) => ({
+  (dAppointment: IAppointments) => ({
     isPending: false,
     isSuccess: true,
     isError: false,
-    appointment,
+    dAppointment,
   })
 );
 
@@ -56,7 +56,6 @@ export const bookAppointmentError = createAction<IAppointmentStateContext>(
   AppointmentActionEnums.bookAppointmentError,
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
-
 
 //Get all   Appointment Pending
 export const getAllAppointmentPending = createAction<IAppointmentStateContext>(

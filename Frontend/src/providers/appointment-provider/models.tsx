@@ -14,9 +14,20 @@ export interface IAppointment {
   patient: IPatient;
 }
 
+export interface IAppointments {
+  id?: string;
+  appointmentDate: Date;
+  appointmentTime: string;
+  purpose: string;
+  appointmentStatus: AppointmentStatusReflist;
+  providerId: string;
+  patientId: string;
+  provider?: IProvider;
+  patient?: IPatient;
+}
 export interface IAppointmentApiResponse {
-  appointmentDate: string; 
-  appointmentTime: string; 
+  appointmentDate: string;
+  appointmentTime: string;
   purpose: string;
   id?: string;
   appointmentStatus: number;

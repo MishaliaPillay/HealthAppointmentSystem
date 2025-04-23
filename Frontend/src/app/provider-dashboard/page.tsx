@@ -19,6 +19,7 @@ import {
   useProviderActions,
 } from "@/providers/providerMedicPrac-provider";
 import { useUserActions } from "@/providers/users-provider";
+import UpdateAvailabilityForm from "@/components/provider-availability/ProviderAvailabilityModal";
 
 const { Title, Text } = Typography;
 
@@ -28,7 +29,6 @@ export default function ProviderDashboard() {
   const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
-
 
   useEffect(() => {
     fetchProviderOnReload();
@@ -82,6 +82,7 @@ export default function ProviderDashboard() {
               <Button size="large" block>
                 Manage Availability
               </Button>
+              <UpdateAvailabilityForm providerId={currentProvider.id} />
             </div>
           </Card>
         </Col>

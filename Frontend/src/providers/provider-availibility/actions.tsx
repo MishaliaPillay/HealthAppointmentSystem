@@ -34,7 +34,7 @@ export const fetchAvailabilitySuccess = createAction<
   isPending: false,
   isSuccess: true,
   isError: false,
-  providers: data,
+  availabilities: { result: data.result },
 }));
 
 export const fetchAvailabilityError =
