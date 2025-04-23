@@ -54,9 +54,14 @@ export default function ProviderAppointmentsPage() {
 
   const loadAppointments = async () => {
     const response = await getAppointments();
-    const fetchedAppointments = response?? [];
+    const fetchedAppointments = response ?? [];
+     const filteredAppointments = fetchedAppointments.filter(
+       (appointment) =>
+         appointment.provider?.id === currentProvider?.id ||
+         appointment.provider?.user.id === currentProvider?.user.id
+     );
     const enhancedAppointmentsData = await Promise.all(
-      fetchedAppointments.map(async (appointment) => {
+      filteredAppointments.map(async (appointment) => {
         try {
           return {
             ...appointment,
