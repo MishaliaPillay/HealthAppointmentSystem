@@ -29,7 +29,7 @@ export default function ProviderDashboard() {
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
 
-  // Fetch user + provider on mount
+
   useEffect(() => {
     fetchProviderOnReload();
   }, []);

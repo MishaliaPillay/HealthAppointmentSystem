@@ -2,9 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
-using Abp.Domain.Entities;
 using healthap.Domain.Appointments;
-using healthap.Domain.Persons;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {

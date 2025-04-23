@@ -9,13 +9,15 @@ using Abp.UI;
 using AutoMapper;
 using healthap.Domain.Persons;
 using healthap.Services.PersonServices.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace healthap.Services.PersonServices
 {
     public class ProviderAppService :
          AsyncCrudAppService<Provider, ProviderResponseDto, Guid, PagedAndSortedResultRequestDto, ProviderRequestDto, ProviderResponseDto>,
-         IProviderAppService
+         IProviderAppService, IApplicationService
     {
         private readonly ProviderManager _providerManager;
         private readonly IMapper _mapper;
@@ -76,7 +78,8 @@ namespace healthap.Services.PersonServices
         public async Task<ProviderResponseDto> GetCurrentProviderAsync(long userId)
         {
             var provider = await _providerManager.GetProviderByUserIdAsync(userId);
-            return _mapper.Map<Provider, ProviderResponseDto>(provider);
+            var result =  _mapper.Map<ProviderResponseDto>(provider);
+            return result;
         }
 
         public async Task<ProviderResponseDto> UpdateproviderAsync(UpdateProviderDto input)

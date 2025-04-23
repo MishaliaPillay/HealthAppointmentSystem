@@ -2,7 +2,7 @@
 
 import React, { useContext, useReducer } from "react";
 import { getAxiosInstace } from "@/utils/axiosInstance";
-import { IAppointment } from "./models";
+import { IAppointment, IAppointmentApiResponse } from "./models";
 import { AppointmentReducer } from "./reducers";
 import {
   AppointmentActionContext,
@@ -48,23 +48,33 @@ export const AppointmentProvider = ({
       });
   };
 
-  const getAppointments = async () => {
+  const getAppointments = async (): Promise<
+    IAppointmentApiResponse[] | null
+  > => {
     dispatch(getAllAppointmentPending());
-    const endpoint = "/api/services/app/Appointment/GetAll";
+    const endpoint =
+      "https://localhost:44311/api/services/app/Appointment/GetAppointments";
 
     return instance
       .get(endpoint)
-      .then((response) =>
-        dispatch(getAllAppointmentSuccess(response.data.data))
-      )
+      .then((response) => {
+        const result = response.data?.result ?? [];
+        dispatch(getAllAppointmentSuccess(result));
+        return result;
+      })
       .catch((error) => {
-        console.error("Fetching appointments failed:", error);
+        console.error(
+          "Fetching appointments failed:",
+          error.response?.data || error.message
+        );
         dispatch(getAllAppointmentError());
+        return null;
       });
   };
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
+
     const endpoint = `/api/services/app/Appointment/Get/${id}`;
 
     return instance
@@ -77,33 +87,37 @@ export const AppointmentProvider = ({
   };
 
   const updateAppointment = async (
-    id: string,
-    appointment: Partial<IAppointment>
+    appointpointId: string,
+    appointmentData: IAppointment
   ) => {
     dispatch(updateAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Update/${id}`;
-
+    //const endpoint = `https://localhost:44311/api/services/app/Appointment/Update`;
+    const endpoint = `/api/services/app/Appointment/Update`;
+    const payload = { ...appointmentData, id: appointpointId };
     return instance
-      .put(endpoint, appointment)
+      .put(endpoint, payload)
       .then((response) => dispatch(updateAppointmentsSuccess(response.data)))
       .catch((error) => {
-        console.error("Updating appointment by ID failed:", error);
+        console.error(
+          "Updating appointment:",
+          error.response?.data || error.message
+        );
         dispatch(updateAppointmentError());
       });
   };
 
-  const deleteAppointment = async (id: string) => {
-    dispatch(deleteAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+const deleteAppointment = async (id: string) => {
+  dispatch(deleteAppointmentPending());
+  const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+  return instance
+    .delete(endpoint)
+    .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
+    .catch((error) => {
+      console.error("Deleting appointment by ID failed:", error);
+      dispatch(deleteAppointmentError());
+    });
+};
 
-    return instance
-      .delete(endpoint)
-      .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
-      .catch((error) => {
-        console.error("Deleting appointment by ID failed:", error);
-        dispatch(deleteAppointmentError());
-      });
-  };
 
   return (
     <AppointmentStateContext.Provider value={state}>

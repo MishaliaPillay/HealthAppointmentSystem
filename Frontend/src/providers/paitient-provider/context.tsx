@@ -14,14 +14,14 @@ export interface IPatientStateContext {
 }
 
 // Actions that will be performed on Patientss
-export interface IPatientActionContext {
-  getPatients: () => void;
-  getPatient: (id: string) => void;
-  registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
-  updatePatient: (PatientId: string, patientData: UpdatePatientDto) => void;
-  deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
-  getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
-}
+  export interface IPatientActionContext {
+    getPatients: () => void;
+    getPatient: (id: string) => Promise<IPatient>;
+    registerPatient: (Patient: IPatientRegisteration) => Promise<void>;
+    updatePatient: (PatientId: string, patientData: UpdatePatientDto) => void;
+    deletePatientbyId: (PatientId: string) => void; //letting user delete their own profile
+    getCurrentPatient: (userId: number) => Promise<IPatient>; // Fixed camelCase name
+  }
 // Initial state with default values
 export const INITIAL_STATE: IPatientStateContext = {
   isPending: false,
