@@ -57,7 +57,8 @@ interface TranscriptEntry {
   isFinal: boolean;
 }
 
-const HF_API_TOKEN = "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";
+const HF_API_TOKEN = process.env.NEXT_PUBLIC_HF_API_TOKEN;
+
 const SUMMARY_MODEL = "facebook/bart-large-cnn";
 
 const callSummarizationAPI = async (text: string) => {
