@@ -21,48 +21,48 @@ export default function LoginForm({
   onBeforeSubmit,
 }: LoginFormProps) {
   const { signIn } = useAuthActions();
-  // const { userExists } = useCheckuserActions();
+  const { userExists } = useCheckuserActions();
   const { getCurrentUser } = useUserActions();
   const [loading, setLoading] = useState(false); // Loading state
 
   // Debounced check
-  // const debouncedEmailCheck = useRef(
-  //   debounce(async (value: string) => {
-  //     const result = await userExists({ emailAddress: value, userName: "" });
-  //     return result.result?.emailExists;
-  //   }, 300)
-  // ).current;
+  const debouncedEmailCheck = useRef(
+    debounce(async (value: string) => {
+      const result = await userExists({ emailAddress: value, userName: "" });
+      return result.result?.emailExists;
+    }, 300)
+  ).current;
 
   // Validation rule
-  // const validateEmailExists = async (_: RuleObject, value: StoreValue) => {
-  //   if (!value) return Promise.resolve();
-  //   setLoading(true); // Start loading indicator
-  //   const exists = await debouncedEmailCheck(value);
-  //   setLoading(false); // Stop loading indicator
+  const validateEmailExists = async (_: RuleObject, value: StoreValue) => {
+    if (!value) return Promise.resolve();
+    setLoading(true); // Start loading indicator
+    const exists = await debouncedEmailCheck(value);
+    setLoading(false); // Stop loading indicator
 
-  //   if (!exists) {
-  //     return Promise.reject("User does not exist");
-  //   }
-  //   return Promise.resolve();
-  // };
+    if (!exists) {
+      return Promise.reject("User does not exist");
+    }
+    return Promise.resolve();
+  };
 
   const onFinishLogin = async (values: ISignInRequest) => {
     onBeforeSubmit?.();
     setLoading(true); // Start loading when checking user existence
 
-    // const exists = await userExists({
-    //   emailAddress: values.userNameOrEmailAddress, // ✅ FIXED
-    //   userName: "",
-    // });
+    const exists = await userExists({
+      emailAddress: values.userNameOrEmailAddress, // ✅ FIXED
+      userName: "",
+    });
 
-    // console.log("User exists response:", exists);
+    console.log("User exists response:", exists);
 
     setLoading(false); // Stop loading after check is done
 
-    // if (!exists.result?.emailExists) {
-    //   message.error("User does not exist");
-    //   return;
-    // }
+    if (!exists.result?.emailExists) {
+      message.error("User does not exist");
+      return;
+    }
 
     try {
       // Attempt to sign in
@@ -105,7 +105,7 @@ export default function LoginForm({
         rules={[
           { required: true, message: "Please input your email!" },
           { type: "email", message: "Please enter a valid email!" },
-          //{ validator: validateEmailExists },
+          { validator: validateEmailExists },
         ]}
       >
         <Input
