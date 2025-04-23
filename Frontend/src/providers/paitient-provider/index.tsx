@@ -61,6 +61,23 @@ export const PatientProvider = ({
       });
   };
 
+  // Get Patient
+const getPatient = async (patientId: string): Promise<IPatient | null> => {
+  dispatch(getPatientPending());
+  //const endpoint = `https://localhost:44311/api/services/app/Patient/Get?Id=${patientId}`;
+  const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
+  return instance
+    .get(endpoint)
+    .then((response) => {
+      dispatch(getPatientsSuccess(response.data));
+      return response.data;
+    })
+    .catch((error) => {
+      console.error(error);
+      dispatch(getPatientError());
+      return null;
+    });
+};
   // Register the patient
   const registerPatient = async (Patient: IPatientRegisteration) => {
     dispatch(registerPatientPending());
@@ -91,20 +108,6 @@ export const PatientProvider = ({
       });
   };
 
-  // Get Patient
-  const getPatient = async (patientId: string) => {
-    dispatch(getPatientPending());
-    const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
-    await instance
-      .get(endpoint)
-      .then((response) => {
-        dispatch(getPatientsSuccess(response.data));
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch(getPatientError());
-      });
-  };
 
   const updatePatient = async (
     patientId: string,

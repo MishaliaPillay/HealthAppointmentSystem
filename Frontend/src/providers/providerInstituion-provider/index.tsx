@@ -29,7 +29,6 @@ export const ProvidersInstituionProvider = ({
     await instance
       .get(endpoint)
       .then((response) => {
-   
         dispatch(getProvidersInInstitutionSuccess(response.data));
       })
       .catch((error) => {

@@ -57,7 +57,7 @@ export const bookAppointmentError = createAction<IAppointmentStateContext>(
   () => ({ isPending: false, isSuccess: false, isError: true })
 );
 
-//Get all appointment Actions
+
 //Get all   Appointment Pending
 export const getAllAppointmentPending = createAction<IAppointmentStateContext>(
   AppointmentActionEnums.getAllAppointmentPending,

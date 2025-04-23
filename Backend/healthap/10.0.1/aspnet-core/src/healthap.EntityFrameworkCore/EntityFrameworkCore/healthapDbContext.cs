@@ -39,19 +39,12 @@ public class healthapDbContext : AbpZeroDbContext<Tenant, Role, User, healthapDb
             entity.Property(e => e.GoogleMapsUrl).HasMaxLength(256);
         });
 
-        // Appointment → Provider (Restrict delete)
-        modelBuilder.Entity<Appointment>()
-            .HasOne(a => a.Provider)
-            .WithMany(p => p.Appointments)
-            .HasForeignKey(a => a.ProviderId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // ProviderAvailability → Provider (Optional cascade or restrict)
+        
         modelBuilder.Entity<ProviderAvailabilty>()
             .HasOne(pa => pa.Provider)
             .WithMany(p => p.Availabilities)
             .HasForeignKey(pa => pa.ProviderId)
-            .OnDelete(DeleteBehavior.Cascade); // or Restrict if you prefer
+            .OnDelete(DeleteBehavior.Cascade); 
     }
     public healthapDbContext(DbContextOptions<healthapDbContext> options)
         : base(options)
