@@ -27,6 +27,30 @@ export default function LoginForm({
   const { getCurrentUser } = useUserActions();
   const [loading, setLoading] = useState(false);
 
+  // Configure toast message options
+  const [messageApi, contextHolder] = message.useMessage();
+
+  // Toast message display functions
+  const showSuccessToast = (msg = "Successfully logged in!") => {
+    messageApi.success({
+      content: msg,
+      duration: 3,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  };
+
+  const showErrorToast = (msg = "Login failed! Please check your credentials.") => {
+    messageApi.error({
+      content: msg,
+      duration: 5,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  };
+
   // Debounced user existence check
   const debouncedEmailCheck = useRef(
     debounce(async (value: string): Promise<boolean> => {
@@ -66,10 +90,9 @@ export default function LoginForm({
       userName: "",
     });
 
-    setLoading(false);
-
     if (!exists.result?.emailExists) {
-      message.error("User does not exist");
+      setLoading(false);
+      showErrorToast("User does not exist");
       return;
     }
 
@@ -79,64 +102,72 @@ export default function LoginForm({
       if (loginResult) {
         const token = sessionStorage.getItem("jwt");
         getCurrentUser(token);
-        message.success("Successfully logged in!");
+        setLoading(false);
+        showSuccessToast();
         onLoginSuccess?.();
+      } else {
+        setLoading(false);
+        showErrorToast();
       }
     } catch (error) {
+      setLoading(false);
       console.error("Login error:", error);
       if (error.response && error.response.data) {
-        message.error(
+        showErrorToast(
           error.response.data.errorMessage ||
             "Login failed! Please check your credentials."
         );
       } else {
-        message.error("Login failed! Please check your credentials.");
+        showErrorToast();
       }
     }
   };
 
   return (
-    <Form
-      name="login"
-      initialValues={{ remember: true }}
-      onFinish={onFinishLogin}
-      size="large"
-      layout="vertical"
-      className={styles.form}
-    >
-      <Form.Item
-        name="userNameOrEmailAddress"
-        validateTrigger={["onBlur", "onSubmit"]}
-        rules={[
-          { required: true, message: "Please input your email!" },
-          { type: "email", message: "Please enter a valid email!" },
-          { validator: validateEmailExists },
-        ]}
+    <>
+      {contextHolder}
+      <Form
+        name="login"
+        initialValues={{ remember: true }}
+        onFinish={onFinishLogin}
+        size="large"
+        layout="vertical"
+        className={styles.form}
       >
-        <Input
-          prefix={<MailOutlined />}
-          placeholder="Email"
-          disabled={loading}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}
-      >
-        <Input.Password placeholder="Password" />
-      </Form.Item>
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className={styles.submitButton}
-          loading={loading}
+        <Form.Item
+          name="userNameOrEmailAddress"
+          validateTrigger={["onBlur", "onSubmit"]}
+          rules={[
+            { required: true, message: "Please input your email!" },
+            { type: "email", message: "Please enter a valid email!" },
+            { validator: validateEmailExists },
+          ]}
         >
-          Log In
-        </Button>
-      </Form.Item>
-    </Form>
+          <Input
+            prefix={<MailOutlined />}
+            placeholder="Email"
+            disabled={loading}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password placeholder="Password" />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className={styles.submitButton}
+            loading={loading}
+          >
+            Log In
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
