@@ -1,10 +1,10 @@
 "use client";
-import { Select, Button, Alert, Typography, Spin } from "antd";
+import { Select, Button, Alert, Typography } from "antd";
 const { Option } = Select;
 const { Title, Paragraph } = Typography;
 
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./SpeechRecognition.module.css";
+
 import jsPDF from "jspdf";
 
 // TypeScript interfaces for Speech Recognition
@@ -141,7 +141,7 @@ const SpeechTranscriber: React.FC = () => {
       setError(
         "Your browser does not support the Web Speech API. Try using Chrome or Edge."
       );
-      return;
+      return undefined;
     }
 
     // Initialize the recognition instance
@@ -186,7 +186,12 @@ const SpeechTranscriber: React.FC = () => {
       setCurrentTranscript(interimTranscript);
     };
 
-    recognition.onerror = (event: any) => {
+    interface SpeechRecognitionErrorEvent extends Event {
+      error: string;
+      message?: string;
+    }
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (!isMountedRef.current) return;
 
       console.error("Speech recognition error:", event.error);
@@ -284,7 +289,7 @@ const SpeechTranscriber: React.FC = () => {
       if (isMountedRef.current) {
         setSummary(summaryText);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error generating summary:", err);
       if (isMountedRef.current) {
         if (err.message?.includes("429")) {
@@ -479,7 +484,7 @@ const SpeechTranscriber: React.FC = () => {
           )}
           {transcripts.length === 0 && !currentTranscript && (
             <Paragraph type="secondary">
-              No transcripts yet. Click "Start Recording" to begin.
+              No transcripts yet. Click &quot;Start Recording&quot; to begin.
             </Paragraph>
           )}
         </div>
