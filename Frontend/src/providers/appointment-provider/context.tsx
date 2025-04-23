@@ -22,7 +22,7 @@ export interface IAppointmentActionContext {
   bookAppointment: (appointment: IAppointment) => void;
   getAppointments: () => Promise<IAppointmentApiResponse[]>; // Fetch all Appointments
   getAppointmentById: (id: string) => void; // Fetch a single Appointment  by the ID
-  updateAppointment: (id: string, appointment: Partial<IAppointment>) => void;
+  updateAppointment: (id: string, appointment: IAppointment) => void;
   deleteAppointment: (id: string) => void;
 }
 

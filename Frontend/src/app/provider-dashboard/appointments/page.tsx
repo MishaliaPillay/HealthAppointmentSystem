@@ -1,42 +1,37 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Typography,
-  Button,
-  Select,
-  Space,
-  Spin,
-  Modal,
-  Table,
-  Input,
-} from "antd";
+import { Input, Button, Select, Space, Spin, Modal, Table, Tag } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
+import styles from "./styles";
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
 import {
   useProviderActions,
   useProviderState,
 } from "@/providers/providerMedicPrac-provider";
 import { useAppointmentActions } from "@/providers/appointment-provider";
-import { useUserActions, useUserState } from "@/providers/users-provider";
+import { useUserActions } from "@/providers/users-provider";
 import {
   IAppointment,
   IAppointmentApiResponse,
 } from "@/providers/appointment-provider/models";
-import styles from "./styles";
-
-const { Option } = Select;
 
 export default function ProviderAppointmentsPage() {
+  const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
+    []
+  );
   const [searchText, setSearchText] = useState("");
-  const [statusFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<IAppointment | null>(null);
-  const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
-    []
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  // States for delete confirmation modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(
+    null
   );
 
   const { isPending, isError, isSuccess, currentProvider } = useProviderState();
@@ -49,121 +44,112 @@ export default function ProviderAppointmentsPage() {
     if (isPending) setLoading(true);
     if (isError || isSuccess) setLoading(false);
     if (!currentProvider) fetchProviderOnReload();
-  }, [isError, isPending, isSuccess, currentProvider]);
+  }, [isPending, isError, isSuccess, currentProvider]);
 
-  const fetchProviderOnReload = async (): Promise<void> => {
+  useEffect(() => {
+    if (currentProvider) loadAppointments();
+  }, [currentProvider]);
+
+  const fetchProviderOnReload = async () => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
-      try {
-        const user = await getCurrentUser(token);
-        await getCurrentProvider(user.id);
-      } catch (err) {
-        console.error("Error loading provider:", err);
-      }
+      const user = await getCurrentUser(token);
+      await getCurrentProvider(user.id);
     }
   };
 
   const loadAppointments = async () => {
-    const response = await getAppointments();
-    const fetchedAppointments = response ?? [];
-    const filteredAppointments = fetchedAppointments.filter(
-      (appointment) =>
-        appointment.provider?.id === currentProvider?.id ||
-        appointment.provider?.user.id === currentProvider?.user.id
-    );
-    const enhancedAppointmentsData = await Promise.all(
-      filteredAppointments.map(async (appointment) => {
-        try {
-          return {
-            ...appointment,
-            patientName: appointment.patient.user.name,
-          };
-        } catch (error) {
-          console.error(
-            `Failed to fetch patient ${appointment.patient}:`,
-            error
-          );
-          return { ...appointment, patientName: "Unknown" };
-        }
-      })
+    const allAppointments = await getAppointments();
+    const providerAppointments = (allAppointments ?? []).filter(
+      (a) =>
+        a.provider?.id === currentProvider?.id ||
+        a.provider?.user.id === currentProvider?.user.id
     );
 
-    setAppointments(enhancedAppointmentsData);
-  };
-  useEffect(() => {
-    loadAppointments();
-  }, [currentProvider]);
+    const enrichedAppointments = providerAppointments.map((a) => ({
+      ...a,
+      patientName: a.patient?.user?.name ?? "Unknown",
+    }));
 
-  const filteredData = appointments.filter((appointment) => {
-    const matchesSearch = appointment.purpose
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      appointment.appointmentStatus === Number(statusFilter);
-    return matchesSearch && matchesStatus;
-  });
-
-  const handleDeleteAppointment = async (appointmentId: string) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this appointment?",
-      content: "This action cannot be undone.",
-      onOk: async () => {
-        await deleteAppointment(appointmentId);
-        setAppointments(
-          appointments.filter((a) => a.appointments.id !== appointmentId)
-        );
-      },
-    });
+    setAppointments(enrichedAppointments);
   };
-  const handleEditAppointment = (appointment: IAppointment) => {
-    console.log("handleEditAppointment", appointment);
+
+  // Handle the delete action by setting the appointment to delete and opening the modal
+  const handleDeleteAppointment = (id: string) => {
+    setAppointmentToDelete(id);
+    setIsModalVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    if (appointmentToDelete) {
+      await deleteAppointment(appointmentToDelete);
+      setAppointments((prev) =>
+        prev.filter((a) => a.id !== appointmentToDelete)
+      );
+    }
+    setIsModalVisible(false);
+  };
+
+  const cancelDelete = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
     setSelectedAppointment({
       ...appointment,
-      id: appointment.id,
-      providerId: appointment?.provider?.id,
-      patientId: appointment?.patient?.id,
+      providerId: appointment.provider?.id,
+      patientId: appointment.patient?.id,
     });
     setEditModalVisible(true);
   };
 
-  const handleUpdateAppointment = async (values: IAppointment) => {
-    console.log("this is the values", values);
-    console.log("selectedAppointment", selectedAppointment);
-
+  const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
     if (!selectedAppointment) return;
-    const updatedValues = {
-      providerId: selectedAppointment?.providerId,
-      patientId: selectedAppointment?.patientId,
-      ...values,
-    };
 
-    console.log("updatedValues", updatedValues);
+    const updated = { ...selectedAppointment, ...values };
+    setConfirmLoading(true);
 
-    await updateAppointment(selectedAppointment.id, updatedValues);
+    await updateAppointment(selectedAppointment.id, updated);
+    setConfirmLoading(false);
     setEditModalVisible(false);
 
-    setAppointments((prevAppointments) =>
-      prevAppointments.map((app) =>
-        app.id === selectedAppointment.id ? { ...app, ...values } : app
-      )
-    );
-  };
-
-  const handleStatusChange = async (id: string, newStatus: number) => {
-    await updateAppointment(id, { appointmentStatus: newStatus });
     setAppointments((prev) =>
       prev.map((app) =>
-        app.id === id ? { ...app, appointmentStatus: newStatus } : app
+        app.id === selectedAppointment.id ? { ...app, ...updated } : app
       )
     );
   };
 
-  const getColumns = () => [
+  const filteredData = appointments.filter((a) =>
+    a.purpose?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const getStatusColor = (status: number) => {
+    switch (status) {
+      case AppointmentStatusReflist.Completed:
+        return "green";
+      case AppointmentStatusReflist.Pending:
+        return "orange";
+      case AppointmentStatusReflist.Cancelled:
+        return "red";
+      case AppointmentStatusReflist.Confirmed:
+        return "blue";
+      default:
+        return "default";
+    }
+  };
+
+  const getStatusLabel = (status: number) => {
+    const entry = Object.entries(AppointmentStatusReflist).find(
+      ([, val]) => val === status
+    );
+    return entry?.[0] ?? "Unknown";
+  };
+
+  const columns = [
     {
       title: "Date",
       dataIndex: "appointmentDate",
-      key: "appointmentDate",
       render: (date: Date) =>
         new Date(date).toLocaleDateString("en-ZA", {
           year: "numeric",
@@ -174,53 +160,33 @@ export default function ProviderAppointmentsPage() {
     {
       title: "Time",
       dataIndex: "appointmentTime",
-      key: "appointmentTime",
     },
     {
       title: "Patient",
       dataIndex: "patientName",
-      key: "patientName",
-      render: (name: string) => `${name}`,
     },
     {
       title: "Purpose",
       dataIndex: "purpose",
-      key: "purpose",
     },
     {
       title: "Status",
       dataIndex: "appointmentStatus",
-      key: "appointmentStatus",
-      render: (status, record) => (
-        <Select
-          defaultValue={status}
-          onChange={(value) => handleStatusChange(record.id, value)}
-        >
-          {Object.keys(AppointmentStatusReflist)
-            .filter((key) => isNaN(Number(key)))
-            .map((statusKey) => (
-              <Option
-                key={statusKey}
-                value={AppointmentStatusReflist[statusKey]}
-              >
-                {statusKey}
-              </Option>
-            ))}
-        </Select>
+      render: (status: number) => (
+        <Tag color={getStatusColor(status)}>{getStatusLabel(status)}</Tag>
       ),
     },
     {
       title: "Actions",
-      key: "actions",
-      render: (_: unknown, record: IAppointment) => (
-        <Space size="small">
+      render: (_, record: IAppointmentApiResponse) => (
+        <Space>
           <Button type="link" onClick={() => handleEditAppointment(record)}>
             Edit
           </Button>
           <Button
-            type="link"
             danger
-            onClick={() => handleDeleteAppointment(record.id)}
+            type="link"
+            onClick={() => handleDeleteAppointment(record.id)} // Trigger delete
           >
             Delete
           </Button>
@@ -231,7 +197,6 @@ export default function ProviderAppointmentsPage() {
 
   return (
     <div style={styles.container}>
-      {/* Search Input */}
       <div style={{ marginBottom: 16 }}>
         <Input
           placeholder="Search by purpose"
@@ -243,76 +208,87 @@ export default function ProviderAppointmentsPage() {
       </div>
 
       <Spin spinning={loading} tip="Loading appointments...">
-        <Modal
-          title="Edit Appointment"
-          open={editModalVisible}
-          onCancel={() => setEditModalVisible(false)}
-          onOk={() =>
-            handleUpdateAppointment({
-              purpose: selectedAppointment?.purpose,
-              appointmentDate: selectedAppointment?.appointmentDate,
-              appointmentTime: selectedAppointment?.appointmentTime,
-              appointmentStatus: selectedAppointment?.appointmentStatus,
-            })
-          }
-          okText="Update"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <Input
-              value={selectedAppointment?.purpose}
-              onChange={(e) =>
-                setSelectedAppointment((prev) =>
-                  prev ? { ...prev, purpose: e.target.value } : null
-                )
-              }
-              placeholder="Purpose"
-            />
-            <Input
-              type="date"
-              value={selectedAppointment?.appointmentDate?.split("T")[0]}
-              onChange={(e) =>
-                setSelectedAppointment((prev) =>
-                  prev ? { ...prev, appointmentDate: e.target.value } : null
-                )
-              }
-            />
-            <Input
-              type="time"
-              value={selectedAppointment?.appointmentTime}
-              onChange={(e) =>
-                setSelectedAppointment((prev) =>
-                  prev ? { ...prev, appointmentTime: e.target.value } : null
-                )
-              }
-            />
-            <Select
-              value={selectedAppointment?.appointmentStatus}
-              onChange={(value) =>
-                setSelectedAppointment((prev) =>
-                  prev ? { ...prev, appointmentStatus: value } : null
-                )
-              }
-            >
-              {Object.keys(AppointmentStatusReflist)
-                .filter((key) => isNaN(Number(key)))
-                .map((statusKey) => (
-                  <Option
-                    key={statusKey}
-                    value={AppointmentStatusReflist[statusKey]}
-                  >
-                    {statusKey}
-                  </Option>
-                ))}
-            </Select>
-          </div>
-        </Modal>
-        <Table<IAppointmentApiResponse>
-          dataSource={filteredData}
-          columns={getColumns()}
+        <Table
           rowKey="id"
+          columns={columns}
+          dataSource={filteredData}
           locale={{ emptyText: "No appointments found." }}
         />
       </Spin>
+
+      {/* Modal for confirmation of deletion */}
+      <Modal
+        title="Are you sure you want to delete this appointment?"
+        visible={isModalVisible}
+        onOk={confirmDelete} // Confirm delete action
+        onCancel={cancelDelete} // Cancel and close the modal
+        okText="Delete"
+        cancelText="Cancel"
+      >
+        <p>This action cannot be undone.</p>
+      </Modal>
+
+      <Modal
+        title="Edit Appointment"
+        open={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onOk={() =>
+          handleUpdateAppointment({
+            purpose: selectedAppointment?.purpose,
+            appointmentDate: selectedAppointment?.appointmentDate,
+            appointmentTime: selectedAppointment?.appointmentTime,
+            appointmentStatus: selectedAppointment?.appointmentStatus,
+          })
+        }
+        okText="Update"
+        confirmLoading={confirmLoading}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Input
+            placeholder="Purpose"
+            value={selectedAppointment?.purpose}
+            onChange={(e) =>
+              setSelectedAppointment((prev) =>
+                prev ? { ...prev, purpose: e.target.value } : null
+              )
+            }
+          />
+          <Input
+            type="date"
+            value={selectedAppointment?.appointmentDate?.split("T")[0]}
+            onChange={(e) =>
+              setSelectedAppointment((prev) =>
+                prev ? { ...prev, appointmentDate: e.target.value } : null
+              )
+            }
+          />
+          <Input
+            type="time"
+            value={selectedAppointment?.appointmentTime}
+            onChange={(e) =>
+              setSelectedAppointment((prev) =>
+                prev ? { ...prev, appointmentTime: e.target.value } : null
+              )
+            }
+          />
+          <Select
+            value={selectedAppointment?.appointmentStatus}
+            onChange={(value) =>
+              setSelectedAppointment((prev) =>
+                prev ? { ...prev, appointmentStatus: value } : null
+              )
+            }
+          >
+            {Object.keys(AppointmentStatusReflist)
+              .filter((k) => isNaN(Number(k)))
+              .map((key) => (
+                <Select.Option key={key} value={AppointmentStatusReflist[key]}>
+                  {key}
+                </Select.Option>
+              ))}
+          </Select>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -152,7 +152,6 @@ export const ProviderProvider = ({
       .then((response) => {
         dispatch(deleteProviderSuccess(response.data));
         return response.data;
-        return response.data;
       })
       .catch((error) => {
         console.error("Error deleting provider:", error);
