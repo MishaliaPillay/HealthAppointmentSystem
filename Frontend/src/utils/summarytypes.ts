@@ -24,6 +24,10 @@ export interface TranscriptEntry {
     transcript: string;
     confidence: number;
   }
+  export interface SpeechRecognitionErrorEvent extends Event {
+    error: string;
+    message: string;
+  }
   
   export interface SpeechRecognition extends EventTarget {
     continuous: boolean;

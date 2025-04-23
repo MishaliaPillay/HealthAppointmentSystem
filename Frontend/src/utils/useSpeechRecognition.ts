@@ -4,6 +4,7 @@ import {
   SpeechRecognition,
   SpeechRecognitionEvent,
   WindowWithSpeechRecognition,
+  SpeechRecognitionErrorEvent,
 } from "./summarytypes";
 
 export const useSpeechRecognition = (language: string) => {
@@ -16,8 +17,10 @@ export const useSpeechRecognition = (language: string) => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const isMountedRef = useRef(true);
 
-  useEffect(() => {
+  useEffect((): (() => void) => {
+    // specify the return type as a function that returns void
     isMountedRef.current = true;
+
     const windowWithSpeech = window as unknown as WindowWithSpeechRecognition;
     const SpeechRecognitionAPI =
       windowWithSpeech.SpeechRecognition ||
@@ -26,7 +29,7 @@ export const useSpeechRecognition = (language: string) => {
     if (!SpeechRecognitionAPI) {
       setIsSupported(false);
       setError("Your browser does not support Web Speech API.");
-      return;
+      return () => {}; // ensure return of a cleanup function
     }
 
     const recognition = new SpeechRecognitionAPI();
@@ -65,7 +68,7 @@ export const useSpeechRecognition = (language: string) => {
       setCurrentTranscript(interim);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (!isMountedRef.current) return;
       setError(`Speech recognition error: ${event.error}`);
       setIsRecording(false);
@@ -94,10 +97,13 @@ export const useSpeechRecognition = (language: string) => {
 
   const toggleRecording = () => {
     if (!recognitionRef.current) return;
+
     try {
-      isRecording
-        ? recognitionRef.current.stop()
-        : recognitionRef.current.start();
+      if (isRecording) {
+        recognitionRef.current.stop();
+      } else {
+        recognitionRef.current.start();
+      }
       setError(null);
     } catch (err) {
       setError(`Failed to ${isRecording ? "stop" : "start"} recording: ${err}`);

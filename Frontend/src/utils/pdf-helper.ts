@@ -1,4 +1,4 @@
-
+import jsPDF from "jspdf";
 
 export const generatePDF = (summary: string) => {
   const doc = new jsPDF();

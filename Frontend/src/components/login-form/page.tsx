@@ -66,7 +66,6 @@ export default function LoginForm({
       userName: "",
     });
 
-    console.log("User exists response:", exists);
     setLoading(false);
 
     if (!exists.result?.emailExists) {
@@ -76,7 +75,6 @@ export default function LoginForm({
 
     try {
       const loginResult = await signIn(values);
-      console.log("Login result:", loginResult);
 
       if (loginResult) {
         const token = sessionStorage.getItem("jwt");
