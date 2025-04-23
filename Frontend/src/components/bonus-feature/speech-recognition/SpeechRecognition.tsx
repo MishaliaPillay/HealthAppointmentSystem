@@ -1,4 +1,5 @@
 "use client";
+import styles from "./SpeechRecognition.module.css";
 import { Select, Button, Alert, Typography } from "antd";
 const { Option } = Select;
 const { Title, Paragraph } = Typography;
@@ -72,9 +73,9 @@ const SpeechTranscriber: React.FC = () => {
   }
 
   return (
-    <div>
-      <Title level={2}>Conversation Transcriber & Summarizer</Title>
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+    <div className={styles.containerSpeech}>
+
+      <div className={styles.controlPanel}>
         <Select
           value={selectedLanguage}
           onChange={handleLanguageChange}
@@ -129,7 +130,7 @@ const SpeechTranscriber: React.FC = () => {
         />
       )}
 
-      <div style={{ marginTop: "1rem" }}>
+      <div className={styles.recordingIndicator}>
         {isRecording ? (
           <Paragraph type="warning">
             🔴 <strong>Recording...</strong>
@@ -140,7 +141,7 @@ const SpeechTranscriber: React.FC = () => {
       </div>
 
       {summary && (
-        <div style={{ marginTop: "2rem" }}>
+        <div className={styles.summarySection}>
           <Title level={3}>AI-Generated Summary</Title>
           <Paragraph>{summary}</Paragraph>
         </div>
@@ -156,9 +157,9 @@ const SpeechTranscriber: React.FC = () => {
         />
       )}
 
-      <div style={{ marginTop: "2rem" }}>
+      <div className={styles.transcriptSection}>
         <Title level={3}>Transcript</Title>
-        <div style={{ maxHeight: 300, overflowY: "auto" }}>
+        <div className={styles.transcriptContainer}>
           {transcripts.map((entry, index) => (
             <Paragraph key={index}>
               <strong>{entry.timestamp}:</strong> {entry.text}

@@ -218,15 +218,16 @@ export default function ProviderAppointmentsPage() {
           </div>
         </div>
       </div>
-
-      <Spin spinning={loading} tip="Loading appointments...">
-        <Table<IAppointment>
-          dataSource={filteredData}
-          columns={getColumns()}
-          rowKey="id"
-          locale={{ emptyText: "No appointments found." }}
-        />
-      </Spin>
+      <div className="spin-container">
+        <Spin spinning={loading} tip="Loading appointments...">
+          <Table<IAppointment>
+            dataSource={filteredData}
+            columns={getColumns()}
+            rowKey="id"
+            locale={{ emptyText: "No appointments found." }}
+          />
+        </Spin>
+      </div>
 
       {/* Edit Appointment Modal */}
       <Modal

@@ -9,6 +9,15 @@
     --foreground: #ededed;
   }
 }
+:root {
+  --primary-color: #177f80; /* Primary Teal */
+  --danger-color: #ef4444; /* Red */
+  --light-bg: #f8fafc; /* Light blue/gray */
+  --lighter-bg: #f9fafb; /* Very light gray */
+  --dark-text: #062034; /* Dark navy */
+  --medium-text: #394750; /* Secondary text */
+  --light-text: #64748b; /* Light text */
+}
 
 html,
 body {
@@ -39,4 +48,10 @@ a {
   html {
     color-scheme: dark;
   }
+}
+.spin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
 }
