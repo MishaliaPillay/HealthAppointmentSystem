@@ -1,0 +1,86 @@
+.speechTranscriber {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.controls {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.actionButton {
+  padding: 10px 15px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.actionButton:hover {
+  background-color: #3367d6;
+}
+
+.actionButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.recording {
+  background-color: #d23f31;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.transcriptContainer {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.transcripts {
+  line-height: 1.5;
+}
+
+.transcriptEntry {
+  margin: 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.timestamp {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.interimTranscript {
+  color: #666;
+  font-style: italic;
+}
+
+.error {
+  color: #d23f31;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fde8e7;
+  border-radius: 4px;
+}
