@@ -60,7 +60,6 @@ export const AppointmentProvider = ({
       .then((response) => {
         const result = response.data?.result ?? [];
         dispatch(getAllAppointmentSuccess(result));
-        console.log("This is the response of getAppointments:", result);
         return result;
       })
       .catch((error) => {
@@ -75,8 +74,8 @@ export const AppointmentProvider = ({
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-    const endpoint = `/Appointment/Get/${id}`;
-    //const endpoint = `/api/services/app/Appointment/Get/${id}`;
+
+    const endpoint = `/api/services/app/Appointment/Get/${id}`;
 
     return instance
       .get(endpoint)
@@ -92,10 +91,9 @@ export const AppointmentProvider = ({
     appointmentData: IAppointment
   ) => {
     dispatch(updateAppointmentPending());
-    const endpoint = `https://localhost:44311/api/services/app/Appointment/Update`;
-    //const endpoint = `/api/services/app/Appointment/Update/${id}`;
+    //const endpoint = `https://localhost:44311/api/services/app/Appointment/Update`;
+    const endpoint = `/api/services/app/Appointment/Update`;
     const payload = { ...appointmentData, id: appointpointId };
-    console.log("payload Update:",payload)
     return instance
       .put(endpoint, payload)
       .then((response) => dispatch(updateAppointmentsSuccess(response.data)))
@@ -108,10 +106,9 @@ export const AppointmentProvider = ({
       });
   };
 
-  //const endpoint = `/api/services/app/Appointment/Delete/${id}`;
 const deleteAppointment = async (id: string) => {
   dispatch(deleteAppointmentPending());
-  const endpoint = `https://localhost:44311/api/services/app/Appointment/Delete?Id=${id}`;
+  const endpoint = `/api/services/app/Appointment/Delete/${id}`;
   return instance
     .delete(endpoint)
     .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))

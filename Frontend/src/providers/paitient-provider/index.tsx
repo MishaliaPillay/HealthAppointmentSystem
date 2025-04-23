@@ -64,14 +64,12 @@ export const PatientProvider = ({
   // Get Patient
 const getPatient = async (patientId: string): Promise<IPatient | null> => {
   dispatch(getPatientPending());
-  const endpoint = `https://localhost:44311/api/services/app/Patient/Get?Id=${patientId}`;
-  //localhost:44311/api/services/app/Patient/Get?Id=d669a466-d61d-4ed9-c389-08dd80f74189
-  //const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
+  //const endpoint = `https://localhost:44311/api/services/app/Patient/Get?Id=${patientId}`;
+  const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
   return instance
     .get(endpoint)
     .then((response) => {
       dispatch(getPatientsSuccess(response.data));
-      console.log("This the entire response in the entire index:", response.data);
       return response.data;
     })
     .catch((error) => {

@@ -54,9 +54,6 @@ export default function LoginForm({
       emailAddress: values.userNameOrEmailAddress, // ✅ FIXED
       userName: "",
     });
-
-    console.log("User exists response:", exists);
-
     setLoading(false); // Stop loading after check is done
 
     if (!exists.result?.emailExists) {
@@ -67,7 +64,6 @@ export default function LoginForm({
     try {
       // Attempt to sign in
       const loginResult = await signIn(values);
-      console.log("Login result:", loginResult);
 
       // If the backend indicates login success, continue
       if (loginResult) {

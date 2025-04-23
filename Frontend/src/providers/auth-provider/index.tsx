@@ -21,10 +21,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const endpoint =
       Auth.role == "PATIENT"
-        ? `https://localhost:44311/api/services/app/Patient/Create`
-        : `https://localhost:44311/api/services/app/Provider/Create`;
-        // ? `https://healthappointmentsystem-2.onrender.com/api/services/app/Patient/Create`
-        // : `https://healthappointmentsystem-2.onrender.com/api/services/app/Provider/Create`;
+        // ? `https://localhost:44311/api/services/app/Patient/Create`
+        // : `https://localhost:44311/api/services/app/Provider/Create`;
+        ? `https://healthappointmentsystem-2.onrender.com/api/services/app/Patient/Create`
+        : `https://healthappointmentsystem-2.onrender.com/api/services/app/Provider/Create`;
     await axios
       .post<IAuth>(endpoint, Auth)
       .then((response) => {
@@ -39,8 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     SignInRequest: ISignInRequest
   ): Promise<ISignInResponse> => {
     dispatch(signInPending());
-    const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
-      //"https://healthappointmentsystem-2.onrender.com/api/TokenAuth/Authenticate";
+    //const endpoint = "https://localhost:44311/api/TokenAuth/Authenticate";
+      const endpoint ="https://healthappointmentsystem-2.onrender.com/api/TokenAuth/Authenticate";
     return axios
       .post(endpoint, SignInRequest)
       .then((response) => {
