@@ -1,88 +1,230 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import LoginSignup from "../../app/login/LoginSignup"; // Import the real component
-import { useAuthState } from "../../providers/auth-provider/index";
-import { useRouter } from "next/navigation";
-import React from "react";
+// LoginForm.test.tsx
+import { describe, it, vi, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import LoginForm from '../../components/login-form/page';
+import { useAuthActions } from '../../providers/auth-provider';
+import { useCheckuserActions } from '../../providers/check-user-provider';
+import { useUserActions } from '../../providers/users-provider';
+import type { IAuthActionContext } from '../../providers/auth-provider/context';
+import type { IUserActionContext } from '../../providers/users-provider/context';
+import type { ICheckUserActionContext } from '../../providers/check-user-provider/context';
+import React from 'react';
 
-// Mocks
-vi.mock("../../providers/auth-provider/index", () => ({
-  useAuthState: vi.fn(),
+// Mock the necessary providers and their hooks
+vi.mock('@/providers/auth-provider', () => ({
+  useAuthActions: vi.fn(),
 }));
 
-const push = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+vi.mock('@/providers/check-user-provider', () => ({
+  useCheckuserActions: vi.fn(),
 }));
 
-// Mock sessionStorage
-Object.defineProperty(window, "sessionStorage", {
-  value: {
-    getItem: vi.fn(() => "mocked.jwt.token"), // Simulate a valid token
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-  },
-  writable: true,
+vi.mock('@/providers/users-provider', () => ({
+  useUserActions: vi.fn(),
+}));
+
+// Mock the lodash.debounce to execute immediately
+vi.mock('lodash.debounce', () => ({
+  default: (fn) => fn,
+}));
+
+// Mock the next/navigation router
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+  })),
+}));
+
+// Mock antd components
+vi.mock('antd', () => {
+  const actual = vi.importActual('antd');
+  return {
+    ...actual,
+    message: {
+      success: vi.fn(),
+      error: vi.fn(),
+    },
+  };
 });
 
-// Mock the decodeToken function and getRole function
-vi.mock("../../utils/decoder", () => ({
-    decodeToken: vi.fn(() => ({
-      role: "user", // Example decoded token data
-      id: "12345",
-    })),
-    getRole: vi.fn(() => "provider"), // Mock the `getRole` function
-  }));
+// Mock sessionStorage
+const sessionStorageMock = (() => {
+  let store = {};
+  return {
+    getItem: vi.fn((key) => store[key] || null),
+    setItem: vi.fn((key, value) => {
+      store[key] = value.toString();
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+  };
+})();
+Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+
+describe('LoginForm', () => {
+  const mockSignIn = vi.fn();
+  const mockUserExists = vi.fn();
+  const mockGetCurrentUser = vi.fn();
+  const mockOnBeforeSubmit = vi.fn();
   
-  
-// Mock components
-vi.mock("../../components/login-form/page", () => ({
-  default: ({ onBeforeSubmit }: any) => (
-    <button onClick={() => onBeforeSubmit?.()}>Login Submit</button>
-  ),
-}));
-
-vi.mock("../../components/sign-up-form/page", () => ({
-  default: ({ onBeforeSubmit }: any) => (
-    <button onClick={() => onBeforeSubmit?.()}>Signup Submit</button>
-  ),
-}));
-
-describe("LoginSignup component", () => {
-  const setActiveTab = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Correctly mock the hook return values with the right interfaces
+    (useAuthActions as any).mockImplementation(() => ({
+        signIn: mockSignIn,
+    } as unknown as IAuthActionContext));
+    
+    (useCheckuserActions as any).mockImplementation(() => ({
+      userExists: mockUserExists,
+    } as ICheckUserActionContext));
+    
+    (useUserActions as any).mockImplementation(() => ({
+      getCurrentUser: mockGetCurrentUser,
+      getUsers: vi.fn(),
+      getUser: vi.fn(),
+      createUser: vi.fn(),
+      updateUser: vi.fn(),
+      deleteUser: vi.fn(),
+    } as IUserActionContext));
+    
+    // Default behavior for userExists check
+    mockUserExists.mockResolvedValue({
+      result: { emailExists: true }
+    });
+    
+    // Default behavior for signIn
+    mockSignIn.mockResolvedValue(true);
+    
+    // Set up sessionStorage mock
+    sessionStorageMock.setItem('jwt', 'mock-jwt-token');
   });
 
-  it("switches to login tab after successful signup", async () => {
-    // Mocking the auth state as if the signup was successful
-    (useAuthState as any).mockReturnValue({
-      isSuccess: true,
-      isError: false,
-      isPending: false,
-      token: "mocked.jwt.token", // Mocked token in the auth state
-    });
+  it('renders login form with all fields', () => {
+    render(<LoginForm />);
+    
+    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
+  });
 
-    render(<LoginSignup activeTab="signup" setActiveTab={setActiveTab} />);
-
-    // Wait for the effect that switches the tab after successful signup
+  it('validates email field is required', async () => {
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    fireEvent.blur(emailInput);
+    
     await waitFor(() => {
-      expect(setActiveTab).toHaveBeenCalledWith("login");
+      expect(screen.getByText('Please input your email!')).toBeInTheDocument();
     });
   });
 
-  it("renders signup tab correctly", () => {
-    render(<LoginSignup activeTab="signup" setActiveTab={setActiveTab} />);
-    expect(screen.getByText("Create Account")).toBeInTheDocument();
-    expect(screen.getByText("Signup Submit")).toBeInTheDocument();
+  it('validates if user exists when email is entered', async () => {
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    await userEvent.type(emailInput, 'test@example.com');
+    fireEvent.blur(emailInput);
+    
+    await waitFor(() => {
+      expect(mockUserExists).toHaveBeenCalledWith({
+        emailAddress: 'test@example.com',
+        userName: ''
+      });
+    });
   });
 
-  it("calls setActiveTab on tab change", () => {
-    render(<LoginSignup activeTab="login" setActiveTab={setActiveTab} />);
-    const loginSubmit = screen.getByText("Login Submit");
-    fireEvent.click(loginSubmit);
-    // Assuming the mock works, we check that the submit button was clicked
-    expect(loginSubmit).toBeInTheDocument();
+  it('displays error when user does not exist', async () => {
+    mockUserExists.mockResolvedValue({
+      result: { emailExists: false }
+    });
+    
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    await userEvent.type(emailInput, 'nonexistent@example.com');
+    fireEvent.blur(emailInput);
+    
+    await waitFor(() => {
+      expect(screen.getByText('User does not exist')).toBeInTheDocument();
+    });
+  });
+
+  it('calls onBeforeSubmit when form is submitted', async () => {
+    render(<LoginForm onBeforeSubmit={mockOnBeforeSubmit} />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    const passwordInput = screen.getByPlaceholderText('Password');
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+    
+    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(passwordInput, 'password123');
+    
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(mockOnBeforeSubmit).toHaveBeenCalled();
+    });
+  });
+
+  it('calls signIn with entered credentials', async () => {
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    const passwordInput = screen.getByPlaceholderText('Password');
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+    
+    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(passwordInput, 'password123');
+    
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(mockSignIn).toHaveBeenCalledWith({
+        userNameOrEmailAddress: 'test@example.com',
+        password: 'password123'
+      });
+    });
+  });
+
+  it('calls getCurrentUser after successful login', async () => {
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    const passwordInput = screen.getByPlaceholderText('Password');
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+    
+    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(passwordInput, 'password123');
+    
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(mockGetCurrentUser).toHaveBeenCalledWith('mock-jwt-token');
+    });
+  });
+
+  it('handles login error', async () => {
+    const errorMessage = 'Invalid credentials';
+    mockSignIn.mockRejectedValue({
+      response: { data: { errorMessage } }
+    });
+    
+    const { container } = render(<LoginForm />);
+    
+    const emailInput = screen.getByPlaceholderText('Email');
+    const passwordInput = screen.getByPlaceholderText('Password');
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+    
+    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(passwordInput, 'password123');
+    
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(require('antd').message.error).toHaveBeenCalledWith(errorMessage);
+    });
   });
 });

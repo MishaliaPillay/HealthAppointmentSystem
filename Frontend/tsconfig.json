@@ -16,6 +16,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "types": ["vitest/globals"],
     "outDir": "dist",
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -49,7 +50,14 @@
     "**/*.stories.d.ts",
     "**/__tests__/**"
   ],
-  "include": ["src", "typings", ".next/types/**/*.ts"],
+  "include": [
+    "src",
+    "typings",
+    ".next/types/**/*.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "__tests__"
+  ],
   "rootDir": "src",
   "typeRoots": ["typings", "node_modules/@types", "models"]
 }
