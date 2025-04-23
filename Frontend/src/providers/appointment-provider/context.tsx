@@ -1,6 +1,6 @@
 "use client";
 import { createContext } from "react";
-import { IAppointment, IAppointmentApiResponse } from "./models";
+import { IAppointment, IAppointmentApiResponse, IAppointments } from "./models";
 
 //Appointment Context shape Interface
 export interface IAppointmentStateContext {
@@ -8,6 +8,7 @@ export interface IAppointmentStateContext {
   readonly isSuccess: boolean;
   readonly isError: boolean;
   readonly appointment?: IAppointment;
+  readonly dAppointment?: IAppointments;
   readonly appointments?: IAppointmentApiResponse[];
 }
 
@@ -19,7 +20,7 @@ export const INITIAL_STATE: IAppointmentStateContext = {
 
 // These actions will be implemented in the provider component
 export interface IAppointmentActionContext {
-  bookAppointment: (appointment: IAppointment) => void;
+  bookAppointment: (dAppointment: IAppointments) => void;
   getAppointments: () => Promise<IAppointmentApiResponse[]>; // Fetch all Appointments
   getAppointmentById: (id: string) => void; // Fetch a single Appointment  by the ID
   updateAppointment: (id: string, appointment: IAppointment) => void;

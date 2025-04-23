@@ -56,7 +56,10 @@ interface SignupFormProps {
   onBeforeSubmit?: () => void;
 }
 
-export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFormProps) {
+export default function SignupForm({
+  onBeforeSubmit,
+  onSignupSuccess,
+}: SignupFormProps) {
   const [role, setRole] = useState<"patient" | "provider">("patient");
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -81,7 +84,7 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
       content: msg,
       duration: 3,
       style: {
-        marginTop: '20px',
+        marginTop: "20px",
       },
     });
   };
@@ -91,7 +94,7 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
       content: msg,
       duration: 5,
       style: {
-        marginTop: '20px',
+        marginTop: "20px",
       },
     });
   };
@@ -166,7 +169,7 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
     try {
       await signUp(formattedValues);
       setLoading(false);
-      
+
       showSuccessToast(`Your ${role} account has been created successfully!`);
       if (onSignupSuccess) {
         onSignupSuccess();
@@ -174,14 +177,16 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
     } catch (error) {
       setLoading(false);
       console.error("Signup error:", error);
-      
+
       if (error.response && error.response.data) {
         showErrorToast(
-          error.response.data.errorMessage || 
-          "Registration failed. Please check your information."
+          error.response.data.errorMessage ||
+            "Registration failed. Please check your information."
         );
       } else {
-        showErrorToast("An error occurred during registration. Please try again later.");
+        showErrorToast(
+          "An error occurred during registration. Please try again later."
+        );
       }
     }
   };
@@ -244,7 +249,9 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
 
             <Form.Item
               name="surname"
-              rules={[{ required: true, message: "Please input your surname!" }]}
+              rules={[
+                { required: true, message: "Please input your surname!" },
+              ]}
             >
               <Input placeholder="Last Name" />
             </Form.Item>
@@ -318,8 +325,10 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                         )}
                         <span className={valid ? styles.valid : styles.invalid}>
                           {key === "length" && "At least 8 characters"}
-                          {key === "lowercase" && "At least one lowercase letter"}
-                          {key === "uppercase" && "At least one uppercase letter"}
+                          {key === "lowercase" &&
+                            "At least one lowercase letter"}
+                          {key === "uppercase" &&
+                            "At least one uppercase letter"}
                           {key === "number" && "At least one number"}
                           {key === "specialChar" &&
                             "At least one special character (!@#$%^&*)"}
@@ -384,7 +393,9 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
 
                 <Form.Item
                   name="city"
-                  rules={[{ required: true, message: "Please input your city!" }]}
+                  rules={[
+                    { required: true, message: "Please input your city!" },
+                  ]}
                 >
                   <Input placeholder="City" />
                 </Form.Item>
@@ -401,7 +412,10 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                 <Form.Item
                   name="postalCode"
                   rules={[
-                    { required: true, message: "Please input your postal code!" },
+                    {
+                      required: true,
+                      message: "Please input your postal code!",
+                    },
                   ]}
                 >
                   <Input placeholder="Postal Code" />
@@ -431,7 +445,10 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                 <Form.Item
                   name="specialtyName"
                   rules={[
-                    { required: true, message: "Please select your specialty!" },
+                    {
+                      required: true,
+                      message: "Please select your specialty!",
+                    },
                   ]}
                 >
                   <Select placeholder="Select Specialty" showSearch>
@@ -486,7 +503,10 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                     { required: true, message: "Please input your biography!" },
                   ]}
                 >
-                  <Input.TextArea placeholder="Professional Biography" rows={4} />
+                  <Input.TextArea
+                    placeholder="Professional Biography"
+                    rows={4}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -504,13 +524,13 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                     showSearch
                     loading={isPending}
                     filterOption={(input, option) =>
-                      (option?.label as string)
-                        ?.toLowerCase()
+                      String(option?.label)
+                        .toLowerCase()
                         .includes(input.toLowerCase())
                     }
                     options={institutions.map((inst) => ({
-                      label: inst.description,
-                      value: inst.id,
+                      label: inst.institutionId,
+                      value: inst.institutionName,
                       inst,
                     }))}
                     optionRender={(option) => {
@@ -518,10 +538,10 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
                       return (
                         <div className={styles.institutionOption}>
                           <span className={styles.institutionName}>
-                            {inst.description}
+                            {inst.address}
                           </span>
                           <span className={styles.institutionAddress}>
-                            {inst.address} • {inst.city}, {inst.state}
+                            {inst.address}
                           </span>
                         </div>
                       );
@@ -561,7 +581,9 @@ export default function SignupForm({ onBeforeSubmit, onSignupSuccess }: SignupFo
               setAdminPasswordModalVisible(false);
               setAdminPasswordInput("");
             } else {
-              showErrorToast("Incorrect admin password. Defaulting to patient account.");
+              showErrorToast(
+                "Incorrect admin password. Defaulting to patient account."
+              );
               setRole("patient");
               form.setFieldsValue({ role: "PATIENT" });
               setAdminPasswordModalVisible(false);

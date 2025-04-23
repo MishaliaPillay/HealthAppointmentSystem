@@ -17,19 +17,12 @@ export interface ILocation {
 }
 
 // Institution object based on your API structure
+
 export interface IInstitution {
-  id: number;
-  description: string;
+  institutionId: number;
+  institutionName: string;
   address: string;
-  city: string;
-  state: string;
-  postalCode: string | null;
-  country: string;
-  facilityType: string;
-  placeId: string;
-  latitude: number;
-  longitude: number;
-  googleMapsUrl: string;
+  providers: IProvider[];
 }
 
 // Provider object used within institutions
@@ -45,14 +38,14 @@ export interface IProvider {
   qualification: string;
   speciality: string;
   institutionId: number;
-  id: number;
+  id: string;
 }
 
 export interface ILocationStateContext {
   readonly isPending: boolean;
   readonly isSuccess: boolean;
   readonly isError: boolean;
-  readonly institutions: IInstitution[]; // make this non‑optional
+  readonly institutions?: IInstitution[]; // make this non‑optional
 }
 
 export const INITIAL_STATE: ILocationStateContext = {

@@ -15,14 +15,16 @@ export interface IProviderAvailabilityStateContext {
   readonly isPending: boolean;
   readonly isSuccess: boolean;
   readonly isError: boolean;
-  readonly availabilities?: IProvidersAvailability[];
+  readonly availabilities?: {
+    result: IProvidersAvailability[];
+  };
 }
 
 export const INITIAL_STATE: IProviderAvailabilityStateContext = {
   isPending: false,
   isSuccess: false,
   isError: false,
-  availabilities: [],
+  availabilities: { result: [] },
 };
 
 export interface IProviderAvailabilityActionContext {
