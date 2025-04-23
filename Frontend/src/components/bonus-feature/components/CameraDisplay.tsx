@@ -1,6 +1,6 @@
 // src/components/FaceAnalyzer/components/CameraDisplay.tsx
 import React, { RefObject } from "react";
-import styles from "../FaceAnalyzer.module.css";
+import styles from "../face-analyzers/FaceAnalyzer.module.css";
 
 interface CameraDisplayProps {
   videoRef: RefObject<HTMLVideoElement>;

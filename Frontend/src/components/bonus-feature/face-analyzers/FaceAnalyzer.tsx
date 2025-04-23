@@ -3,14 +3,14 @@
 
 import React, { useState } from "react";
 import styles from "./FaceAnalyzer.module.css";
-import { Header } from "./components/Header";
-import { ControlPanel } from "./components/ControlPanel";
-import { ErrorMessage } from "./components/ErrorMessage";
-import { CameraDisplay } from "./components/CameraDisplay";
-import { ResultsPanel } from "./components/ResultsPanel";
-import { InstructionsPanel } from "./components/InstructionsPanel";
-import { useFaceDetection } from "./hooks/useFaceDetection";
-import { useCamera } from "./hooks/useCamera";
+import { Header } from "../components/Header";
+import { ControlPanel } from "../components/ControlPanel";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { CameraDisplay } from "../components/CameraDisplay";
+import { ResultsPanel } from "../components/ResultsPanel";
+import { InstructionsPanel } from "../components/InstructionsPanel";
+import { useFaceDetection } from "../hooks/useFaceDetection";
+import { useCamera } from "../hooks/useCamera";
 
 const FaceAnalyzer = () => {
   const [error, setError] = useState<string | null>(null);

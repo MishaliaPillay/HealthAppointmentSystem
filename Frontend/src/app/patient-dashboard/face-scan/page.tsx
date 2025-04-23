@@ -1,5 +1,5 @@
 import HealthAnalysisComponent from "@/components/bonus-feature/components/displayChatboard";
-import FaceAnalyzer from "../../../components/bonus-feature/FaceAnalyzer";
+import FaceAnalyzer from "../../../components/bonus-feature/face-analyzers/FaceAnalyzer";
 
 export default function Home() {
   return (

@@ -43,8 +43,7 @@ export const ProviderProvider = ({
     userId: number
   ): Promise<IProvider | null> => {
     dispatch(getCurrentProviderPending());
-    const endpoint = `/api/services/Provider/GetCurrentProvider?userId=${userId}`;
-    //const endpoint = `https://localhost:44311/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
+    const endpoint = `/api/services/app/Provider/GetCurrentProvider?userId=${userId}`;
     return instance
       .get(endpoint)
       .then((response) => {

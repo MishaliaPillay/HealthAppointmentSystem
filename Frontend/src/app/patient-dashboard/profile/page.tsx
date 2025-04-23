@@ -96,15 +96,15 @@ const ProfilePage: React.FC = () => {
         ...prev,
         ...values,
       }));
-
+      
+      
       // Optionally update the UI right away
       form.setFieldsValue({ ...values });
+      
     } catch (error) {
       console.error("Validation failed:", error);
     }
   };
-
-
 
   return (
     <div>
@@ -125,13 +125,16 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {loading || !formValues ? (
-          <Spin spinning tip="Loading patient data..." />
+          <div className="spin-container">
+            <Spin spinning tip="Loading patient data..." />
+          </div>
         ) : (
           <Form
             form={form}
             layout="vertical"
             onValuesChange={(changedValues) =>
               setFormValues({ ...formValues, ...changedValues })
+              
             }
           >
             <Row gutter={24}>
@@ -157,12 +160,12 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                  <Form.Item
+                <Form.Item
                   label="Password"
                   name="password"
                   rules={[{ required: true, message: "Password is required!" }]}
                 >
-                    <Input.Password placeholder="Enter new password (required)"/>
+                  <Input.Password placeholder="Enter new password (required)" />
                 </Form.Item>
               </Col>
 
@@ -214,9 +217,16 @@ const ProfilePage: React.FC = () => {
             <Divider />
 
             <Form.Item style={{ textAlign: "center" }}>
-              <Button type="primary" onClick={updatePatientProfile}>
-                Save Changes
-              </Button>
+            <Button
+              type="primary"
+              onClick={async () => {
+                await updatePatientProfile(); 
+                window.location.reload();      
+              }}
+            >
+              Save Changes
+            </Button>
+
             </Form.Item>
           </Form>
         )}
