@@ -1,4 +1,4 @@
-// src/components/FaceAnalyzer/components/WellnessInsights.tsx
+
 import React from "react";
 
 interface WellnessInsightsProps {

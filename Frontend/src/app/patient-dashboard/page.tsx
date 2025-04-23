@@ -11,15 +11,15 @@ import {
 } from "antd";
 const { Title, Text } = Typography;
 import styles from "./patientdash.module.css";
-import {BookingModule} from "../../components/booking/booking";
+import { BookingModule } from "../../components/booking/booking";
 import { useState, useEffect } from "react";
 import {
   usePatientActions,
   usePatientState,
 } from "@/providers/paitient-provider";
 import { useUserActions } from "@/providers/users-provider";
-import withAuth from "../../hoc/withAuth"
-function Dashboard () {
+import withAuth from "../../hoc/withAuth";
+function Dashboard() {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [Loading, setLoading] = useState(false);
 
@@ -61,7 +61,10 @@ function Dashboard () {
         })
         .catch((err) => console.error("Error Current User : ", err));
       if (Loading || isPending) {
-        <Spin spinning tip="Loading patient data..." />;
+        <div className="spin-container">
+
+          <Spin spinning tip="Loading patient data..." />
+        </div>;
       }
       if (isError || !getCurrentUser(token)) {
         <p>Failed to load patient data. Please try again.</p>;
@@ -101,10 +104,7 @@ function Dashboard () {
                   {currentPatient?.appointments?.length || 0}
                 </Text>
               </div>
-              <Progress
-                strokeColor="#52c41a"
-                showInfo={false}
-              />
+              <Progress strokeColor="#52c41a" showInfo={false} />
             </div>
             <div className={styles.statBlock}>
               <div className={styles.statLabel}>

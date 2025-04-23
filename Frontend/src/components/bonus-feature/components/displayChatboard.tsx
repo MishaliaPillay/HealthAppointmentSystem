@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { analyzeHealthImage } from "../geminiService";
+import { analyzeHealthImage } from "../face-analyzers/geminiService";
 import { useStyles } from "../../../app/patient-dashboard/styles/aiStyle/style";
 
 export default function HealthAnalysisComponent() {

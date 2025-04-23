@@ -125,9 +125,9 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {loading || !formValues ? (
-          
-          <Spin spinning tip="Loading patient data..." />
-         
+          <div className="spin-container">
+            <Spin spinning tip="Loading patient data..." />
+          </div>
         ) : (
           <Form
             form={form}
@@ -160,12 +160,12 @@ const ProfilePage: React.FC = () => {
                   <Input />
                 </Form.Item>
 
-                  <Form.Item
+                <Form.Item
                   label="Password"
                   name="password"
                   rules={[{ required: true, message: "Password is required!" }]}
                 >
-                    <Input.Password placeholder="Enter new password (required)"/>
+                  <Input.Password placeholder="Enter new password (required)" />
                 </Form.Item>
               </Col>
 

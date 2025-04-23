@@ -1,6 +1,6 @@
-// src/components/FaceAnalyzer/components/ControlPanel.tsx
+
 import React from "react";
-import styles from "../FaceAnalyzer.module.css";
+import styles from "../face-analyzers/FaceAnalyzer.module.css";
 
 interface ControlPanelProps {
   modelsLoaded: boolean;
