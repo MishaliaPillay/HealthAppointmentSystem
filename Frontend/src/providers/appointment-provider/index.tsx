@@ -38,7 +38,6 @@ export const AppointmentProvider = ({
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
     const endpoint = "/api/services/app/Appointment/Create";
-
     return instance
       .post(endpoint, appointment)
       .then((response) => dispatch(bookAppointmentSuccess(response.data)))
@@ -52,9 +51,7 @@ export const AppointmentProvider = ({
     IAppointmentApiResponse[] | null
   > => {
     dispatch(getAllAppointmentPending());
-    const endpoint =
-      "https://localhost:44311/api/services/app/Appointment/GetAppointments";
-
+    const endpoint = "/api/services/app/Appointment/GetAll";
     return instance
       .get(endpoint)
       .then((response) => {
@@ -74,9 +71,7 @@ export const AppointmentProvider = ({
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
-
     const endpoint = `/api/services/app/Appointment/Get/${id}`;
-
     return instance
       .get(endpoint)
       .then((response) => dispatch(getAppointmentSuccess(response.data)))
@@ -91,7 +86,6 @@ export const AppointmentProvider = ({
     appointmentData: IAppointment
   ) => {
     dispatch(updateAppointmentPending());
-    //const endpoint = `https://localhost:44311/api/services/app/Appointment/Update`;
     const endpoint = `/api/services/app/Appointment/Update`;
     const payload = { ...appointmentData, id: appointpointId };
     return instance
@@ -106,18 +100,17 @@ export const AppointmentProvider = ({
       });
   };
 
-const deleteAppointment = async (id: string) => {
-  dispatch(deleteAppointmentPending());
-  const endpoint = `/api/services/app/Appointment/Delete/${id}`;
-  return instance
-    .delete(endpoint)
-    .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
-    .catch((error) => {
-      console.error("Deleting appointment by ID failed:", error);
-      dispatch(deleteAppointmentError());
-    });
-};
-
+  const deleteAppointment = async (id: string) => {
+    dispatch(deleteAppointmentPending());
+    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+    return instance
+      .delete(endpoint)
+      .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
+      .catch((error) => {
+        console.error("Deleting appointment by ID failed:", error);
+        dispatch(deleteAppointmentError());
+      });
+  };
 
   return (
     <AppointmentStateContext.Provider value={state}>
