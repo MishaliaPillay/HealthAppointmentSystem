@@ -26,6 +26,7 @@ import {
   updateAppointmentPending,
   updateAppointmentsSuccess,
 } from "./actions";
+import { getFcmToken, sendNotification } from "@/utils/firebase";
 
 export const AppointmentProvider = ({
   children,
@@ -35,13 +36,74 @@ export const AppointmentProvider = ({
   const [state, dispatch] = useReducer(AppointmentReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
+  // Helper function for sending notification
+  const sendAppointmentNotification = async (appointment: IAppointment, action: string) => {
+    if (typeof window === 'undefined') return;
+    
+    // Get the tokens from sessionStorage
+    const providerToken = getFcmToken(appointment.providerId);
+    const patientToken = getFcmToken(appointment.patientId);
+    
+    if (!providerToken && !patientToken) {
+      console.log('No FCM tokens available for users');
+      return;
+    }
+    
+    // Format the appointment date
+    const appointmentDate = new Date(appointment.appointmentDate).toLocaleDateString();
+    
+    // Create notification content based on action
+    let title, body;
+    switch (action) {
+      case 'create':
+        title = 'New Appointment';
+        body = `New appointment scheduled for ${appointmentDate}`;
+        break;
+      case 'update':
+        title = 'Appointment Updated';
+        body = `Your appointment on ${appointmentDate} has been updated`;
+        break;
+      case 'cancel':
+        title = 'Appointment Cancelled';
+        body = `Your appointment on ${appointmentDate} has been cancelled`;
+        break;
+      default:
+        title = 'Appointment Notification';
+        body = `Regarding your appointment on ${appointmentDate}`;
+    }
+    
+    // Send to both users
+    if (providerToken) {
+      sendNotification(providerToken, title, body, {
+        appointmentId: appointment.id || '',
+        type: 'appointment_notification'
+      });
+    }
+    
+    if (patientToken) {
+      sendNotification(patientToken, title, body, {
+        appointmentId: appointment.id || '',
+        type: 'appointment_notification'
+      });
+    }
+  };
+
   const bookAppointment = async (appointment: IAppointment) => {
     dispatch(bookAppointmentPending());
     const endpoint = "/api/services/app/Appointment/Create";
 
     return instance
       .post(endpoint, appointment)
-      .then((response) => dispatch(bookAppointmentSuccess(response.data)))
+      .then((response) => {
+        dispatch(bookAppointmentSuccess(response.data));
+        
+        // Send notification after booking
+        if (response.data && response.data.result) {
+          sendAppointmentNotification(response.data.result, 'create');
+        }
+        
+        return response.data;
+      })
       .catch((error) => {
         console.error("Error booking an appointment:", error);
         dispatch(bookAppointmentError());
@@ -63,6 +125,9 @@ export const AppointmentProvider = ({
       });
   };
 
+
+
+  // Fetch appointment by ID
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
     const endpoint = `/api/services/app/Appointment/Get/${id}`;
@@ -76,6 +141,9 @@ export const AppointmentProvider = ({
       });
   };
 
+
+
+
   const updateAppointment = async (
     id: string,
     appointment: Partial<IAppointment>
@@ -85,20 +153,48 @@ export const AppointmentProvider = ({
 
     return instance
       .put(endpoint, appointment)
-      .then((response) => dispatch(updateAppointmentsSuccess(response.data)))
+      .then((response) => {
+        dispatch(updateAppointmentsSuccess(response.data));
+        
+        // Send notification after update
+        if (response.data && response.data.result) {
+          sendAppointmentNotification(response.data.result, 'update');
+        }
+        
+        return response.data;
+      })
       .catch((error) => {
         console.error("Updating appointment by ID failed:", error);
         dispatch(updateAppointmentError());
       });
-  };
+  }; // Fix: removed the extra closing bracket here
 
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
+    
+    // First get the appointment details to have info for the notification
+    let appointmentData = null;
+    try {
+      const appointmentResponse = await instance.get(`/api/services/app/Appointment/Get/${id}`);
+      appointmentData = appointmentResponse.data.result;
+    } catch (error) {
+      console.error("Could not fetch appointment before deletion:", error);
+    }
+    
     const endpoint = `/api/services/app/Appointment/Delete/${id}`;
 
     return instance
       .delete(endpoint)
-      .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))
+      .then((response) => {
+        dispatch(deleteAppointmenttSuccess(response.data));
+        
+        // Send notification after deletion
+        if (appointmentData) {
+          sendAppointmentNotification(appointmentData, 'cancel');
+        }
+        
+        return response.data;
+      })
       .catch((error) => {
         console.error("Deleting appointment by ID failed:", error);
         dispatch(deleteAppointmentError());

@@ -9,6 +9,8 @@ import { UserProvider } from "../providers/users-provider";
 import { CheckUserProvider } from "@/providers/check-user-provider";
 import { AppointmentProvider } from "@/providers/appointment-provider";
 import { LocationProvider } from "@/providers/institutionLocation-provider";
+import { ServiceWorkerRegistration } from "@/components/service/ServiceWorkerRegistration";
+import { NotificationProvider } from "@/providers/notification-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +47,12 @@ export default function RootLayout({
                 <ProviderProvider>
                   <PatientProvider>
                     <CheckUserProvider>
-                      <AppointmentProvider>{children}</AppointmentProvider>
+                      <AppointmentProvider>
+                        <NotificationProvider>
+                          <ServiceWorkerRegistration />
+                          {children}
+                        </NotificationProvider>
+                      </AppointmentProvider>
                     </CheckUserProvider>
                   </PatientProvider>
                 </ProviderProvider>

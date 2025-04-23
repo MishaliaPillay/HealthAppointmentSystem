@@ -12,7 +12,8 @@ import { useRouter } from "next/navigation";
 import { getRole } from "@/utils/decoder";
 import { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
-import NotificationPopup, { Notification } from "../notification/page";
+import { NotificationPopup, Notification } from "../notification/page";
+import { useNotificationState, useNotificationActions } from "@/providers/notification-provider";
 
 const { Header: AntHeader } = Layout;
 
@@ -25,6 +26,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
   const router = useRouter();
   const { currentUser } = useUserState();
   const [role, setRole] = useState<string | null>(null);
+  const { notifications } = useNotificationState();
+  const { markAsRead, markAllAsRead } = useNotificationActions();
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
@@ -35,7 +38,12 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
 
     const userRole = getRole(token);
     setRole(userRole);
-  }, []);
+    
+    // Store user ID for notifications if not already stored
+    if (currentUser?.id) {
+      sessionStorage.setItem("currentUserId", String(currentUser.id));
+    }
+  }, [currentUser, router]);
 
   const signOutUser = () => {
     sessionStorage.removeItem("jwt");
@@ -57,16 +65,21 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
     },
   ];
 
-  const notifications: Notification[] = [
-    {
-      id: "1",
-      title: "Appointment Reminder",
-      message: "Your appointment is scheduled for tomorrow",
-      time: "2 hours ago",
-      read: false,
-      severity: "info",
-    },
-  ];
+  const handleNotificationClick = (notification: Notification) => {
+    // Mark notification as read when clicked
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+    if (notification.data?.appointmentId) {
+      router.push(`/${role}-dashboard/appointments/${notification.data.appointmentId}`);
+    }
+  };
+
+  const handleMarkAllAsRead = () => {
+    if (currentUser?.id) {
+      markAllAsRead(String(currentUser.id));
+    }
+  };
 
   return (
     <AntHeader
@@ -85,7 +98,11 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
       />
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <NotificationPopup notifications={notifications} />
+        <NotificationPopup 
+          notifications={notifications} 
+          onNotificationClick={handleNotificationClick}
+          onMarkAllAsRead={handleMarkAllAsRead}
+        />
         <Dropdown menu={{ items }} placement="bottomRight">
           <Space style={{ cursor: "pointer", color: "white" }}>
             <UserOutlined />

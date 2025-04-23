@@ -1,0 +1,26 @@
+// // import { IAppointment } from "@/providers/appointment-provider/context";
+
+// const REMINDER_INTERVALS = {
+//   DAY_BEFORE: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+//   HOUR_BEFORE: 60 * 60 * 1000,      // 1 hour in milliseconds
+// };
+
+// export const shouldSendReminder = (appointment: IAppointment): boolean => {
+//   if (!appointment.appointmentDate || appointment.notificationSent) {
+//     return false;
+//   }
+
+//   const appointmentTime = new Date(appointment.appointmentDate).getTime();
+//   const currentTime = new Date().getTime();
+//   const timeUntilAppointment = appointmentTime - currentTime;
+
+//   return (
+//     Math.abs(timeUntilAppointment - REMINDER_INTERVALS.DAY_BEFORE) < 300000 || // Within 5 minutes of 24h before
+//     Math.abs(timeUntilAppointment - REMINDER_INTERVALS.HOUR_BEFORE) < 300000   // Within 5 minutes of 1h before
+//   );
+// };
+
+// export const getReminderMessage = (appointment: IAppointment, interval: keyof typeof REMINDER_INTERVALS): string => {
+//   const timeStr = interval === 'DAY_BEFORE' ? 'tomorrow' : 'in 1 hour';
+//   return `Reminder: You have an appointment ${timeStr} at ${appointment.appointmentTime}`;
+// };
