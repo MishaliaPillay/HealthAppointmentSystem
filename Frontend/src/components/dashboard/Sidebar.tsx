@@ -6,6 +6,7 @@ import {
   ScheduleOutlined,
   QuestionCircleOutlined,
   LogoutOutlined,
+  FundOutlined,
   ArrowLeftOutlined,
   HeartOutlined,
   BookOutlined,
@@ -94,6 +95,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         key: "/patient-dashboard/booking-page",
         icon: <BookOutlined />,
         label: <Link href="/patient-dashboard/booking-page">Booking Page</Link>,
+      },
+      {
+        key: "/patient-dashboard/health-analyze",
+        icon: <FundOutlined />,
+        label: <Link href="/patient-dashboard/health-analyze">Health Analyze</Link>,
       }
     );
   }
