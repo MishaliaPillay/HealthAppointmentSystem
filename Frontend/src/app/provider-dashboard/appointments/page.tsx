@@ -34,7 +34,7 @@ export default function ProviderAppointmentsPage() {
   const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
-    useState<IAppointmentApiResponse | null>(null);
+    useState<IAppointment | null>(null);
   const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
     []
   );
@@ -110,30 +110,37 @@ export default function ProviderAppointmentsPage() {
       content: "This action cannot be undone.",
       onOk: async () => {
         await deleteAppointment(appointmentId);
-        setAppointments(appointments.filter((a) => a.appointments.id !== appointmentId));
+        setAppointments(
+          appointments.filter((a) => a.appointments.id !== appointmentId)
+        );
       },
     });
   };
-
-  const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
-      setSelectedAppointment({
-        ...appointment,
-        id: (appointment).appointments.id, 
-      });
-      setEditModalVisible(true);
+  const handleEditAppointment = (appointment: IAppointment) => {
+    console.log("handleEditAppointment", appointment);
+    setSelectedAppointment({
+      ...appointment,
+      id: appointment.id,
+      providerId: appointment?.provider?.id,
+      patientId: appointment?.patient?.id,
+    });
+    setEditModalVisible(true);
   };
-  // const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
-  //   setSelectedAppointment({
-  //     ...appointment,
-  //     appointments: appointment.id,
-  //   });
-  //   setEditModalVisible(true);
-  // };
 
-  const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
+  const handleUpdateAppointment = async (values: IAppointment) => {
+    console.log("this is the values", values);
+    console.log("selectedAppointment", selectedAppointment);
+
     if (!selectedAppointment) return;
+    const updatedValues = {
+      providerId: selectedAppointment?.providerId,
+      patientId: selectedAppointment?.patientId,
+      ...values,
+    };
 
-    await updateAppointment(selectedAppointment.id, values);
+    console.log("updatedValues", updatedValues);
+
+    await updateAppointment(selectedAppointment.id, updatedValues);
     setEditModalVisible(false);
 
     setAppointments((prevAppointments) =>
@@ -221,7 +228,6 @@ export default function ProviderAppointmentsPage() {
       ),
     },
   ];
-
 
   return (
     <div style={styles.container}>

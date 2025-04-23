@@ -48,32 +48,30 @@ export const AppointmentProvider = ({
       });
   };
 
- const getAppointments = async (): Promise<
-   IAppointmentApiResponse[] | null
- > => {
-   dispatch(getAllAppointmentPending());
-   const endpoint =
-     "https://localhost:44311/api/services/app/Appointment/GetAppointments";
+  const getAppointments = async (): Promise<
+    IAppointmentApiResponse[] | null
+  > => {
+    dispatch(getAllAppointmentPending());
+    const endpoint =
+      "https://localhost:44311/api/services/app/Appointment/GetAppointments";
 
-   return instance
-     .get(endpoint)
-     .then((response) => {
-       const result = response.data?.result ?? [];
-       dispatch(getAllAppointmentSuccess(result));
-       console.log("This is the response of getAppointments:", result);
-       return result;
-     })
-     .catch((error) => {
-       console.error(
-         "Fetching appointments failed:",
-         error.response?.data || error.message
-       );
-       dispatch(getAllAppointmentError());
-       return null;
-     });
- };
-
-
+    return instance
+      .get(endpoint)
+      .then((response) => {
+        const result = response.data?.result ?? [];
+        dispatch(getAllAppointmentSuccess(result));
+        console.log("This is the response of getAppointments:", result);
+        return result;
+      })
+      .catch((error) => {
+        console.error(
+          "Fetching appointments failed:",
+          error.response?.data || error.message
+        );
+        dispatch(getAllAppointmentError());
+        return null;
+      });
+  };
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());
@@ -90,18 +88,22 @@ export const AppointmentProvider = ({
   };
 
   const updateAppointment = async (
-    id: string,
-    appointment: Partial<IAppointment>
+    appointpointId: string,
+    appointmentData: IAppointment
   ) => {
     dispatch(updateAppointmentPending());
-    const endpoint = `/Appointment/Update`;
+    const endpoint = `https://localhost:44311/api/services/app/Appointment/Update`;
     //const endpoint = `/api/services/app/Appointment/Update/${id}`;
-
+    const payload = { ...appointmentData, id: appointpointId };
+    console.log("payload Update:",payload)
     return instance
-      .put(endpoint, appointment)
+      .put(endpoint, payload)
       .then((response) => dispatch(updateAppointmentsSuccess(response.data)))
       .catch((error) => {
-        console.error("Updating appointment by ID failed:", error);
+        console.error(
+          "Updating appointment:",
+          error.response?.data || error.message
+        );
         dispatch(updateAppointmentError());
       });
   };

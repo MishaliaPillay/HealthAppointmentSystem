@@ -10,8 +10,8 @@ export interface IAppointment {
   appointmentStatus: AppointmentStatusReflist;
   providerId: string;
   patientId: string;
-  Provider: IProvider;
-  Patient: IPatient;
+  provider: IProvider;
+  patient: IPatient;
 }
 
 export interface IAppointmentApiResponse {
@@ -23,5 +23,4 @@ export interface IAppointmentApiResponse {
   appointments: IAppointment;
   provider: IProvider;
   patient: IPatient;
-
 }
