@@ -1,4 +1,4 @@
-// src/components/FaceAnalyzer/components/InstructionsPanel.tsx
+
 import React from "react";
 
 export const InstructionsPanel = () => {

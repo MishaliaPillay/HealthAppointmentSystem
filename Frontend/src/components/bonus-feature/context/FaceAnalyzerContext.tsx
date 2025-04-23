@@ -5,7 +5,7 @@ import {
   EmotionData,
   WellnessData,
   FaceAnalysisState,
-} from "../types";
+} from "../face-analyzers/types";
 
 interface FaceAnalyzerContextType {
   camera: CameraState;

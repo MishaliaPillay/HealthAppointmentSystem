@@ -56,7 +56,11 @@ export default function ProviderDashboard() {
   };
 
   if (loading || !currentProvider) {
-    return <Spin spinning tip="Loading provider data..." />;
+    return (
+      <div className="spin-container">
+        <Spin spinning tip="Loading patient data..." />
+      </div>
+    );
   }
 
   return (

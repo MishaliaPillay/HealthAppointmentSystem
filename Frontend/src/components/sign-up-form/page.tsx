@@ -174,7 +174,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             </Radio.Group>
           </Form.Item>
 
-          {/* Personal Information Section */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Personal Information</h3>
           </div>
