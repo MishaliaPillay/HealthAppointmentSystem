@@ -104,43 +104,46 @@ export default function ProviderAppointmentsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // const handleDeleteAppointment = async (appointmentId: string) => {
-  //   Modal.confirm({
-  //     title: "Are you sure you want to delete this appointment?",
-  //     content: "This action cannot be undone.",
-  //     onOk: async () => {
-  //       await deleteAppointment(appointmentId);
-  //       setAppointments(appointments.filter((a) => a.Patient.id !== appointmentId));
-  //     },
-  //   });
-  // };
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this appointment?",
+      content: "This action cannot be undone.",
+      onOk: async () => {
+        await deleteAppointment(appointmentId);
+        setAppointments(appointments.filter((a) => a.appointments.id !== appointmentId));
+      },
+    });
+  };
 
-  // const handleEditAppointment = (appointment: IAppointment) => {
-  //   setSelectedAppointment(appointment);
-  //   setEditModalVisible(true);
-  // };
+  const handleEditAppointment = (appointment: IAppointment) => {
+      setSelectedAppointment({
+        ...appointment,
+        id: (appointment).id, 
+      });
+      setEditModalVisible(true);
+  };
 
-  // const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
-  //   if (!selectedAppointment) return;
+  const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
+    if (!selectedAppointment) return;
 
-  //   await updateAppointment(selectedAppointment.id, values);
-  //   setEditModalVisible(false);
+    await updateAppointment(selectedAppointment.id, values);
+    setEditModalVisible(false);
 
-  //   setAppointments((prevAppointments) =>
-  //     prevAppointments.map((app) =>
-  //       app.id === selectedAppointment.id ? { ...app, ...values } : app
-  //     )
-  //   );
-  // };
+    setAppointments((prevAppointments) =>
+      prevAppointments.map((app) =>
+        app.id === selectedAppointment.id ? { ...app, ...values } : app
+      )
+    );
+  };
 
-  // const handleStatusChange = async (id: string, newStatus: number) => {
-  //   await updateAppointment(id, { appointmentStatus: newStatus });
-  //   setAppointments((prev) =>
-  //     prev.map((app) =>
-  //       app.id === id ? { ...app, appointmentStatus: newStatus } : app
-  //     )
-  //   );
-  // };
+  const handleStatusChange = async (id: string, newStatus: number) => {
+    await updateAppointment(id, { appointmentStatus: newStatus });
+    setAppointments((prev) =>
+      prev.map((app) =>
+        app.id === id ? { ...app, appointmentStatus: newStatus } : app
+      )
+    );
+  };
 
   const getColumns = () => [
     {
@@ -170,47 +173,48 @@ export default function ProviderAppointmentsPage() {
       dataIndex: "purpose",
       key: "purpose",
     },
-    // {
-    //   title: "Status",
-    //   dataIndex: "appointmentStatus",
-    //   key: "appointmentStatus",
-    //   render: (status, record) => (
-    //     <Select
-    //       defaultValue={status}
-    //       onChange={(value) => handleStatusChange(record.id, value)}
-    //     >
-    //       {Object.keys(AppointmentStatusReflist)
-    //         .filter((key) => isNaN(Number(key)))
-    //         .map((statusKey) => (
-    //           <Option
-    //             key={statusKey}
-    //             value={AppointmentStatusReflist[statusKey]}
-    //           >
-    //             {statusKey}
-    //           </Option>
-    //         ))}
-    //     </Select>
-    //   ),
-    // },
-    // {
-    //   title: "Actions",
-    //   key: "actions",
-    //   render: (_: unknown, record: IAppointment) => (
-    //     <Space size="small">
-    //       <Button type="link" onClick={() => handleEditAppointment(record)}>
-    //         Edit
-    //       </Button>
-    //       <Button
-    //         type="link"
-    //         danger
-    //         onClick={() => handleDeleteAppointment(record.id)}
-    //       >
-    //         Delete
-    //       </Button>
-    //     </Space>
-    //   ),
-    // },
+    {
+      title: "Status",
+      dataIndex: "appointmentStatus",
+      key: "appointmentStatus",
+      render: (status, record) => (
+        <Select
+          defaultValue={status}
+          onChange={(value) => handleStatusChange(record.id, value)}
+        >
+          {Object.keys(AppointmentStatusReflist)
+            .filter((key) => isNaN(Number(key)))
+            .map((statusKey) => (
+              <Option
+                key={statusKey}
+                value={AppointmentStatusReflist[statusKey]}
+              >
+                {statusKey}
+              </Option>
+            ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: unknown, record: IAppointment) => (
+        <Space size="small">
+          <Button type="link" onClick={() => handleEditAppointment(record)}>
+            Edit
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() => handleDeleteAppointment(record.id)}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
   ];
+
 
   return (
     <div style={styles.container}>
@@ -226,6 +230,69 @@ export default function ProviderAppointmentsPage() {
       </div>
 
       <Spin spinning={loading} tip="Loading appointments...">
+        <Modal
+          title="Edit Appointment"
+          open={editModalVisible}
+          onCancel={() => setEditModalVisible(false)}
+          onOk={() =>
+            handleUpdateAppointment({
+              purpose: selectedAppointment?.purpose,
+              appointmentDate: selectedAppointment?.appointmentDate,
+              appointmentTime: selectedAppointment?.appointmentTime,
+              appointmentStatus: selectedAppointment?.appointmentStatus,
+            })
+          }
+          okText="Update"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <Input
+              value={selectedAppointment?.purpose}
+              onChange={(e) =>
+                setSelectedAppointment((prev) =>
+                  prev ? { ...prev, purpose: e.target.value } : null
+                )
+              }
+              placeholder="Purpose"
+            />
+            <Input
+              type="date"
+              value={selectedAppointment?.appointmentDate?.split("T")[0]}
+              onChange={(e) =>
+                setSelectedAppointment((prev) =>
+                  prev ? { ...prev, appointmentDate: e.target.value } : null
+                )
+              }
+            />
+            <Input
+              type="time"
+              value={selectedAppointment?.appointmentTime}
+              onChange={(e) =>
+                setSelectedAppointment((prev) =>
+                  prev ? { ...prev, appointmentTime: e.target.value } : null
+                )
+              }
+            />
+            <Select
+              value={selectedAppointment?.appointmentStatus}
+              onChange={(value) =>
+                setSelectedAppointment((prev) =>
+                  prev ? { ...prev, appointmentStatus: value } : null
+                )
+              }
+            >
+              {Object.keys(AppointmentStatusReflist)
+                .filter((key) => isNaN(Number(key)))
+                .map((statusKey) => (
+                  <Option
+                    key={statusKey}
+                    value={AppointmentStatusReflist[statusKey]}
+                  >
+                    {statusKey}
+                  </Option>
+                ))}
+            </Select>
+          </div>
+        </Modal>
         <Table<IAppointmentApiResponse>
           dataSource={filteredData}
           columns={getColumns()}

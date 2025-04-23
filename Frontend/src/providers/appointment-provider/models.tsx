@@ -19,6 +19,8 @@ export interface IAppointmentApiResponse {
   appointmentTime: string; // e.g. "12:51:00"
   purpose: string;
   appointmentStatus: number;
+  appointments: IAppointment;
   provider: IProvider;
   patient: IPatient;
+
 }
