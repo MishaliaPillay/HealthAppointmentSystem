@@ -1,6 +1,6 @@
 "use client";
-import React from "react"
-import Link from "next/link"
+import React from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   Calendar,
@@ -12,10 +12,10 @@ import {
   Stethoscope,
   User,
   Video,
-} from "lucide-react"
-import { Button } from "antd"
-import "./style.css"
-import { useRouter } from "next/navigation"
+} from "lucide-react";
+import { Button } from "antd";
+import "./style.css";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
@@ -49,17 +49,17 @@ export default function Home() {
                 Your Health, <span className="highlight">Your Schedule</span>
               </h1>
               <p className="hero-description">
-                Book appointments with top healthcare providers in your area. No waiting lines, no phone calls – just
-                simple, secure scheduling.
+                Book appointments with top healthcare providers in your area. No
+                waiting lines, no phone calls – just simple, secure scheduling.
               </p>
               <div>
-                <Button 
-                  type="primary" 
-                  size="large" 
+                <Button
+                  type="primary"
+                  size="large"
                   className="book-button"
-                  onClick={() => router.push('/login')}
+                  onClick={() => router.push("/login")}
                 >
-                  Book Now
+                  Get Started
                   <ArrowRight className="button-icon" />
                 </Button>
               </div>
@@ -83,7 +83,8 @@ export default function Home() {
             <div className="section-tag">Key Features</div>
             <h2 className="section-title">Simplifying Healthcare Access</h2>
             <p className="section-description">
-              Our platform makes managing your healthcare appointments effortless and efficient.
+              Our platform makes managing your healthcare appointments
+              effortless and efficient.
             </p>
           </div>
           <div className="features-grid">
@@ -95,27 +96,32 @@ export default function Home() {
               },
               {
                 title: "Instant Confirmations",
-                description: "Receive immediate appointment confirmations and reminders.",
+                description:
+                  "Receive immediate appointment confirmations and reminders.",
                 icon: <CheckCircle className="feature-icon" />,
               },
               {
                 title: "Emotion Detection",
-                description: "AI-powered analysis to understand your emotional state.",
+                description:
+                  "AI-powered analysis to understand your emotional state.",
                 icon: <Video className="feature-icon" />,
               },
               {
                 title: "Secure Health Records",
-                description: "Your medical information is protected with bank-level security.",
+                description:
+                  "Your medical information is protected with bank-level security.",
                 icon: <Shield className="feature-icon" />,
               },
               {
                 title: "Smart Provider Matching",
-                description: "Find the right specialist for your specific health needs.",
+                description:
+                  "Find the right specialist for your specific health needs.",
                 icon: <Stethoscope className="feature-icon" />,
               },
               {
                 title: "24/7 Support",
-                description: "Our team is always available to assist with any questions.",
+                description:
+                  "Our team is always available to assist with any questions.",
                 icon: <MessageSquare className="feature-icon" />,
               },
             ].map((feature, index) => (
@@ -135,32 +141,38 @@ export default function Home() {
           <div className="section-header">
             <div className="section-tag">Simple Process</div>
             <h2 className="section-title">How It Works</h2>
-            <p className="section-description">Getting the healthcare you need has never been easier.</p>
+            <p className="section-description">
+              Getting the healthcare you need has never been easier.
+            </p>
           </div>
           <div className="steps-grid">
             {[
               {
                 step: "1",
                 title: "Create Account",
-                description: "Sign up and complete your health profile in minutes.",
+                description:
+                  "Sign up and complete your health profile in minutes.",
                 icon: <User className="step-icon" />,
               },
               {
                 step: "2",
                 title: "Find Provider",
-                description: "Search for specialists based on your needs and location.",
+                description:
+                  "Search for specialists based on your needs and location.",
                 icon: <Stethoscope className="step-icon" />,
               },
               {
                 step: "3",
                 title: "Book Appointment",
-                description: "Select a convenient time slot from available options.",
+                description:
+                  "Select a convenient time slot from available options.",
                 icon: <Calendar className="step-icon" />,
               },
               {
                 step: "4",
                 title: "Get Care",
-                description: "Visit your provider in-person or via video consultation.",
+                description:
+                  "Visit your provider in-person or via video consultation.",
                 icon: <Heart className="step-icon" />,
               },
             ].map((step, index) => (
@@ -217,7 +229,9 @@ export default function Home() {
           <div className="section-header">
             <div className="section-tag">Testimonials</div>
             <h2 className="section-title">What Our Users Say</h2>
-            <p className="section-description">Real experiences from patients and healthcare providers.</p>
+            <p className="section-description">
+              Real experiences from patients and healthcare providers.
+            </p>
           </div>
           <div className="testimonials-grid">
             {[
@@ -248,7 +262,9 @@ export default function Home() {
                       <Star key={i} className="star-icon" />
                     ))}
                 </div>
-                <p className="testimonial-quote">&quot;{testimonial.quote}&quot;</p>
+                <p className="testimonial-quote">
+                  &quot;{testimonial.quote}&quot;
+                </p>
                 <div className="testimonial-author">
                   <p className="author-name">{testimonial.author}</p>
                   <p className="author-role">{testimonial.role}</p>
@@ -270,7 +286,9 @@ export default function Home() {
                 </div>
                 <span className="logo-text">HealthConnect</span>
               </div>
-              <p className="footer-description">Connecting patients with quality healthcare providers 24/7.</p>
+              <p className="footer-description">
+                Connecting patients with quality healthcare providers 24/7.
+              </p>
             </div>
             <div className="footer-column">
               <h3 className="footer-heading">For Patients</h3>
@@ -349,10 +367,12 @@ export default function Home() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p className="copyright">© {new Date().getFullYear()} HealthConnect. All rights reserved.</p>
+            <p className="copyright">
+              © {new Date().getFullYear()} HealthConnect. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }

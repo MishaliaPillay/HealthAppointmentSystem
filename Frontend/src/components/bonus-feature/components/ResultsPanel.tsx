@@ -1,6 +1,5 @@
-// src/components/FaceAnalyzer/components/ResultsPanel.tsx
 import React from "react";
-import styles from "../FaceAnalyzer.module.css";
+import styles from "../face-analyzers/FaceAnalyzer.module.css";
 import { EmotionDisplay } from "./EmotionDisplay";
 import { WellnessInsights } from "./WellnessInsights";
 

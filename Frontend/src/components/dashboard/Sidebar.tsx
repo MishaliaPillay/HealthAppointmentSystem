@@ -7,6 +7,8 @@ import {
   QuestionCircleOutlined,
   LogoutOutlined,
   ArrowLeftOutlined,
+  HeartOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -69,11 +71,35 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         <Link href={`/${role}-dashboard/appointments`}>My Appointments</Link>
       ),
     },
-    {
-      key: "/patient-dashboard/help",
-      icon: <QuestionCircleOutlined />,
-      label: <Link href="/patient-dashboard/help">Help</Link>,
-    },
+  ];
+
+  if (role === "provider") {
+    menuItems.push({
+      key: "/provider-dashboard/speech-summarizer",
+      icon: <ScheduleOutlined />,
+      label: (
+        <Link href="/provider-dashboard/speech-summarizer">Clinical Notes</Link>
+      ),
+    });
+  }
+
+  if (role === "patient") {
+    menuItems.push(
+      {
+        key: "/patient-dashboard/face-scan",
+        icon: <HeartOutlined />,
+        label: <Link href="/patient-dashboard/face-scan">Well Being</Link>,
+      },
+      {
+        key: "/patient-dashboard/booking-page",
+        icon: <BookOutlined />,
+        label: <Link href="/patient-dashboard/booking-page">Booking Page</Link>,
+      }
+    );
+  }
+
+  // Move "Back" and "Logout" to the end
+  menuItems.push(
     {
       key: "back",
       icon: <ArrowLeftOutlined />,
@@ -81,12 +107,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       onClick: () => router.back(),
     },
     {
+      key: "/patient-dashboard/help",
+      icon: <QuestionCircleOutlined />,
+      label: <Link href="/patient-dashboard/help">Help</Link>,
+    },
+    {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
       onClick: signOutUser,
-    },
-  ];
+    }
+  );
 
   const getSelectedKey = () => {
     const match = menuItems

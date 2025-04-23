@@ -9,12 +9,14 @@ import { useCheckuserActions } from "@/providers/check-user-provider";
 import debounce from "lodash.debounce";
 import { RuleObject } from "antd/es/form";
 import { StoreValue } from "antd/es/form/interface";
-import styles from "../../app/page.module.css";
+import styles from "../../app/login/login-page.module.css";
 
 interface LoginFormProps {
   onLoginSuccess?: () => void;
   onBeforeSubmit?: () => void;
 }
+
+let validationCount = 0;
 
 export default function LoginForm({
   onLoginSuccess,
@@ -23,41 +25,48 @@ export default function LoginForm({
   const { signIn } = useAuthActions();
   const { userExists } = useCheckuserActions();
   const { getCurrentUser } = useUserActions();
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
-  // Debounced check
+  // Debounced user existence check
   const debouncedEmailCheck = useRef(
-    debounce(async (value: string) => {
+    debounce(async (value: string): Promise<boolean> => {
       const result = await userExists({ emailAddress: value, userName: "" });
-      return result.result?.emailExists;
+      return !!result.result?.emailExists;
     }, 300)
   ).current;
 
-  // Validation rule
+  // Email validation rule
   const validateEmailExists = async (_: RuleObject, value: StoreValue) => {
     if (!value) return Promise.resolve();
-    setLoading(true); // Start loading indicator
+
+    const currentValidation = ++validationCount; // Track validation instance
+    setLoading(true);
+
     const exists = await debouncedEmailCheck(value);
-    setLoading(false); // Stop loading indicator
+    setLoading(false);
+
+    if (currentValidation !== validationCount) {
+      return Promise.resolve(); // Ignore outdated validation
+    }
 
     if (!exists) {
       return Promise.reject("User does not exist");
     }
+
     return Promise.resolve();
   };
 
+  // Handle login submit
   const onFinishLogin = async (values: ISignInRequest) => {
     onBeforeSubmit?.();
-    setLoading(true); // Start loading when checking user existence
+    setLoading(true);
 
     const exists = await userExists({
-      emailAddress: values.userNameOrEmailAddress, // ✅ FIXED
+      emailAddress: values.userNameOrEmailAddress,
       userName: "",
     });
 
-    console.log("User exists response:", exists);
-
-    setLoading(false); // Stop loading after check is done
+    setLoading(false);
 
     if (!exists.result?.emailExists) {
       message.error("User does not exist");
@@ -65,21 +74,17 @@ export default function LoginForm({
     }
 
     try {
-      // Attempt to sign in
       const loginResult = await signIn(values);
-      console.log("Login result:", loginResult);
 
-      // If the backend indicates login success, continue
       if (loginResult) {
         const token = sessionStorage.getItem("jwt");
         getCurrentUser(token);
+        message.success("Successfully logged in!");
         onLoginSuccess?.();
       }
     } catch (error) {
-      // Handle login failure (e.g., incorrect password or backend issues)
       console.error("Login error:", error);
       if (error.response && error.response.data) {
-        // Backend might return specific error details
         message.error(
           error.response.data.errorMessage ||
             "Login failed! Please check your credentials."
@@ -111,7 +116,7 @@ export default function LoginForm({
         <Input
           prefix={<MailOutlined />}
           placeholder="Email"
-          disabled={loading} // Disable input while checking
+          disabled={loading}
         />
       </Form.Item>
 
@@ -127,7 +132,7 @@ export default function LoginForm({
           type="primary"
           htmlType="submit"
           className={styles.submitButton}
-          loading={loading} // Show loading spinner while submitting
+          loading={loading}
         >
           Log In
         </Button>
