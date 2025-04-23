@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Typography, Button, Select, Space, Spin, Modal, Table } from "antd";
+import {
+  Typography,
+  Button,
+  Select,
+  Space,
+  Spin,
+  Modal,
+  Table,
+  Input,
+} from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
 import {
@@ -15,10 +25,11 @@ import {
   IAppointmentApiResponse,
 } from "@/providers/appointment-provider/models";
 import styles from "./styles";
+
 const { Option } = Select;
 
 export default function ProviderAppointmentsPage() {
-  const [searchText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [statusFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -55,11 +66,11 @@ export default function ProviderAppointmentsPage() {
   const loadAppointments = async () => {
     const response = await getAppointments();
     const fetchedAppointments = response ?? [];
-     const filteredAppointments = fetchedAppointments.filter(
-       (appointment) =>
-         appointment.provider?.id === currentProvider?.id ||
-         appointment.provider?.user.id === currentProvider?.user.id
-     );
+    const filteredAppointments = fetchedAppointments.filter(
+      (appointment) =>
+        appointment.provider?.id === currentProvider?.id ||
+        appointment.provider?.user.id === currentProvider?.user.id
+    );
     const enhancedAppointmentsData = await Promise.all(
       filteredAppointments.map(async (appointment) => {
         try {
@@ -203,6 +214,17 @@ export default function ProviderAppointmentsPage() {
 
   return (
     <div style={styles.container}>
+      {/* Search Input */}
+      <div style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search by purpose"
+          prefix={<SearchOutlined />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300 }}
+        />
+      </div>
+
       <Spin spinning={loading} tip="Loading appointments...">
         <Table<IAppointmentApiResponse>
           dataSource={filteredData}
