@@ -4,10 +4,10 @@ import { Tabs, Typography, Spin } from "antd";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import styles from "./login-page.module.css";
-import { useAuthState } from "@/providers/auth-provider";
+import { useAuthState } from "../../providers/auth-provider/index";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { getRole } from "@/utils/decoder";
+import { getRole } from "../../utils/decoder";
 import LoginForm from "../../components/login-form/page";
 import SignupForm from "../../components/sign-up-form/page";
 
