@@ -1,4 +1,4 @@
-import HealthAnalysisComponent from "@/components/bonus-feature/components/displayChatboard";
+// import HealthAnalysisComponent from "@/components/bonus-feature/components/displayChatboard";
 import FaceAnalyzer from "../../../components/bonus-feature/face-analyzers/FaceAnalyzer";
 
 export default function Home() {
@@ -6,9 +6,9 @@ export default function Home() {
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Emotion Detection</h1>
       <FaceAnalyzer />
-      <div>
+      {/* <div>
         <HealthAnalysisComponent />
-      </div>
+      </div> */}
     </div>
   );
 }
