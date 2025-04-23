@@ -2,13 +2,11 @@
 using Abp.Application.Services.Dto;
 using healthap.Domain.Appointments;
 using healthap.Domain.Persons;
-using healthap.Services.PersonServices.Dtos;
 
 namespace healthap.Services.AppointmentServices.Dtos
 {
     public class AppointResponseDto:EntityDto<Guid>
     {
-
         public DateTime AppointmentDate { get; set; }
 
         public TimeSpan AppointmentTime { get; set; }
@@ -17,11 +15,7 @@ namespace healthap.Services.AppointmentServices.Dtos
 
         public virtual ReflistAppointStatus? AppointmentStatus { get; set; }
 
-        //public Guid ProviderId { get; set; }
-
         public Provider Provider { get; set; }
-
-        //public Guid PatientId { get; set; }
         public Patient Patient { get; set; }
     }
 }

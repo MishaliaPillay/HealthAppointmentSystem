@@ -86,6 +86,7 @@ namespace healthap.Services.AppointmentServices
 
                 var appointResp = new AppointResponseDto
                 {
+                    Id=appointment.Id,
                     AppointmentDate = appointment.AppointmentDate,
                     AppointmentTime = appointment.AppointmentTime,
                     Purpose = appointment.Purpose,

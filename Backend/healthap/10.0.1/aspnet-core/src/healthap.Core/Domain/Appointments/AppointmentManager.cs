@@ -48,10 +48,7 @@ namespace healthap.Domain.Appointments
             return !overlappingAppointments.Any();
         }
 
-        //public IQueryable<Appointment> GetAllAppointments()
-        //{
-        //    return _appointmentRepository.GetAllIncluding(p => p.Patient, p => p.Provider, p => p.Patient.User, p => p.Provider.User);
-        //}
+       
         
     }
 }
