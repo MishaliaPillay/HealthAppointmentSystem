@@ -2,7 +2,7 @@
 
 import React, { useContext, useReducer } from "react";
 import { getAxiosInstace } from "@/utils/axiosInstance";
-import { IAppointment } from "./models";
+import { IAppointment, IAppointmentApiResponse } from "./models";
 import { AppointmentReducer } from "./reducers";
 import {
   AppointmentActionContext,
@@ -48,22 +48,32 @@ export const AppointmentProvider = ({
       });
   };
 
-  const getAppointments = async (): Promise<IAppointment[] | null> => {
-    dispatch(getAllAppointmentPending());
-    // const endpoint = "/api/services/app/Appointment/GetAll";
-    const endpoint = "/Appointment/GetAll";
-    return instance
-      .get(endpoint)
-      .then((response) => {
-        dispatch(getAllAppointmentSuccess(response.data.data));
-        return response.data.data;
-      })
-      .catch((error) => {
-        console.error("Fetching appointments failed:", error);
-        dispatch(getAllAppointmentError());
-        return null;
-      });
-  };
+ const getAppointments = async (): Promise<
+   IAppointmentApiResponse[] | null
+ > => {
+   dispatch(getAllAppointmentPending());
+   const endpoint =
+     "https://localhost:44311/api/services/app/Appointment/GetAppointments";
+
+   return instance
+     .get(endpoint)
+     .then((response) => {
+       const result = response.data?.result ?? [];
+       dispatch(getAllAppointmentSuccess(result));
+       console.log("This is the response of getAppointments:", result);
+       return result;
+     })
+     .catch((error) => {
+       console.error(
+         "Fetching appointments failed:",
+         error.response?.data || error.message
+       );
+       dispatch(getAllAppointmentError());
+       return null;
+     });
+ };
+
+
 
   const getAppointmentById = async (id: string) => {
     dispatch(getAppointmentPending());

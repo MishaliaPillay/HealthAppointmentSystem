@@ -62,22 +62,6 @@ namespace healthap.Services.AppointmentServices
 
             return createdAppointment;
         }
-
-        //public override async Task<PagedResultDto<AppointmentDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
-        //{
-        //    var query = _appointmentManager.GetAllAppointments();
-        //    var totalCount = await query.CountAsync();
-        //    var appointments = await query
-        //        .Skip(input.SkipCount)
-        //        .Take(input.MaxResultCount)
-        //        .ToListAsync();
-        //    var result = ObjectMapper.Map<List<AppointmentDto>>(appointments);
-        //    return new PagedResultDto<AppointmentDto>(totalCount, result);
-
-        //}
-
-
-
         public async Task<IList<AppointResponseDto>> GetAppointments()
         {
             var appointQuery = await _appointmentRepository.GetAllAsync();
@@ -115,32 +99,7 @@ namespace healthap.Services.AppointmentServices
 
             return appontResponseList;
         }
-        //public async Task<IList<AppointResponseDto>> GetAppointments()
-        //{
-        //    var appointQuery = await _appointmentRepository.GetAllAsync();
-        //    List<AppointResponseDto> appontResponseList= new List<AppointResponseDto>();
-           
-        //    foreach (var appointment in appointQuery)
-        //    {
-        //        var patients = await _patientRepository.GetAllIncludingAsync(p => p.User);
-        //        var patient= await patients.FirstOrDefaultAsync(p => p.Id == appointment.PatientId);
-
-        //        var providers = await _providerRepository.GetAllIncludingAsync(p => p.User);
-        //        var provider= await providers.FirstOrDefaultAsync(p => p.Id == appointment.ProviderId);
-
-        //        var appointResp = new AppointResponseDto
-        //        {
-        //            AppointmentDate = appointment.AppointmentDate,
-        //            AppointmentTime = appointment.AppointmentTime,
-        //            Purpose = appointment.Purpose,
-        //            AppointmentStatus = appointment.AppointmentStatus,
-        //            Patient = patient,
-        //            Provider = provider
-        //        };
-        //        appontResponseList.Add(appointResp);
-        //    }
-        //    return appontResponseList;
-        //}
+     
 
     }
 }
