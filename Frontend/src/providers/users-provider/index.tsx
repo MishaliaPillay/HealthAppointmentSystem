@@ -29,8 +29,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Get current user
   const getCurrentUser = async (token: string): Promise<IUser | null> => {
     dispatch(getCurrentUserPending());
-    const endpoint = `https://healthappointmentsystem-2.onrender.com/api/services/app/Session/GetCurrentLoginInformations`;
-    //const endpoint = `https://localhost:44311/api/services/app/Session/GetCurrentLoginInformations`;
+    const endpoint = `/api/services/app/Session/GetCurrentLoginInformations`;
     return axios
       .get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
@@ -55,8 +54,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Fetch all users
   const getUsers = async () => {
     dispatch(getUserPending());
-    //const endpoint = `/api/services/app/User/GetAll`;
-    const endpoint = `https://localhost:44311/api/services/app/User/GetAll`;
+    const endpoint = `/api/services/app/User/GetAll`;
     return instance
       .get(endpoint)
       .then((response) => {
@@ -71,8 +69,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Create a user
   const createUser = async (user: IUser) => {
     dispatch(createUserPending());
-    //const endpoint = `/api/services/app/User/Create`;
-   const endpoint = `https://localhost:44311/api/services/app/User/Create`;
+    const endpoint = `/api/services/app/User/Create`;
     return instance
       .post(endpoint, user)
       .then((response) => {
@@ -87,8 +84,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Update a user
   const updateUser = async (user: IUser) => {
     dispatch(updateUserPending());
-    // const endpoint = `/api/services/app/User/Update`;
-  const endpoint = `https://localhost:44311/api/services/app/User/Update`;
+    const endpoint = `/api/services/app/User/Update`;
     return instance
       .put(endpoint, user)
       .then((response) => {
