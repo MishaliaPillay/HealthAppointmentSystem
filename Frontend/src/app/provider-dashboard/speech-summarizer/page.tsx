@@ -1,6 +1,6 @@
 
 import React from "react";
-import SpeechTranscriber from "../../../components/speech-recognition/SpeechRecognition";
+import SpeechTranscriber from "../../../components/bonus-feature/speech-recognition/SpeechRecognition";
 
 function App() {
   return (

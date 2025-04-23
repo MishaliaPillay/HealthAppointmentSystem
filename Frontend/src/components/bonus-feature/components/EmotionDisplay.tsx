@@ -1,4 +1,4 @@
-// src/components/FaceAnalyzer/components/EmotionDisplay.tsx
+
 import React from "react";
 
 interface EmotionDisplayProps {
