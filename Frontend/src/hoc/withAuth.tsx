@@ -15,7 +15,7 @@ const withAuth = (WrappedLayout: React.ComponentType<LayoutProps>) => {
       const token = sessionStorage.getItem("jwt");
 
       if (!token) {
-        router.push("/");
+        router.push("/login");
         return;
       }
 
