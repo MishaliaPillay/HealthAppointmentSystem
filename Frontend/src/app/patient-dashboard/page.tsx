@@ -50,24 +50,37 @@ function Dashboard() {
     if (currentPatient === undefined) {
       fetchPatientOnReload();
     }
-  }, [isError, isPending, isSuccess, currentPatient]);
+  }, [isError, isPending, isSuccess]);
 
-  const fetchPatientOnReload = async (): Promise<void> => {
+  // const fetchPatientOnReload = async (): Promise<void> => {
+  //   const token = sessionStorage.getItem("jwt");
+  //   if (token) {
+  //     await getCurrentUser(token)
+  //       .then(async (user) => {
+  //         return await getCurrentPatient(user.id);
+  //       })
+  //       .catch((err) => console.error("Error Current User : ", err));
+  //     if (Loading || isPending) {
+  //       <div className="spin-container">
+
+  //         <Spin spinning tip="Loading patient data..." />
+  //       </div>;
+  //     }
+  //     if (isError || !getCurrentUser(token)) {
+  //       <p>Failed to load patient data. Please try again.</p>;
+  //     }
+  //   }
+  // };
+  const fetchPatientOnReload = async () => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
-      await getCurrentUser(token)
-        .then(async (user) => {
-          return await getCurrentPatient(user.id);
-        })
-        .catch((err) => console.error("Error Current User : ", err));
-      if (Loading || isPending) {
-        <div className="spin-container">
-
-          <Spin spinning tip="Loading patient data..." />
-        </div>;
-      }
-      if (isError || !getCurrentUser(token)) {
-        <p>Failed to load patient data. Please try again.</p>;
+      try {
+        // Call getCurrentUser once and store the result
+        const user = await getCurrentUser(token);
+        // Then use the result to get the patient
+        await getCurrentPatient(user.id);
+      } catch (err) {
+        console.error("Error fetching current user:", err);
       }
     }
   };

@@ -26,9 +26,11 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const [user, setUser] = useState(null);
 
   const { getCurrentUser } = useUserActions();
   const { currentUser } = useUserState();
@@ -43,16 +45,36 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     setRole(userRole);
   }, []);
 
-  useEffect(() => {
-    if (!currentUser) {
-      const token = sessionStorage.getItem("jwt");
-      if (token) {
-        getCurrentUser(token).catch((err) => {
-          console.error("Error fetching current user: ", err);
-        });
-      }
-    }
-  }, [currentUser, getCurrentUser]);
+  // useEffect(() => {
+  //   if (!currentUser) {
+  //     const token = sessionStorage.getItem("jwt");
+  //     if (token) {
+  //       getCurrentUser(token).catch((err) => {
+  //         console.error("Error fetching current user: ", err);
+  //       });
+  //     }
+  //   }
+  // }, [currentUser, getCurrentUser]);
+ useEffect(() => {
+   // This function should only run once when component mounts
+   const fetchUser = async () => {
+     setLoading(true);
+     try {
+       const token = sessionStorage.getItem("jwt");
+       if (token) {
+         const userData = await getCurrentUser(token);
+         setUser(userData);
+       }
+     } catch (error) {
+       console.error("Error fetching user:", error);
+     } finally {
+       setLoading(false);
+     }
+   };
+
+   fetchUser();
+   // Empty dependency array means this effect runs once on mount
+ }, []);
 
   const signOutUser = () => {
     sessionStorage.removeItem("jwt");

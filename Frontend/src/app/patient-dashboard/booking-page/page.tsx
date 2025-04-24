@@ -140,7 +140,6 @@ const BookingComponent: React.FC = () => {
     try {
       setLoading(true);
       const providerDetails = await getCurrentProvider(doctor.userId);
-      console.log("doctor ", doctor);
       setProviderData(providerDetails);
     } catch (error) {
       console.error("Error fetching provider details:", error);
@@ -170,7 +169,6 @@ const BookingComponent: React.FC = () => {
       console.error("Missing required appointment data");
       return;
     }
-    console.log("curre", currentPatientId);
     setIsSubmitting(true);
     try {
       const appointmentData: IAppointments = {
@@ -196,7 +194,6 @@ const BookingComponent: React.FC = () => {
       (provider) => provider.speciality === selectedSpecialty
     ) || [];
 
-  console.log(institutions);
 
   if (loading) {
     return (

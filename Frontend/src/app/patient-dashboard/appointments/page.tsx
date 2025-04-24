@@ -72,9 +72,7 @@ export default function PatientAppointmentsPage() {
   };
 
   const loadAppointments = async () => {
-    const allAppointments = await getAppointments();
-    console.log("these are all appointments", allAppointments);
-    
+    const allAppointments = await getAppointments();    
     const patientAppointments = (allAppointments ?? []).filter(
       (a) =>
         a.patient?.id === currentPatient?.id ||
