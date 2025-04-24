@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef, useEffect } from "react";
 import {
   Form,
@@ -155,7 +154,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
         initialValues={{ role: "patient" }}
       >
         <div className={styles.signupGrid}>
-          {/* Account Type Section */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Account Type</h3>
           </div>
@@ -213,7 +211,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             <Input placeholder="Phone Number" />
           </Form.Item>
 
-          {/* Account Information Section */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Account Information</h3>
           </div>
@@ -286,21 +283,12 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
             </div>
           </Form.Item>
 
-          {/* Patient Specific Fields */}
+          {/* Patient Fields */}
           {role === "patient" && (
             <>
-              <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Patient Details</h3>
-              </div>
-
               <Form.Item
                 name="dateOfBirth"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your date of birth!",
-                  },
-                ]}
+                rules={[{ required: true, message: "Please input DOB!" }]}
               >
                 <DatePicker
                   placeholder="Date of Birth"
@@ -311,10 +299,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
               <Form.Item
                 name="preferredContactMethod"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please select your preferred contact method!",
-                  },
+                  { required: true, message: "Please select contact method!" },
                 ]}
               >
                 <Select placeholder="Preferred Contact Method">
@@ -323,72 +308,32 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 </Select>
               </Form.Item>
 
-              <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Address Information</h3>
-              </div>
-
-              <Form.Item
-                name="address"
-                className={styles.fullWidth}
-                rules={[
-                  { required: true, message: "Please input your address!" },
-                ]}
-              >
+              <Form.Item name="address" rules={[{ required: true }]}>
                 <Input placeholder="Address" />
               </Form.Item>
 
-              <Form.Item
-                name="city"
-                rules={[{ required: true, message: "Please input your city!" }]}
-              >
+              <Form.Item name="city" rules={[{ required: true }]}>
                 <Input placeholder="City" />
               </Form.Item>
 
-              <Form.Item
-                name="province"
-                rules={[
-                  { required: true, message: "Please input your province!" },
-                ]}
-              >
+              <Form.Item name="province" rules={[{ required: true }]}>
                 <Input placeholder="Province" />
               </Form.Item>
 
-              <Form.Item
-                name="postalCode"
-                rules={[
-                  { required: true, message: "Please input your postal code!" },
-                ]}
-              >
+              <Form.Item name="postalCode" rules={[{ required: true }]}>
                 <Input placeholder="Postal Code" />
               </Form.Item>
 
-              <Form.Item
-                name="country"
-                className={styles.fullWidth}
-                rules={[
-                  { required: true, message: "Please input your country!" },
-                ]}
-              >
+              <Form.Item name="country" rules={[{ required: true }]}>
                 <Input placeholder="Country" />
               </Form.Item>
             </>
           )}
 
-          {/* Provider Specific Fields */}
+          {/* Provider Fields */}
           {role === "provider" && (
             <>
-              <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  Professional Information
-                </h3>
-              </div>
-
-              <Form.Item
-                name="specialtyName"
-                rules={[
-                  { required: true, message: "Please select your specialty!" },
-                ]}
-              >
+              <Form.Item name="specialtyName" rules={[{ required: true }]}>
                 <Select placeholder="Select Specialty" showSearch>
                   {specialties.map((spec) => (
                     <Option key={spec} value={spec}>
@@ -398,93 +343,49 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 </Select>
               </Form.Item>
 
-              <Form.Item
-                name="qualification"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter your qualification!",
-                  },
-                ]}
-              >
+              <Form.Item name="qualification" rules={[{ required: true }]}>
                 <Input placeholder="Qualification" />
               </Form.Item>
 
-              <Form.Item
-                name="yearsOfExperience"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter years of experience!",
-                  },
-                ]}
-              >
+              <Form.Item name="yearsOfExperience" rules={[{ required: true }]}>
                 <Input type="number" placeholder="Years of Experience" />
               </Form.Item>
 
               <Form.Item
                 name="maxAppointmentsPerDay"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter max appointments per day!",
-                  },
-                ]}
+                rules={[{ required: true }]}
               >
                 <Input type="number" placeholder="Max Appointments Per Day" />
               </Form.Item>
 
-              <Form.Item
-                name="biography"
-                className={styles.fullWidth}
-                rules={[
-                  { required: true, message: "Please input your biography!" },
-                ]}
-              >
+              <Form.Item name="biography" rules={[{ required: true }]}>
                 <Input.TextArea placeholder="Professional Biography" rows={4} />
               </Form.Item>
 
-              <Form.Item
-                name="institutionId"
-                className={styles.fullWidth}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select your institution!",
-                  },
-                ]}
-              >
+              <Form.Item name="institutionId" rules={[{ required: true }]}>
                 <Select
                   placeholder="Select Institution"
                   showSearch
                   loading={isPending}
+                  optionLabelProp="label"
                   filterOption={(input, option) =>
-                    (option?.label as string)
-                      ?.toLowerCase()
+                    (option?.label as unknown as string)
+                      .toLowerCase()
                       .includes(input.toLowerCase())
                   }
                   options={institutions.map((inst) => ({
-                    value: inst.institutionId,
-                    label: inst.institutionName, // ✅ added label here
-                    inst,
-                  }))}
-                  optionRender={(option) => {
-                    const inst = option.data.inst;
-                    return (
+                    label: (
                       <div className={styles.institutionOption}>
+                        <span className={styles.institutionName}>
+                          {inst.description}
+                        </span>
                         <span className={styles.institutionAddress}>
                           {inst.address}
                         </span>
                       </div>
-                    );
-                  }}
-                  notFoundContent={
-                    !isPending && institutions.length === 0 ? (
-                      <div style={{ padding: "8px", color: "gray" }}>
-                        No institutions found
-                      </div>
-                    ) : null
-                  }
+                    ),
+                    value: inst.id,
+                  }))}
                 />
               </Form.Item>
             </>
@@ -503,6 +404,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           </Form.Item>
         </div>
       </Form>
+
       <Modal
         title="Admin Password Required"
         open={adminPasswordModalVisible}
@@ -510,17 +412,15 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           if (adminPasswordInput === ADMIN_PASSWORD) {
             setRole("provider");
             form.setFieldsValue({ role: "PROVIDER" });
-            setAdminPasswordModalVisible(false);
-            setAdminPasswordInput("");
           } else {
             message.error(
               "Incorrect admin password. Defaulting to patient account."
             );
             setRole("patient");
             form.setFieldsValue({ role: "PATIENT" });
-            setAdminPasswordModalVisible(false);
-            setAdminPasswordInput("");
           }
+          setAdminPasswordModalVisible(false);
+          setAdminPasswordInput("");
         }}
         onCancel={() => {
           setRole("patient");
