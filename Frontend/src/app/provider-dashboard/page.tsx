@@ -19,6 +19,7 @@ import {
   Appointment,
   Provider,
 } from "../../components/provider-dashboard/models";
+import UpdateAvailabilityForm from "@/components/provider-availability/ProviderAvailabilityModal";
 
 export default function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
@@ -215,6 +216,7 @@ export default function ProviderDashboard() {
         getPatientName={getPatientName}
         isNewPatient={isNewPatient}
       />
+      <UpdateAvailabilityForm providerId={currentProvider.id} />
     </div>
   );
 }
