@@ -140,7 +140,7 @@ const BookingComponent: React.FC = () => {
     try {
       setLoading(true);
       const providerDetails = await getCurrentProvider(doctor.userId);
-      console.log("doctor ", doctor);
+
       setProviderData(providerDetails);
     } catch (error) {
       console.error("Error fetching provider details:", error);
@@ -170,7 +170,7 @@ const BookingComponent: React.FC = () => {
       console.error("Missing required appointment data");
       return;
     }
-    console.log("curre", currentPatientId);
+
     setIsSubmitting(true);
     try {
       const appointmentData: IAppointments = {
@@ -195,8 +195,6 @@ const BookingComponent: React.FC = () => {
     providers?.result?.filter(
       (provider) => provider.speciality === selectedSpecialty
     ) || [];
-
-  console.log(institutions);
 
   if (loading) {
     return (
@@ -280,6 +278,7 @@ const BookingComponent: React.FC = () => {
                       <p>Specialty: {doc.speciality}</p>
                       <p>Phone: {doc.phoneNumber}</p>
                       <p>Experience: {doc.yearsOfExperience} years</p>
+                      <p>Experience: {doc.qualification} </p>
                     </Card>
                   </Col>
                 ))}
@@ -293,7 +292,7 @@ const BookingComponent: React.FC = () => {
               Book an Appointment with Dr. {selectedDoctor.fullName}
             </h2>
             <Card className="mb-4">
-              <p>Doctor: {selectedDoctor.fullName}</p>
+              <p>Doctor: Dr {selectedDoctor.fullName}</p>
               <p>Specialty: {selectedDoctor.speciality}</p>
             </Card>
 
@@ -375,9 +374,9 @@ const BookingComponent: React.FC = () => {
               scheduled for {selectedDate?.format("MMMM D, YYYY")} at{" "}
               {selectedTime}.
             </p>
-            <p>Please check your WhatsApp and SMS for confirmation details.</p>
+            <p>Please check your WhatsApp or SMS for confirmation details.</p>
             <Button type="primary" onClick={() => setCurrentStep(0)}>
-              Book Another Appointment
+              Back
             </Button>
           </div>
         )}
