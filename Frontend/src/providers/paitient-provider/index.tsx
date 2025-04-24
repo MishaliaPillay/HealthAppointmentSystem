@@ -40,7 +40,7 @@ export const PatientProvider = ({
     userId: number
   ): Promise<IPatient | null> => {
     dispatch(getCurrentPatientPending());
-    const endpoint = `/api/services/Patient/GetCurrentPatient?userId=${userId}`;
+    const endpoint = `/api/services/app/Patient/GetCurrentPatient?userId=${userId}`;
     return instance
       .get(endpoint)
       .then((response) => {
@@ -61,21 +61,21 @@ export const PatientProvider = ({
   };
 
   // Get Patient
-const getPatient = async (patientId: string): Promise<IPatient | null> => {
-  dispatch(getPatientPending());
-  const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
-  return instance
-    .get(endpoint)
-    .then((response) => {
-      dispatch(getPatientsSuccess(response.data));
-      return response.data;
-    })
-    .catch((error) => {
-      console.error(error);
-      dispatch(getPatientError());
-      return null;
-    });
-};
+  const getPatient = async (patientId: string): Promise<IPatient | null> => {
+    dispatch(getPatientPending());
+    const endpoint = `/api/services/app/Patient/Get?Id=${patientId}`;
+    return instance
+      .get(endpoint)
+      .then((response) => {
+        dispatch(getPatientsSuccess(response.data));
+        return response.data;
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(getPatientError());
+        return null;
+      });
+  };
   // Register the patient
   const registerPatient = async (Patient: IPatientRegisteration) => {
     dispatch(registerPatientPending());
@@ -105,7 +105,6 @@ const getPatient = async (patientId: string): Promise<IPatient | null> => {
         dispatch(getPatientsError());
       });
   };
-
 
   const updatePatient = async (
     patientId: string,

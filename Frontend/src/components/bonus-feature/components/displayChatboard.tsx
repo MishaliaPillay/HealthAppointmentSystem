@@ -2,6 +2,56 @@
 import { useState } from "react";
 import { analyzeHealthImage } from "../face-analyzers/geminiService";
 import { useStyles } from "../../../app/patient-dashboard/styles/aiStyle/style";
+import jsPDF from "jspdf";
+import { Button, Typography, Divider, Space, Card } from "antd"; // Added more Ant Design components
+import {
+  DownloadOutlined,
+  SoundOutlined,
+  FileImageOutlined,
+} from "@ant-design/icons"; // Added FileImageOutlined
+
+const { Title, Text, Paragraph } = Typography;
+
+// Reading the text using SpeechSynthesis API
+const speakText = (text) => {
+  const utterance = new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.speak(utterance);
+};
+
+// Generating and downloading the analysis report as PDF
+const downloadReportAsPDF = (content, fileName = "AI_Health_Report.pdf") => {
+  const doc = new jsPDF();
+
+  // Add title
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Health Image Analysis Report", 10, 20);
+
+  // Add date
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, 10, 30);
+
+  // Add divider
+  doc.line(10, 35, 200, 35);
+
+  // Add content
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  const lines = doc.splitTextToSize(content, 180);
+  doc.text(lines, 10, 45);
+
+  // Add disclaimer
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "italic");
+  doc.text(
+    "Disclaimer: This analysis is for informational purposes only and does not constitute medical advice.",
+    10,
+    doc.internal.pageSize.height - 20
+  );
+
+  doc.save(fileName);
+};
 
 export default function HealthAnalysisComponent() {
   const { styles } = useStyles();
@@ -31,7 +81,6 @@ export default function HealthAnalysisComponent() {
     setError("");
     setAnalysis("");
 
-    // Validating the image
     if (!selectedImage) {
       setError("Please select an image first");
       return;
@@ -52,14 +101,19 @@ export default function HealthAnalysisComponent() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Health Image Analysis</h1>
+      <Title level={2} className={styles.title}>
+        Health Image Analysis
+      </Title>
+      <Divider />
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div>
-          <label className={styles.label}>Upload an image:</label>
+          <Title level={4} className={styles.label}>
+            Upload an image
+          </Title>
           <div className={styles.fileInputContainer}>
             <label className={styles.fileInputLabel}>
-              Choose File
+              <FileImageOutlined /> Choose File
               <input
                 type="file"
                 accept="image/*"
@@ -67,25 +121,35 @@ export default function HealthAnalysisComponent() {
                 className={styles.fileInput}
               />
             </label>
-            <span className={styles.fileInputText}>
+            <Text className={styles.fileInputText}>
               {selectedImage ? selectedImage.name : "No file selected"}
-            </span>
+            </Text>
           </div>
         </div>
 
         {imagePreview && (
           <div>
-            <p className={styles.previewContainer}>Preview:</p>
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className={styles.previewImage}
-            />
+            <Title level={5} className={styles.previewContainer}>
+              Preview
+            </Title>
+            <Card
+              bordered={false}
+              style={{ marginBottom: "20px" }}
+              bodyStyle={{ display: "flex", justifyContent: "center" }}
+            >
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className={styles.previewImage}
+              />
+            </Card>
           </div>
         )}
 
         <div>
-          <label className={styles.label}>Additional context:</label>
+          <Title level={4} className={styles.label}>
+            Additional context
+          </Title>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -94,28 +158,64 @@ export default function HealthAnalysisComponent() {
           />
         </div>
 
-        <button
-          type="submit"
+        <Button
+          type="primary"
+          htmlType="submit"
           disabled={isLoading || !selectedImage}
           className={styles.button}
+          size="large"
         >
           {isLoading ? "Analyzing..." : "Analyze Image"}
-        </button>
+        </Button>
       </form>
 
-      {error && <p className={styles.errorMessage}>{error}</p>}
+      {error && (
+        <div className={styles.errorContainer}>
+          <Text type="danger" className={styles.errorMessage}>
+            {error}
+          </Text>
+        </div>
+      )}
 
       {analysis && (
-        <div className={styles.analysisContainer}>
-          <h2 className={styles.analysisTitle}>Analysis Result</h2>
-          <p className={styles.analysisText}>{analysis}</p>
+        <Card className={styles.analysisContainer}>
+          <Title level={3} className={styles.analysisTitle}>
+            Analysis Results
+          </Title>
+          <Divider />
+
+          <div className={styles.analysisContent}>
+            <Paragraph className={styles.analysisText}>{analysis}</Paragraph>
+          </div>
+
+          <Divider />
+
           <div className={styles.disclaimer}>
-            <p className={styles.disclaimerText}>
+            <Text type="secondary" italic className={styles.disclaimerText}>
               <strong>Disclaimer:</strong> This analysis is for informational
               purposes only and does not constitute medical advice.
-            </p>
+            </Text>
           </div>
-        </div>
+
+          <Space className={styles.buttonContainer} size="middle">
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={() => downloadReportAsPDF(analysis)}
+              className={styles.button}
+            >
+              Download PDF
+            </Button>
+            <Button
+              type="default"
+              icon={<SoundOutlined />}
+              onClick={() => speakText(analysis)}
+              className={styles.button}
+            >
+              Text to Speech
+            </Button>
+          </Space>
+        </Card>
       )}
     </div>
   );

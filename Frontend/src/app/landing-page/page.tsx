@@ -168,13 +168,6 @@ export default function Home() {
                   "Select a convenient time slot from available options.",
                 icon: <Calendar className="step-icon" />,
               },
-              {
-                step: "4",
-                title: "Get Care",
-                description:
-                  "Visit your provider in-person or via video consultation.",
-                icon: <Heart className="step-icon" />,
-              },
             ].map((step, index) => (
               <div key={index} className="step-card">
                 <div className="step-number">{step.step}</div>
@@ -193,12 +186,12 @@ export default function Home() {
           <div className="stats-grid">
             {[
               {
-                stat: "10,000+",
+                stat: "10+",
                 label: "Appointments Booked",
                 icon: <Calendar className="stat-icon" />,
               },
               {
-                stat: "500+",
+                stat: "5+",
                 label: "Healthcare Providers",
                 icon: <User className="stat-icon" />,
               },
@@ -209,7 +202,7 @@ export default function Home() {
               },
               {
                 stat: "24/7",
-                label: "Customer Support",
+                label: "Live Service",
                 icon: <MessageSquare className="stat-icon" />,
               },
             ].map((item, index) => (
@@ -303,11 +296,7 @@ export default function Home() {
                     Book Appointment
                   </Link>
                 </li>
-                <li>
-                  <Link href="#" className="footer-link">
-                    Video Consultations
-                  </Link>
-                </li>
+
                 <li>
                   <Link href="#" className="footer-link">
                     Health Records

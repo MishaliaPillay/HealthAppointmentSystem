@@ -2,7 +2,7 @@
 
 import React, { useContext, useReducer } from "react";
 import { getAxiosInstace } from "@/utils/axiosInstance";
-import { IAppointment, IAppointmentApiResponse } from "./models";
+import { IAppointment, IAppointmentApiResponse, IAppointments } from "./models";
 import { AppointmentReducer } from "./reducers";
 import {
   AppointmentActionContext,
@@ -35,7 +35,7 @@ export const AppointmentProvider = ({
   const [state, dispatch] = useReducer(AppointmentReducer, INITIAL_STATE);
   const instance = getAxiosInstace();
 
-  const bookAppointment = async (appointment: IAppointment) => {
+  const bookAppointment = async (appointment: IAppointments) => {
     dispatch(bookAppointmentPending());
     const endpoint = "/api/services/app/Appointment/Create";
     return instance
@@ -51,7 +51,7 @@ export const AppointmentProvider = ({
     IAppointmentApiResponse[] | null
   > => {
     dispatch(getAllAppointmentPending());
-    const endpoint = "/api/services/app/Appointment/GetAll";
+    const endpoint ="api/services/app/Appointment/GetAppointments";
     return instance
       .get(endpoint)
       .then((response) => {
@@ -102,7 +102,7 @@ export const AppointmentProvider = ({
 
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+    const endpoint = `api/services/app/Appointment/Delete?Id=${id}`;
     return instance
       .delete(endpoint)
       .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))

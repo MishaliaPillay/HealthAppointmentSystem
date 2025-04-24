@@ -65,7 +65,7 @@ export const ProviderProvider = ({
   // Register Provider
   const registerProvider = async (provider: IProviderRegisteration) => {
     dispatch(registerProviderPending());
-    const endpoint = `/api/services/Provider/Create`;
+    const endpoint = `/api/services/app/Provider/Create`;
     return instance
       .post(endpoint, provider)
       .then((response) => {
@@ -83,7 +83,7 @@ export const ProviderProvider = ({
   const getProviders = async (): Promise<IProvider[]> => {
     dispatch(getProvidersPending());
     return instance
-      .get("/api/services/Provider/GetAll")
+      .get("/api/services/app/Provider/GetAll")
       .then((response) => {
         dispatch(getProvidersSuccess(response.data.result));
         return response.data.result;
@@ -99,7 +99,7 @@ export const ProviderProvider = ({
   const getProvider = async (providerId: string): Promise<IProvider | null> => {
     dispatch(getProviderPending());
     return instance
-      .get(`/api/services/Provider/Get?Id=${providerId}`)
+      .get(`/api/services/app/Provider/Get?Id=${providerId}`)
       .then((response) => {
         dispatch(getProviderSuccess(response.data.result));
         return response.data.result; // Ensure it returns provider data
@@ -116,7 +116,7 @@ export const ProviderProvider = ({
     providerData: UpdateProvider
   ) => {
     dispatch(updateProviderPending());
-    const endpoint = `/api/services/Provider/UpdateProvider`;
+    const endpoint = `/api/services/app/Provider/UpdateProvider`;
     const payload = { ...providerData, id: providerId };
 
     return instance
@@ -134,7 +134,7 @@ export const ProviderProvider = ({
   // Delete Provider
   const deleteProviderById = async (providerId: string) => {
     dispatch(deleteProviderPending());
-    const endpoint = `/api/services/Provider/Delete?ProviderId=${providerId}`;
+    const endpoint = `/api/services/app/Provider/Delete?ProviderId=${providerId}`;
     return instance
       .delete(endpoint)
       .then((response) => {
