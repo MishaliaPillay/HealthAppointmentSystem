@@ -27,6 +27,7 @@ import {
   IAppointment,
   IAppointmentApiResponse,
 } from "@/providers/appointment-provider/models";
+import { allFaces } from "face-api.js";
 
 const { Text } = Typography;
 
@@ -72,6 +73,8 @@ export default function PatientAppointmentsPage() {
 
   const loadAppointments = async () => {
     const allAppointments = await getAppointments();
+    console.log("these are all appointments", allAppointments);
+    
     const patientAppointments = (allAppointments ?? []).filter(
       (a) =>
         a.patient?.id === currentPatient?.id ||
