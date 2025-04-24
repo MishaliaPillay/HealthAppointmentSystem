@@ -242,7 +242,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Institutions with {selectedSpecialty} Specialists
             </h2>
-            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+            <Button onClick={handleBack} className={styles.backButton}>
+              {" "}
+              <ArrowLeftOutlined />
               Back
             </Button>
             {loadingInstitutions ? (
@@ -284,7 +286,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Doctors at Selected Institution
             </h2>
-            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+            <Button onClick={handleBack} className={styles.backButton}>
+              {" "}
+              <ArrowLeftOutlined />
               Back
             </Button>
             {loadingProviders ? (
@@ -336,7 +340,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Book an Appointment with Dr. {selectedDoctor.fullName}
             </h2>
-            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+            <Button onClick={handleBack} className={styles.backButton}>
+              {" "}
+              <ArrowLeftOutlined />
               Back
             </Button>
             <Card className={styles.appointmentSummaryCard}>
@@ -364,10 +370,14 @@ const BookingComponent: React.FC = () => {
                 <div className={styles.datePickerWrapper}>
                   <DatePicker
                     className={styles.datePicker}
+                    value={selectedDate}
+                    onChange={(date) => {
+                      setSelectedDate(date); // set state
+                      appointmentForm.setFieldsValue({ appointmentDate: date }); // set form value
+                    }}
                     disabledDate={(current) =>
                       current && current < dayjs().startOf("day")
                     }
-                    onChange={handleDateChange}
                   />
                 </div>
               </Form.Item>
