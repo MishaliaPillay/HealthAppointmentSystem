@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, Spin } from "antd";
 import {
   DashboardOutlined,
   ScheduleOutlined,
@@ -31,7 +31,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState(null);
-
   const { getCurrentUser } = useUserActions();
   const { currentUser } = useUserState();
 
@@ -45,18 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     setRole(userRole);
   }, []);
 
-  // useEffect(() => {
-  //   if (!currentUser) {
-  //     const token = sessionStorage.getItem("jwt");
-  //     if (token) {
-  //       getCurrentUser(token).catch((err) => {
-  //         console.error("Error fetching current user: ", err);
-  //       });
-  //     }
-  //   }
-  // }, [currentUser, getCurrentUser]);
  useEffect(() => {
-   // This function should only run once when component mounts
    const fetchUser = async () => {
      setLoading(true);
      try {
@@ -73,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
    };
 
    fetchUser();
-   // Empty dependency array means this effect runs once on mount
+
  }, []);
 
   const signOutUser = () => {
@@ -125,8 +113,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       }
     );
   }
-
-  // Move "Back" and "Logout" to the end
   menuItems.push(
     {
       key: "back",
@@ -155,6 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   };
 
   return (
+    <Spin  spinning={loading}>
     <Sider
       trigger={null}
       collapsible
@@ -183,7 +170,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         }}
       >
         <Avatar style={{ backgroundColor: "#87CEFA" }}>
-          {currentUser ? currentUser.name?.[0] : "U"}
+          {user ? currentUser.name?.[0] : "U"}
         </Avatar>
         {!collapsed && (
           <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
@@ -196,7 +183,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         items={menuItems}
       />
     </Sider>
-  );
+      </Spin>
+      );
 };
 
 export default Sidebar;
