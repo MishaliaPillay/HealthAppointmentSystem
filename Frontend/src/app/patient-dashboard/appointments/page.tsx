@@ -80,7 +80,7 @@ export default function PatientAppointmentsPage() {
 
     const enrichedAppointments = patientAppointments.map((a) => ({
       ...a,
-      providerName: a.provider?.user?.name ?? "Unknown",
+      providerName: a.provider?.user?.id ?? "Unknown",
     }));
 
     setAppointments(enrichedAppointments);
