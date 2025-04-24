@@ -156,11 +156,6 @@ const BookingComponent: React.FC = () => {
     }
   };
 
-  const handleDateChange = (date: dayjs.Dayjs | null) => {
-    setSelectedDate(date);
-    setSelectedTime(null);
-  };
-
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
     appointmentForm.setFieldsValue({ appointmentTime: time });
