@@ -51,13 +51,14 @@ namespace healthap.Services.AppointmentServices
             //    throw new ApplicationException("The selected time slot is not available.");
             //}
 
-            //string message = $"Good day, your appointment is successfully submitted for the date {input.AppointmentDate} and the time {input.AppointmentTime}.";
+            string message = $"Good day, your appointment is successfully submitted for the date {input.AppointmentDate} and the time {input.AppointmentTime}.";
             //// Format the cell number
-            //var ts = "0825185584";
-            //var cell = "+27" + ts.Substring(1);
+           var ts = "0825185584";
+           var cell = "+27" + ts.Substring(1);
+            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
 
             //// Send SMS , a  static  on the service method
-            //Services.NotificaServices.SmsService.SendMessage(cell, message);
+            Services.NotificaServices.SmsService.SendMessage(cell, message);
             var createdAppointment = await base.CreateAsync(input);
 
             return createdAppointment;
