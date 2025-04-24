@@ -473,7 +473,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                     return (
                       <div className={styles.institutionOption}>
                         <span className={styles.institutionAddress}>
-                          {inst.address} • {inst.city}, {inst.state}
+                          {inst.address}
                         </span>
                       </div>
                     );
