@@ -464,7 +464,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                       .includes(input.toLowerCase())
                   }
                   options={institutions.map((inst) => ({
-                    label: inst.description,
+                 
                     value: inst.id,
                     inst,
                   }))}
@@ -472,9 +472,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                     const inst = option.data.inst;
                     return (
                       <div className={styles.institutionOption}>
-                        <span className={styles.institutionName}>
-                          {inst.description}
-                        </span>
+                      
                         <span className={styles.institutionAddress}>
                           {inst.address} • {inst.city}, {inst.state}
                         </span>
