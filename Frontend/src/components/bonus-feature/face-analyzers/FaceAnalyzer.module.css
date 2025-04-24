@@ -14,7 +14,7 @@
 }
 
 .title {
-  color: #1e40af;
+  color: #0a6d6f;
   font-size: 1.25rem;
   font-weight: 500;
   margin: 0 0 0.25rem 0;
@@ -102,7 +102,7 @@
 }
 
 .buttonStart:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: #00a28d;
 }
 
 .buttonStop {
@@ -250,7 +250,7 @@
 }
 
 .resultCardTitle {
-  color: #1e40af;
+  color: #1eafa8;
   font-weight: 500;
   font-size: 1rem;
   margin: 0 0 0.75rem 0;
@@ -269,7 +269,7 @@
 }
 
 .emotionText {
-  color: #2563eb;
+  color: #006776;
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
@@ -285,7 +285,7 @@
 
 .progressBar {
   height: 100%;
-  background-color: #2563eb;
+  background-color: #007352;
   border-radius: 0.25rem;
   transition: width 0.3s ease;
 }
@@ -369,7 +369,7 @@
   background-color: white;
   padding: 0.75rem;
   border-radius: 0.25rem;
-  border-left: 4px solid #2563eb;
+  border-left: 4px solid #0bb2a4;
 }
 
 .tipLabel {
@@ -434,7 +434,7 @@
 
 .instructionsFooter {
   margin-top: 1rem;
-  color: #4338ca;
+  color: #004f50;
   font-size: 0.75rem;
   font-style: italic;
 }
