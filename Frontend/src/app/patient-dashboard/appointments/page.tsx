@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-import styles from "./styles";
+import { styles } from "./styles"; // Import the styles object
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
 import {
   usePatientActions,
@@ -35,7 +35,7 @@ export default function PatientAppointmentsPage() {
     []
   );
   const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Show loading until appointments are loaded
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<IAppointment | null>(null);
@@ -71,6 +71,7 @@ export default function PatientAppointmentsPage() {
   };
 
   const loadAppointments = async () => {
+    setLoading(true); // Show loading spinner
     const allAppointments = await getAppointments();
     const patientAppointments = (allAppointments ?? []).filter(
       (a) =>
@@ -80,10 +81,11 @@ export default function PatientAppointmentsPage() {
 
     const enrichedAppointments = patientAppointments.map((a) => ({
       ...a,
-      providerName: a.provider?.user?.id ?? "Unknown",
+      providerName: a.provider?.user?.name ?? "Unknown",
     }));
 
     setAppointments(enrichedAppointments);
+    setLoading(false); // Stop loading spinner once appointments are available
   };
 
   const handleDeleteAppointment = (id: string) => {
@@ -93,10 +95,12 @@ export default function PatientAppointmentsPage() {
 
   const confirmDelete = async () => {
     if (appointmentToDelete) {
+      setLoading(true); // Trigger loading state for deletion
       await deleteAppointment(appointmentToDelete);
       setAppointments((prev) =>
         prev.filter((a) => a.id !== appointmentToDelete)
       );
+      setLoading(false); // Stop loading after delete operation
     }
     setIsModalVisible(false);
   };
@@ -171,6 +175,13 @@ export default function PatientAppointmentsPage() {
     {
       title: "Time",
       dataIndex: "appointmentTime",
+      render: (time: string) => {
+        const date = new Date(`1970-01-01T${time}Z`); // Assuming time is in HH:MM format
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }); // Formats time as "HH:MM" without seconds
+      },
     },
     {
       title: "Provider",
@@ -196,12 +207,15 @@ export default function PatientAppointmentsPage() {
 
         return isEditable ? (
           <Space>
-            <Button type="link" onClick={() => handleEditAppointment(record)}>
+            <Button
+              className="edit-button"
+              onClick={() => handleEditAppointment(record)}
+            >
               Edit
             </Button>
             <Button
+              className="delete-button"
               danger
-              type="link"
               onClick={() => handleDeleteAppointment(record.id)}
             >
               Delete
@@ -218,24 +232,31 @@ export default function PatientAppointmentsPage() {
 
   return (
     <div style={styles.container}>
-      <div style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Search by purpose"
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300 }}
-        />
+      <div style={styles.header}>
+        <div style={styles.searchFilter}>
+          <Input
+            placeholder="Search by purpose"
+            prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={styles.searchInput}
+          />
+        </div>
       </div>
 
-      <Spin spinning={loading} tip="Loading appointments...">
+      {loading ? (
+        <Spin spinning={loading} tip="Loading your appointments...">
+          <div />
+        </Spin>
+      ) : (
         <Table
           rowKey="id"
           columns={columns}
           dataSource={filteredData}
           locale={{ emptyText: "No appointments found." }}
+          style={styles.responsiveTable}
         />
-      </Spin>
+      )}
 
       <Modal
         title="Are you sure you want to delete this appointment?"
@@ -263,7 +284,7 @@ export default function PatientAppointmentsPage() {
         okText="Update"
         confirmLoading={confirmLoading}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <Input
             placeholder="Purpose"
             value={selectedAppointment?.purpose}

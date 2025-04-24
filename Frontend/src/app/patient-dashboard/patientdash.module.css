@@ -1,0 +1,134 @@
+
+.stepCard {
+    background-color: #fefefe;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.stepCard:hover {
+    transform: translateY(-3px);
+}
+
+.iconWrapper {
+    margin-bottom: 8px;
+}
+.dashboardContainer {
+    padding: 24px;
+    background-color: #e6f4ff;
+    /* soft blue background */
+    min-height: 100vh;
+}
+
+.welcomeCard {
+    background: linear-gradient(135deg, #d6eaff, #cce3ff);
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 30px 20px;
+    box-shadow: 0 2px 10px rgba(0, 110, 255, 0.1);
+}
+
+.dashboardTitle {
+    color: #003a8c;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.username {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1890ff;
+}
+
+.subtitle {
+    color: #555;
+    font-size: 16px;
+    margin-top: 12px;
+}
+
+.rowSpacing {
+    margin-top: 32px;
+}
+
+.tipCard {
+    background-color: #f0f5ff;
+    border-left: 5px solid #69c0ff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.loadingScreen {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+.dashboardContainer {
+    background-color: var(--navy-50);
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.dashboardTitle {
+    color: var(--navy-900);
+    font-weight: 700;
+}
+
+.userName {
+    color: var(--teal-600);
+}
+
+.subtitle {
+    color: var(--gray-600);
+    font-size: 1rem;
+}
+
+.statCard,
+.tipCard,
+.infoCard,
+.stepCard {
+    background-color: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.statLabel {
+    color: var(--gray-600);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.tealText {
+    color: var(--teal-600);
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--navy-900);
+    margin-bottom: 1rem;
+}
+
+.stepItem {
+    text-align: center;
+    background-color: var(--white);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stepIcon {
+    font-size: 2rem;
+    color: var(--teal-600);
+    margin-bottom: 0.5rem;
+}
+
+.bulbIcon {
+    color: var(--teal-600);
+    margin-right: 0.5rem;
+}

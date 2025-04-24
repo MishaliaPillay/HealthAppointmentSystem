@@ -75,14 +75,10 @@ export default function ProviderDashboard() {
       // Extract appointments from the nested structure
       const allAppointments: Appointment[] = response.data.result.items || [];
 
-      console.log(allAppointments);
-
       // Filter appointments for current provider
       const providerAppointments = allAppointments.filter(
         (appointment) => appointment.providerId === currentProvider.id
       );
-
-      console.log(providerAppointments);
 
       setAppointments(providerAppointments);
 
@@ -98,7 +94,6 @@ export default function ProviderDashboard() {
         return appDate >= today && appDate < tomorrow;
       });
       setTodayAppointments(todayApps);
-      console.log("Today’s Appointments:", todayApps);
 
       // Calculate this week's appointments (fix: zero out time)
       const currentDate = new Date();
@@ -116,9 +111,6 @@ export default function ProviderDashboard() {
         return appDate >= startOfWeek && appDate <= endOfWeek;
       });
       setWeekAppointments(weekApps);
-      console.log("This Week’s Appointments:", weekApps);
-
-      console.log(weekApps);
 
       // Get unique patient IDs from today's appointments
       const patientIds: string[] = [
@@ -139,7 +131,6 @@ export default function ProviderDashboard() {
             }
           );
           newPatientDetails[patientId] = response.data.result;
-          console.log(newPatientDetails);
         } catch (err) {
           console.error(
             `Error fetching details for patient ${patientId}:`,

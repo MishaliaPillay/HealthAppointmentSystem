@@ -1,10 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Input, Button, Select, Space, Spin, Modal, Table, Tag } from "antd";
+import {
+  Input,
+  Button,
+  Select,
+  Space,
+  Spin,
+  Modal,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-import styles from "./styles";
+import { styles } from "./styles";
 import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
 import {
   useProviderActions,
@@ -17,18 +28,19 @@ import {
   IAppointmentApiResponse,
 } from "@/providers/appointment-provider/models";
 
+const { Text } = Typography;
+
 export default function ProviderAppointmentsPage() {
   const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
     []
   );
   const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<IAppointment | null>(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  // States for delete confirmation modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(
     null
@@ -59,6 +71,7 @@ export default function ProviderAppointmentsPage() {
   };
 
   const loadAppointments = async () => {
+    setLoading(true);
     const allAppointments = await getAppointments();
     const providerAppointments = (allAppointments ?? []).filter(
       (a) =>
@@ -72,9 +85,9 @@ export default function ProviderAppointmentsPage() {
     }));
 
     setAppointments(enrichedAppointments);
+    setLoading(false);
   };
 
-  // Handle the delete action by setting the appointment to delete and opening the modal
   const handleDeleteAppointment = (id: string) => {
     setAppointmentToDelete(id);
     setIsModalVisible(true);
@@ -82,10 +95,12 @@ export default function ProviderAppointmentsPage() {
 
   const confirmDelete = async () => {
     if (appointmentToDelete) {
+      setLoading(true);
       await deleteAppointment(appointmentToDelete);
       setAppointments((prev) =>
         prev.filter((a) => a.id !== appointmentToDelete)
       );
+      setLoading(false);
     }
     setIsModalVisible(false);
   };
@@ -160,6 +175,13 @@ export default function ProviderAppointmentsPage() {
     {
       title: "Time",
       dataIndex: "appointmentTime",
+      render: (time: string) => {
+        const date = new Date(`1970-01-01T${time}Z`);
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
     },
     {
       title: "Patient",
@@ -178,50 +200,67 @@ export default function ProviderAppointmentsPage() {
     },
     {
       title: "Actions",
-      render: (_, record: IAppointmentApiResponse) => (
-        <Space>
-          <Button type="link" onClick={() => handleEditAppointment(record)}>
-            Edit
-          </Button>
-          <Button
-            danger
-            type="link"
-            onClick={() => handleDeleteAppointment(record.id)} // Trigger delete
-          >
-            Delete
-          </Button>
-        </Space>
-      ),
+      render: (_, record: IAppointmentApiResponse) => {
+        const isEditable =
+          record.appointmentStatus === AppointmentStatusReflist.Pending ||
+          record.appointmentStatus === AppointmentStatusReflist.Confirmed;
+
+        return isEditable ? (
+          <Space>
+            <Button
+              className="edit-button"
+              onClick={() => handleEditAppointment(record)}
+            >
+              Edit
+            </Button>
+            <Button
+              className="delete-button"
+              danger
+              onClick={() => handleDeleteAppointment(record.id)}
+            >
+              Delete
+            </Button>
+          </Space>
+        ) : (
+          <Tooltip title="Only Pending or Confirmed appointments can be edited.">
+            <Text type="secondary">Not Editable</Text>
+          </Tooltip>
+        );
+      },
     },
   ];
 
   return (
     <div style={styles.container}>
-      <div style={{ marginBottom: 16 }}>
+      <div style={styles.header}>
         <Input
           placeholder="Search by purpose"
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300 }}
+          style={styles.searchInput}
         />
       </div>
 
-      <Spin spinning={loading} tip="Loading appointments...">
+      {loading ? (
+        <Spin spinning={loading} tip="Loading appointments...">
+          <div />
+        </Spin>
+      ) : (
         <Table
           rowKey="id"
           columns={columns}
           dataSource={filteredData}
           locale={{ emptyText: "No appointments found." }}
+          style={styles.responsiveTable}
         />
-      </Spin>
+      )}
 
-      {/* Modal for confirmation of deletion */}
       <Modal
         title="Are you sure you want to delete this appointment?"
-        visible={isModalVisible}
-        onOk={confirmDelete} // Confirm delete action
-        onCancel={cancelDelete} // Cancel and close the modal
+        open={isModalVisible}
+        onOk={confirmDelete}
+        onCancel={cancelDelete}
         okText="Delete"
         cancelText="Cancel"
       >
@@ -243,7 +282,7 @@ export default function ProviderAppointmentsPage() {
         okText="Update"
         confirmLoading={confirmLoading}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <Input
             placeholder="Purpose"
             value={selectedAppointment?.purpose}

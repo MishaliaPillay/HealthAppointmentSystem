@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, Spin } from "antd";
 import {
   DashboardOutlined,
   ScheduleOutlined,
@@ -26,10 +26,11 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-
+  const [user, setUser] = useState(null);
   const { getCurrentUser } = useUserActions();
   const { currentUser } = useUserState();
 
@@ -44,15 +45,23 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   }, []);
 
   useEffect(() => {
-    if (!currentUser) {
-      const token = sessionStorage.getItem("jwt");
-      if (token) {
-        getCurrentUser(token).catch((err) => {
-          console.error("Error fetching current user: ", err);
-        });
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const token = sessionStorage.getItem("jwt");
+        if (token) {
+          const userData = await getCurrentUser(token);
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [currentUser, getCurrentUser]);
+    };
+
+    fetchUser();
+  }, []);
 
   const signOutUser = () => {
     sessionStorage.removeItem("jwt");
@@ -99,12 +108,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       {
         key: "/patient-dashboard/health-analyze",
         icon: <FundOutlined />,
-        label: <Link href="/patient-dashboard/health-analyze">Health Analyze</Link>,
+        label: (
+          <Link href="/patient-dashboard/health-analyze">Health Analyze</Link>
+        ),
       }
     );
   }
-
-  // Move "Back" and "Logout" to the end
   menuItems.push(
     {
       key: "back",
@@ -133,47 +142,49 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   };
 
   return (
-    <Sider
-      trigger={null}
-      collapsible
-      collapsed={collapsed}
-      onCollapse={setCollapsed}
-      breakpoint="lg"
-      collapsedWidth={80}
-      style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        zIndex: 100,
-      }}
-      width={200}
-    >
-      <div
+    <Spin spinning={loading}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        breakpoint="lg"
+        collapsedWidth={80}
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          margin: "16px 0",
-          color: "white",
+          overflow: "auto",
+          height: "100vh",
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 100,
         }}
+        width={200}
       >
-        <Avatar style={{ backgroundColor: "#87CEFA" }}>
-          {currentUser ? currentUser.name?.[0] : "U"}
-        </Avatar>
-        {!collapsed && (
-          <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
-        )}
-      </div>
-      <Menu
-        theme="dark"
-        mode="inline"
-        selectedKeys={[getSelectedKey()]}
-        items={menuItems}
-      />
-    </Sider>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "16px 0",
+            color: "white",
+          }}
+        >
+          <Avatar style={{ backgroundColor: "#87CEFA" }}>
+            {user ? currentUser.name?.[0] : "U"}
+          </Avatar>
+          {!collapsed && (
+            <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
+          )}
+        </div>
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={[getSelectedKey()]}
+          items={menuItems}
+        />
+      </Sider>
+    </Spin>
   );
 };
 

@@ -51,7 +51,7 @@ export const AppointmentProvider = ({
     IAppointmentApiResponse[] | null
   > => {
     dispatch(getAllAppointmentPending());
-    const endpoint = "/api/services/app/Appointment/GetAll";
+    const endpoint ="api/services/app/Appointment/GetAppointments";
     return instance
       .get(endpoint)
       .then((response) => {
@@ -102,7 +102,7 @@ export const AppointmentProvider = ({
 
   const deleteAppointment = async (id: string) => {
     dispatch(deleteAppointmentPending());
-    const endpoint = `/api/services/app/Appointment/Delete/${id}`;
+    const endpoint = `api/services/app/Appointment/Delete?Id=${id}`;
     return instance
       .delete(endpoint)
       .then((response) => dispatch(deleteAppointmenttSuccess(response.data)))

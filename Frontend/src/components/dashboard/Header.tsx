@@ -12,10 +12,7 @@ import { useRouter } from "next/navigation";
 import { getRole } from "@/utils/decoder";
 import { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
-import NotificationPopup, { Notification } from "../notification/page";
-
 const { Header: AntHeader } = Layout;
-
 interface HeaderProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
@@ -56,18 +53,6 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
       ),
     },
   ];
-
-  const notifications: Notification[] = [
-    {
-      id: "1",
-      title: "Appointment Reminder",
-      message: "Your appointment is scheduled for tomorrow",
-      time: "2 hours ago",
-      read: false,
-      severity: "info",
-    },
-  ];
-
   return (
     <AntHeader
       style={{
@@ -85,7 +70,6 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
       />
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <NotificationPopup notifications={notifications} />
         <Dropdown menu={{ items }} placement="bottomRight">
           <Space style={{ cursor: "pointer", color: "white" }}>
             <UserOutlined />
