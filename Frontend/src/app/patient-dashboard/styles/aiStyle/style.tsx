@@ -194,6 +194,22 @@ export const useStyles = createStyles({
       width: 100%;
     }
   `,
+  // Added the missing errorContainer style
+  errorContainer: css`
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    
+    @media (max-width: 768px) {
+      margin-top: 0.75rem;
+    }
+    
+    @media (max-width: 480px) {
+      margin-top: 0.5rem;
+    }
+  `,
   errorMessage: css`
     margin-top: 1rem;
     color: #dc2626;
@@ -248,6 +264,18 @@ export const useStyles = createStyles({
       margin-bottom: 0.375rem;
     }
   `,
+
+  analysisContent: css`
+  margin: 1rem 0;
+  
+  @media (max-width: 768px) {
+    margin: 0.75rem 0;
+  }
+  
+  @media (max-width: 480px) {
+    margin: 0.5rem 0;
+  }
+`,
   analysisText: css`
     color: #374151;
     white-space: pre-line;
@@ -288,6 +316,16 @@ export const useStyles = createStyles({
     
     @media (max-width: 480px) {
       font-size: 0.75rem;
+    }
+  `,
+  buttonContainer: css`
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 1rem;
+    
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 0.5rem;
     }
   `,
 });
