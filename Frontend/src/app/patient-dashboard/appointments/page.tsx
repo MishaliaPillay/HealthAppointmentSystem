@@ -81,7 +81,7 @@ export default function PatientAppointmentsPage() {
 
     const enrichedAppointments = patientAppointments.map((a) => ({
       ...a,
-      providerName: a.provider?.user?.id ?? "Unknown",
+      providerName: a.provider?.user?.name ?? "Unknown",
     }));
 
     setAppointments(enrichedAppointments);
@@ -178,8 +178,8 @@ export default function PatientAppointmentsPage() {
       render: (time: string) => {
         const date = new Date(`1970-01-01T${time}Z`); // Assuming time is in HH:MM format
         return date.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
+          hour: "2-digit",
+          minute: "2-digit",
         }); // Formats time as "HH:MM" without seconds
       },
     },
