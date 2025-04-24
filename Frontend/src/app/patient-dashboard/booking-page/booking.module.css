@@ -35,7 +35,7 @@
   font-weight: 500;
   transition: all 0.3s ease;
   background-color: #e6f7ff;
-  color: #0057b8;
+  color: #119f9d;
   border: 1px solid #91caff;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .institutionCard:hover {
-  border-color: #1890ff;
+  border-color: #34cea2;
   transform: translateY(-4px);
   box-shadow: 0 6px 12px rgba(24, 144, 255, 0.15);
 }
@@ -152,8 +152,10 @@
   height: 400px;
 }
 
-.backButton {
+.backButton { color: rgb(6, 112, 112);
   margin-top: 24px;
+  margin-bottom: 20px;
+background-color: #00eaff00;  border: none;
 }
 
 /* Responsive adjustments */

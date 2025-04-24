@@ -34,6 +34,7 @@ import {
   ExperimentOutlined,
   TrophyOutlined,
   EnvironmentOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 
 import dayjs from "dayjs";
@@ -64,6 +65,7 @@ const specialties = [
   "Radiology",
   "Urology",
 ];
+
 export interface IProviderCardDisplay {
   id: number;
   userId: number;
@@ -107,27 +109,21 @@ const BookingComponent: React.FC = () => {
   const { getCurrentUser } = useUserActions();
   const { getCurrentPatient } = usePatientActions();
 
-  // Fetch current user/patient information on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const token = sessionStorage.getItem("jwt");
         if (!token) return;
-
         const user = await getCurrentUser(token);
         const patient = await getCurrentPatient(user.id);
-
-        if (patient?.id) {
-          setCurrentPatientId(patient.id);
-        }
+        if (patient?.id) setCurrentPatientId(patient.id);
       } catch (err) {
         console.error("Error fetching current user or patient:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -148,7 +144,6 @@ const BookingComponent: React.FC = () => {
     try {
       setLoading(true);
       const providerDetails = await getCurrentProvider(doctor.userId);
-
       setProviderData(providerDetails);
     } catch (error) {
       console.error("Error fetching provider details:", error);
@@ -168,9 +163,7 @@ const BookingComponent: React.FC = () => {
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
-    appointmentForm.setFieldsValue({
-      appointmentTime: time,
-    });
+    appointmentForm.setFieldsValue({ appointmentTime: time });
   };
 
   const handleAppointmentSubmit = async (values: IAppointment) => {
@@ -178,7 +171,6 @@ const BookingComponent: React.FC = () => {
       console.error("Missing required appointment data");
       return;
     }
-
     setIsSubmitting(true);
     try {
       const appointmentData: IAppointments = {
@@ -189,7 +181,6 @@ const BookingComponent: React.FC = () => {
         providerId: providerData.id,
         patientId: currentPatientId,
       };
-
       await bookAppointment(appointmentData);
       setCurrentStep(4);
     } catch (error) {
@@ -197,6 +188,10 @@ const BookingComponent: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
   const filteredProviders =
@@ -247,6 +242,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Institutions with {selectedSpecialty} Specialists
             </h2>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
             {loadingInstitutions ? (
               <div className={styles.spinnerContainer}>
                 <Spin />
@@ -286,6 +284,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Doctors at Selected Institution
             </h2>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
             {loadingProviders ? (
               <div className={styles.spinnerContainer}>
                 <Spin />
@@ -335,6 +336,9 @@ const BookingComponent: React.FC = () => {
             <h2 className={styles.sectionTitle}>
               Book an Appointment with Dr. {selectedDoctor.fullName}
             </h2>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
             <Card className={styles.appointmentSummaryCard}>
               <p className={styles.doctorInfo}>
                 <UserOutlined className={styles.doctorInfoIcon} />
