@@ -28,6 +28,14 @@ import {
 import { useProviderActions } from "../../../providers/providerMedicPrac-provider";
 import { usePatientActions } from "../../../providers/paitient-provider";
 import { ProviderAvailabilityProvider } from "../../../providers/provider-availibility";
+import {
+  UserOutlined,
+  PhoneOutlined,
+  ExperimentOutlined,
+  TrophyOutlined,
+  EnvironmentOutlined,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 
 import dayjs from "dayjs";
 import { useUserActions } from "@/providers/users-provider";
@@ -36,6 +44,7 @@ import {
   IProvider,
 } from "@/providers/institutionLocation-provider/context";
 import ProviderTimeSlots from "../provider-times/provider-timeslot";
+import styles from "./booking.module.css";
 
 const { Step } = Steps;
 
@@ -56,6 +65,7 @@ const specialties = [
   "Radiology",
   "Urology",
 ];
+
 export interface IProviderCardDisplay {
   id: number;
   userId: number;
@@ -99,27 +109,21 @@ const BookingComponent: React.FC = () => {
   const { getCurrentUser } = useUserActions();
   const { getCurrentPatient } = usePatientActions();
 
-  // Fetch current user/patient information on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const token = sessionStorage.getItem("jwt");
         if (!token) return;
-
         const user = await getCurrentUser(token);
         const patient = await getCurrentPatient(user.id);
-
-        if (patient?.id) {
-          setCurrentPatientId(patient.id);
-        }
+        if (patient?.id) setCurrentPatientId(patient.id);
       } catch (err) {
         console.error("Error fetching current user or patient:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -159,9 +163,7 @@ const BookingComponent: React.FC = () => {
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
-    appointmentForm.setFieldsValue({
-      appointmentTime: time,
-    });
+    appointmentForm.setFieldsValue({ appointmentTime: time });
   };
 
   const handleAppointmentSubmit = async (values: IAppointment) => {
@@ -179,7 +181,6 @@ const BookingComponent: React.FC = () => {
         providerId: providerData.id,
         patientId: currentPatientId,
       };
-
       await bookAppointment(appointmentData);
       setCurrentStep(4);
     } catch (error) {
@@ -189,68 +190,87 @@ const BookingComponent: React.FC = () => {
     }
   };
 
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
+  };
+
   const filteredProviders =
     providers?.result?.filter(
       (provider) => provider.speciality === selectedSpecialty
     ) || [];
 
-
   if (loading) {
     return (
-      <Spin
-        size="large"
-        className="flex justify-center items-center h-screen"
-      />
+      <div className={styles.spinnerContainer}>
+        <Spin size="large" />
+      </div>
     );
   }
 
   return (
     <ProviderAvailabilityProvider>
-      <div className="p-6">
-        <Steps current={currentStep} className="mb-6">
-          <Step title="Specialty" />
-          <Step title="Institution" />
-          <Step title="Doctor" />
-          <Step title="Appointment Details" />
-          <Step title="Confirmation" />
-        </Steps>
+      <div className={styles.bookingContainer}>
+        <div className={styles.stepContainer}>
+          <Steps current={currentStep}>
+            <Step title="Specialty" />
+            <Step title="Institution" />
+            <Step title="Doctor" />
+            <Step title="Appointment Details" />
+            <Step title="Confirmation" />
+          </Steps>
+        </div>
+
         {currentStep === 0 && (
           <div>
-            <h2 className="mb-4">Select a Specialty</h2>
-            <Row gutter={[16, 16]}>
+            <h2 className={styles.sectionTitle}>Select a Specialty</h2>
+            <div className={styles.specialtyButtonsContainer}>
               {specialties.map((spec) => (
-                <Col key={spec}>
-                  <Button
-                    type="primary"
-                    onClick={() => handleSpecialtySelect(spec)}
-                  >
-                    {spec}
-                  </Button>
-                </Col>
+                <Button
+                  key={spec}
+                  className={styles.specialtyButton}
+                  onClick={() => handleSpecialtySelect(spec)}
+                >
+                  {spec}
+                </Button>
               ))}
-            </Row>
+            </div>
           </div>
         )}
 
         {currentStep === 1 && (
           <div>
-            <h2 className="mb-4">
+            <h2 className={styles.sectionTitle}>
               Institutions with {selectedSpecialty} Specialists
             </h2>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
             {loadingInstitutions ? (
-              <Spin />
+              <div className={styles.spinnerContainer}>
+                <Spin />
+              </div>
             ) : (
               <Row gutter={[16, 16]}>
                 {(institutions || []).map((inst: IInstitution) => (
                   <Col key={inst.institutionId} xs={24} sm={12} md={8}>
                     <Card
                       hoverable
-                      title={inst.institutionName}
+                      className={styles.institutionCard}
+                      title={
+                        <span className={styles.institutionCardTitle}>
+                          {inst.institutionName}
+                        </span>
+                      }
                       onClick={() =>
                         handleInstitutionSelect(inst.institutionId)
                       }
                     >
-                      <p>Address: {inst.address}</p>
+                      <p className={styles.doctorInfo}>
+                        <EnvironmentOutlined
+                          className={styles.doctorInfoIcon}
+                        />
+                        {inst.address}
+                      </p>
                     </Card>
                   </Col>
                 ))}
@@ -258,25 +278,51 @@ const BookingComponent: React.FC = () => {
             )}
           </div>
         )}
+
         {currentStep === 2 && (
           <div key={selectedInstitutionId}>
-            <h2 className="mb-4">Doctors at Selected Institution</h2>
+            <h2 className={styles.sectionTitle}>
+              Doctors at Selected Institution
+            </h2>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
             {loadingProviders ? (
-              <Spin />
+              <div className={styles.spinnerContainer}>
+                <Spin />
+              </div>
             ) : (
               <Row gutter={[16, 16]}>
                 {(filteredProviders as IProviderCardDisplay[]).map((doc) => (
                   <Col key={doc.userId} xs={24} sm={12} md={8}>
                     <Card
                       hoverable
-                      title={doc.fullName}
+                      className={styles.doctorCard}
+                      title={
+                        <span className={styles.doctorCardTitle}>
+                          {doc.fullName}
+                        </span>
+                      }
                       onClick={() =>
                         handleProviderSelect(doc as unknown as IProvider)
-                      } // cast only where needed
+                      }
                     >
-                      <p>Specialty: {doc.speciality}</p>
-                      <p>Phone: {doc.phoneNumber}</p>
-                      <p>Experience: {doc.yearsOfExperience} years</p>
+                      <p className={styles.doctorInfo}>
+                        <UserOutlined className={styles.doctorInfoIcon} />
+                        Specialty: {doc.speciality}
+                      </p>
+                      <p className={styles.doctorInfo}>
+                        <PhoneOutlined className={styles.doctorInfoIcon} />
+                        Phone: {doc.phoneNumber}
+                      </p>
+                      <p className={styles.doctorInfo}>
+                        <ExperimentOutlined className={styles.doctorInfoIcon} />
+                        Experience: {doc.yearsOfExperience} years
+                      </p>
+                      <p className={styles.doctorInfo}>
+                        <TrophyOutlined className={styles.doctorInfoIcon} />
+                        Qualification: {doc.qualification}
+                      </p>
                     </Card>
                   </Col>
                 ))}
@@ -284,33 +330,46 @@ const BookingComponent: React.FC = () => {
             )}
           </div>
         )}
+
         {currentStep === 3 && selectedDoctor && (
           <div>
-            <h2 className="mb-4">
+            <h2 className={styles.sectionTitle}>
               Book an Appointment with Dr. {selectedDoctor.fullName}
             </h2>
-            <Card className="mb-4">
-              <p>Doctor: {selectedDoctor.fullName}</p>
-              <p>Specialty: {selectedDoctor.speciality}</p>
+            <Button onClick={handleBack} className={styles.backButton}> <ArrowLeftOutlined/>
+              Back
+            </Button>
+            <Card className={styles.appointmentSummaryCard}>
+              <p className={styles.doctorInfo}>
+                <UserOutlined className={styles.doctorInfoIcon} />
+                Doctor: Dr. {selectedDoctor.fullName}
+              </p>
+              <p className={styles.doctorInfo}>
+                <ExperimentOutlined className={styles.doctorInfoIcon} />
+                Specialty: {selectedDoctor.speciality}
+              </p>
             </Card>
 
             <Form
               form={appointmentForm}
               layout="vertical"
               onFinish={handleAppointmentSubmit}
+              className={styles.appointmentForm}
             >
               <Form.Item
                 name="appointmentDate"
                 label="Appointment Date"
                 rules={[{ required: true, message: "Please select a date" }]}
               >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={(current) =>
-                    current && current < dayjs().startOf("day")
-                  }
-                  onChange={handleDateChange}
-                />
+                <div className={styles.datePickerWrapper}>
+                  <DatePicker
+                    className={styles.datePicker}
+                    disabledDate={(current) =>
+                      current && current < dayjs().startOf("day")
+                    }
+                    onChange={handleDateChange}
+                  />
+                </div>
               </Form.Item>
 
               {selectedDate && providerData && (
@@ -321,11 +380,13 @@ const BookingComponent: React.FC = () => {
                     { required: true, message: "Please select a time slot" },
                   ]}
                 >
-                  <ProviderTimeSlots
-                    providerId={providerData.id}
-                    selectedDate={selectedDate.toDate()}
-                    onSelectTimeSlot={handleTimeSelect}
-                  />
+                  <div className={styles.timeSlotsContainer}>
+                    <ProviderTimeSlots
+                      providerId={providerData.id}
+                      selectedDate={selectedDate.toDate()}
+                      onSelectTimeSlot={handleTimeSelect}
+                    />
+                  </div>
                 </Form.Item>
               )}
 
@@ -334,7 +395,7 @@ const BookingComponent: React.FC = () => {
                   message="Please select a date to view available time slots"
                   type="info"
                   showIcon
-                  className="mb-4"
+                  className={styles.alert}
                 />
               )}
 
@@ -357,6 +418,7 @@ const BookingComponent: React.FC = () => {
                   htmlType="submit"
                   loading={isSubmitting}
                   disabled={!selectedDate || !selectedTime}
+                  className={styles.submitButton}
                 >
                   Book Appointment
                 </Button>
@@ -364,16 +426,25 @@ const BookingComponent: React.FC = () => {
             </Form>
           </div>
         )}
+
         {currentStep === 4 && (
-          <div className="text-center">
-            <h2 className="mb-4">Appointment Successfully Booked!</h2>
-            <p>
+          <div className={styles.confirmationContainer}>
+            <h2 className={styles.confirmationTitle}>
+              Appointment Successfully Booked!
+            </h2>
+            <p className={styles.confirmationDetails}>
               Your appointment with Dr. {selectedDoctor?.fullName} has been
               scheduled for {selectedDate?.format("MMMM D, YYYY")} at{" "}
               {selectedTime}.
             </p>
-            <p>Please check your WhatsApp and SMS for confirmation details.</p>
-            <Button type="primary" onClick={() => setCurrentStep(0)}>
+            <p className={styles.confirmationDetails}>
+              Please check your WhatsApp or SMS for confirmation details.
+            </p>
+            <Button
+              type="primary"
+              onClick={() => setCurrentStep(0)}
+              className={styles.backButton}
+            >
               Book Another Appointment
             </Button>
           </div>

@@ -1,0 +1,178 @@
+/* BookingComponent.module.css */
+.bookingContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stepContainer {
+  margin-bottom: 48px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #1a365d;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 12px;
+}
+
+.specialtyButtonsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.specialtyButton {
+  min-width: 150px;
+  height: 48px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: #e6f7ff;
+  color: #119f9d;
+  border: 1px solid #91caff;
+}
+
+.specialtyButton:hover {
+  background-color: #bae7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.institutionCard {
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid #e6e6e6;
+}
+
+.institutionCard:hover {
+  border-color: #34cea2;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(24, 144, 255, 0.15);
+}
+
+.institutionCardTitle {
+  color: #0057b8;
+  font-weight: 600;
+}
+
+.doctorCard {
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid #e6e6e6;
+}
+
+.doctorCard:hover {
+  border-color: #52c41a;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(82, 196, 26, 0.15);
+}
+
+.doctorCardTitle {
+  color: #237804;
+  font-weight: 600;
+}
+
+.doctorInfo {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.doctorInfoIcon {
+  margin-right: 8px;
+  color: #8c8c8c;
+}
+
+.appointmentForm {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.appointmentSummaryCard {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  margin-bottom: 24px;
+}
+
+.datePickerWrapper {
+  width: 100%;
+}
+
+.datePicker {
+  width: 100%;
+  height: 40px;
+}
+
+.timeSlotsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.submitButton {
+  height: 44px;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+.confirmationContainer {
+  text-align: center;
+  padding: 32px;
+  background-color: #f6ffed;
+  border-radius: 8px;
+  border: 1px solid #b7eb8f;
+}
+
+.confirmationTitle {
+  color: #52c41a;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.confirmationDetails {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: #262626;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.backButton { color: rgb(6, 112, 112);
+  margin-top: 24px;
+  margin-bottom: 20px;
+background-color: #00eaff00;  border: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bookingContainer {
+    padding: 16px 12px;
+  }
+
+  .specialtyButtonsContainer {
+    justify-content: center;
+  }
+
+  .specialtyButton {
+    min-width: 120px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+}
