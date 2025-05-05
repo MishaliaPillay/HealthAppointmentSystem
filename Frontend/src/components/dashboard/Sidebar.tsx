@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
     if (!token) {
-      router.push("/login");
+      router.push("/");
       return;
     }
     const userRole = getRole(token);
@@ -142,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   };
 
   return (
-    <Spin spinning={loading}>
+
       <Sider
         trigger={null}
         collapsible
@@ -184,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           items={menuItems}
         />
       </Sider>
-    </Spin>
+
   );
 };
 
