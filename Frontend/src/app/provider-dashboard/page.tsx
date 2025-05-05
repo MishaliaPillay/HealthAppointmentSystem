@@ -2,7 +2,7 @@
 import { Row, Col, Spin } from "antd";
 import styles from "./providerdashdash.module.css";
 import { useEffect, useState, useCallback } from "react";
-
+import { useRef } from "react";
 import {
   useProviderState,
   useProviderActions,
@@ -29,7 +29,10 @@ export default function ProviderDashboard() {
   const [patientDetails, setPatientDetails] = useState<Record<string, Patient>>(
     {}
   );
-
+  const availabilityRef = useRef<HTMLDivElement | null>(null);
+    const scrollToAvailability = () => {
+      availabilityRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
   const { currentProvider, isPending, isError } = useProviderState();
   const { getCurrentProvider } = useProviderActions();
   const { getCurrentUser } = useUserActions();
@@ -169,7 +172,7 @@ export default function ProviderDashboard() {
   // Helper function to get patient full name
   const getPatientName = (patientId: string): string => {
     const patient = patientDetails[patientId];
-    if (!patient || !patient.user) return "Unknown Patient";
+    if (!patient || !patient.user) return "Patient Purpose:";
 
     return `${patient.user.name || ""} ${patient.user.surname || ""}`.trim();
   };
@@ -200,7 +203,7 @@ export default function ProviderDashboard() {
 
       <Row gutter={[24, 24]} className={styles.rowSpacing}>
         <Col xs={24} md={12}>
-          <QuickActions />
+          <QuickActions onManageAvailabilityClick={scrollToAvailability} />
         </Col>
         <Col xs={24} md={12}>
           <PracticeStats
@@ -216,7 +219,9 @@ export default function ProviderDashboard() {
         getPatientName={getPatientName}
         isNewPatient={isNewPatient}
       />
+      <div ref={availabilityRef}>
       <UpdateAvailabilityForm providerId={currentProvider.id} />
+      </div>
     </div>
   );
 }
