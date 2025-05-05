@@ -36,7 +36,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, setCollapsed }) => {
 
   const signOutUser = () => {
     sessionStorage.removeItem("jwt");
-    router.push("/");
+    window.location.reload();
+    router.push("/login");
   };
 
   const items: MenuProps["items"] = [
