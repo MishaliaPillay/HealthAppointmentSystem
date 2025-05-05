@@ -16,14 +16,15 @@ namespace healthap.Services.PersonServices.Mappings
             CreateMap<Authorization.Users.User, UserResponseDto>();
 
             // Patient mapping
-            CreateMap<Patient, PatientResponseDto>()
-                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
-                .ForMember(p => p.PreferredContactMedthod, m => m.MapFrom(e => e.PreferredContactMedthod != null ? e.PreferredContactMedthod.GetEnumDescription() : null));
-
             CreateMap<PatientRequestDto, Patient>()
             .ForMember(d => d.Id, opt => opt.Ignore())
             .ForMember(d => d.User, opt => opt.Ignore())
             .ForMember(d => d.UserId, opt => opt.Ignore());
+            CreateMap<Patient, PatientResponseDto>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
+                .ForMember(p => p.PreferredContactMedthod, m => m.MapFrom(e => e.PreferredContactMedthod != null ? e.PreferredContactMedthod.GetEnumDescription() : null));
+
+
             // Provider mapping
             CreateMap<Provider, ProviderResponseDto>()
                 .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
