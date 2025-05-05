@@ -138,6 +138,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
     };
 
     await signUp(formattedValues);
+    window.location.reload();
     setLoading(false);
   };
 

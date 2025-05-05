@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
     if (!token) {
-      router.push("/");
+      router.push("/login");
       return;
     }
     const userRole = getRole(token);
