@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -13,13 +13,17 @@ import {
   User,
   Video,
 } from "lucide-react";
-import { Button } from "antd";
+import { Button} from 'antd';
 import "./style.css";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
+  const onClickGetStrated = () => {
+    setLoading(true)
+    router.push("/login");
+  }
   return (
     <div className="page-container">
       {/* Header */}
@@ -57,7 +61,8 @@ export default function Home() {
                   type="primary"
                   size="large"
                   className="book-button"
-                  onClick={() => router.push("/login")}
+                  onClick={onClickGetStrated}
+                  loading={loading}
                 >
                   Get Started
                   <ArrowRight className="button-icon" />
