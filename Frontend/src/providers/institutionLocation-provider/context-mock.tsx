@@ -1,5 +1,5 @@
 "use client";
-import { createContext, ReactNode } from "react";
+import { createContext } from "react";
 
 // Location object (for Google Places etc.)
 export interface ILocation {
@@ -19,10 +19,11 @@ export interface ILocation {
 // Institution object based on your API structure
 
 export interface IInstitution {
-  description?: ReactNode;
-  id?: string;
   institutionId: number;
   institutionName: string;
+  description:string;
+  id:number;
+  
   address: string;
   providers: IProvider[];
 }

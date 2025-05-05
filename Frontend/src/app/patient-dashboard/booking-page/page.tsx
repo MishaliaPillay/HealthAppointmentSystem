@@ -408,12 +408,13 @@ const BookingComponent: React.FC = () => {
                 name="purpose"
                 label="Purpose of Appointment"
                 rules={[
-                  { required: true, message: "Please enter the purpose" },
+                  { required: true, message: "Please enter the purpose " },
                 ]}
               >
                 <Input.TextArea
                   rows={4}
-                  placeholder="Describe the reason for your appointment"
+                  placeholder="Describe the reason for your appointment (150 max)"
+                  maxLength={150}
                 />
               </Form.Item>
 

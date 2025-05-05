@@ -1,5 +1,6 @@
 
 # 🏥 Healthcare Appointment System
+A Healthcare Appointment System streamlines booking, managing, and tracking appointments by utilizing platforms like Google to populate and display hospitals and health institutions in real-time. It incorporates AI-powered tools for emotion detection via video and pre-assessment recommendations based on uploaded images or prompts, ensuring personalized and efficient care
 
 This is a full-stack **Healthcare Appointment Booking System** built with:
 
