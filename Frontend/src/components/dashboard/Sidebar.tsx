@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Menu, Avatar, Spin } from "antd";
+import { Layout, Menu, Avatar} from "antd";
 import {
   DashboardOutlined,
   ScheduleOutlined,
@@ -26,7 +26,6 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
-  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -46,7 +45,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
       try {
         const token = sessionStorage.getItem("jwt");
         if (token) {
@@ -56,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
-        setLoading(false);
+
       }
     };
 
