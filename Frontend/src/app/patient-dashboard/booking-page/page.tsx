@@ -98,7 +98,6 @@ const BookingComponent: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
   const { institutions, isPending: loadingInstitutions } = useLocationState();
   const { providers, isPending: loadingProviders } =
     useProvidersInstitionState();
