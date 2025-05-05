@@ -8,7 +8,6 @@ import {
   Select,
   DatePicker,
   RadioChangeEvent,
-  Spin,
   message,
   Modal,
 } from "antd";
@@ -143,7 +142,7 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
   };
 
   return (
-    <Spin spinning={loading} tip="Please hold on...">
+    <>
       <Form
         form={form}
         name="signup"
@@ -303,8 +302,8 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
                 ]}
               >
                 <Select placeholder="Preferred Contact Method">
-                  <Option value={1}>Email</Option>
-                  <Option value={2}>Phone</Option>
+                  <Option value={1}>SMS</Option>
+                  <Option value={2}>WhatsApp</Option>
                 </Select>
               </Form.Item>
 
@@ -437,6 +436,6 @@ export default function SignupForm({ onBeforeSubmit }: SignupFormProps) {
           onChange={(e) => setAdminPasswordInput(e.target.value)}
         />
       </Modal>
-    </Spin>
+    </>
   );
 }
