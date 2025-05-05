@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Menu, Avatar, Spin } from "antd";
+import { Layout, Menu, Avatar } from "antd";
 import {
   DashboardOutlined,
   ScheduleOutlined,
@@ -26,7 +26,6 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
-  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -46,7 +45,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
       try {
         const token = sessionStorage.getItem("jwt");
         if (token) {
@@ -56,7 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -65,7 +62,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   const signOutUser = () => {
     sessionStorage.removeItem("jwt");
-    router.push("/");
+    window.location.reload();
+    router.push("/login");
   };
 
   const menuItems: MenuProps["items"] = [
@@ -142,49 +140,47 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   };
 
   return (
-    <Spin spinning={loading}>
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        onCollapse={setCollapsed}
-        breakpoint="lg"
-        collapsedWidth={80}
+    <Sider
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      onCollapse={setCollapsed}
+      breakpoint="lg"
+      collapsedWidth={80}
+      style={{
+        overflow: "auto",
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 100,
+      }}
+      width={200}
+    >
+      <div
         style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "fixed",
-          left: 0,
-          top: 0,
-          bottom: 0,
-          zIndex: 100,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          margin: "16px 0",
+          color: "white",
         }}
-        width={200}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            margin: "16px 0",
-            color: "white",
-          }}
-        >
-          <Avatar style={{ backgroundColor: "#87CEFA" }}>
-            {user ? currentUser.name?.[0] : "U"}
-          </Avatar>
-          {!collapsed && (
-            <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
-          )}
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[getSelectedKey()]}
-          items={menuItems}
-        />
-      </Sider>
-    </Spin>
+        <Avatar style={{ backgroundColor: "#87CEFA" }}>
+          {user ? currentUser.name?.[0] : "U"}
+        </Avatar>
+        {!collapsed && (
+          <div style={{ margin: "12px 0" }}>{currentUser?.name}</div>
+        )}
+      </div>
+      <Menu
+        theme="dark"
+        mode="inline"
+        selectedKeys={[getSelectedKey()]}
+        items={menuItems}
+      />
+    </Sider>
   );
 };
 

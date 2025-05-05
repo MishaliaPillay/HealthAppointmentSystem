@@ -33,23 +33,38 @@ namespace healthap.Services.AppointmentServices
         }
         public override async Task<AppointmentDto> CreateAsync(AppointmentDto input)
         {
+            //var startTime = input.AppointmentTime;
+            //var endTime = startTime.Add(TimeSpan.FromHours(1));
+
+            //// Retrieve appointments first, then filter in memory
+            //var appointments = await Repository.GetAllListAsync(a =>
+            //    a.ProviderId == input.ProviderId &&
+            //    a.AppointmentDate.Date == input.AppointmentDate.Date);
+
+            //bool isAvailable = appointments.All(a =>
+            //    a.AppointmentTime < endTime &&
+            //    a.AppointmentTime > startTime - TimeSpan.FromHours(1)
+            //);
+            var appointmentDate = input.AppointmentDate.Date;
             var startTime = input.AppointmentTime;
             var endTime = startTime.Add(TimeSpan.FromHours(1));
 
-            // Retrieve appointments first, then filter in memory
+            // Get appointments for the same provider and date
             var appointments = await Repository.GetAllListAsync(a =>
                 a.ProviderId == input.ProviderId &&
-                a.AppointmentDate.Date == input.AppointmentDate.Date);
+                a.AppointmentDate.Date == appointmentDate);
 
-            bool isAvailable = appointments.All(a =>
-                a.AppointmentTime < endTime &&
-                a.AppointmentTime > startTime - TimeSpan.FromHours(1)
-            );
+            // Check if the requested time overlaps with any existing appointment
+            bool isAvailable = !appointments.Any(a =>
+            {
+                var existingStart = a.AppointmentTime;
+                var existingEnd = existingStart.Add(TimeSpan.FromHours(1));
 
-            //if (!isAvailable)
-            //{
-            //    throw new ApplicationException("The selected time slot is not available.");
-            //}
+                // Basic overlap check: [startTime, endTime) overlaps with [existingStart, existingEnd)
+                return startTime < existingEnd && endTime > existingStart;
+            });
+
+
 
             string message = $"Good day, your appointment is successfully submitted for the date {input.AppointmentDate} and the time {input.AppointmentTime}.";
             //// Format the cell number
@@ -101,7 +116,14 @@ namespace healthap.Services.AppointmentServices
 
             return appontResponseList;
         }
-     
 
+        public override Task<AppointmentDto> UpdateAsync(AppointmentDto input)
+
+        {
+            string message = $"Good day, your appointment status is {input.AppointmentStatus}";
+            Services.NotificaServices.WhatsAppService.SendWhatsapp.SendMessage(message);
+
+            return base.UpdateAsync(input);
+        }
     }
 }

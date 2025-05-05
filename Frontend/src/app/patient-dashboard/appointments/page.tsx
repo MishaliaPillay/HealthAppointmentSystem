@@ -176,11 +176,11 @@ export default function PatientAppointmentsPage() {
       title: "Time",
       dataIndex: "appointmentTime",
       render: (time: string) => {
-        const date = new Date(`1970-01-01T${time}Z`); // Assuming time is in HH:MM format
+        const date = new Date(`1970-01-01T${time}Z`); 
         return date.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        }); // Formats time as "HH:MM" without seconds
+        }); 
       },
     },
     {

@@ -28,11 +28,11 @@ const withAuth = (WrappedLayout: React.ComponentType<LayoutProps>) => {
         } else if (role === "patient") {
           router.push("/patient-dashboard");
         } else {
-          router.push("/");
+          router.push("/login");
         }
       } catch (error) {
         console.error("Error decoding token:", error);
-        router.push("/"); //if decoding fails
+        router.push("/login"); 
       }
     }, [router]);
     return <WrappedLayout {...props}>{children}</WrappedLayout>;
