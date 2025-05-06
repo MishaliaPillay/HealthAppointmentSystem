@@ -12,11 +12,12 @@ import {
   Tag,
   Tooltip,
   Typography,
+  DatePicker,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-import { styles } from "./styles"; // Import the styles object
-import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus";
+import { styles } from "./styles"; // Importing the custom styles
+import { AppointmentStatusReflist } from "@/enums/ReflistAppointStatus"; // Enum for appointment statuses
 import {
   usePatientActions,
   usePatientState,
@@ -26,25 +27,27 @@ import { useUserActions } from "@/providers/users-provider";
 import {
   IAppointment,
   IAppointmentApiResponse,
-} from "@/providers/appointment-provider/models";
+} from "@/providers/appointment-provider/models"; // Types for appointment data
 
 const { Text } = Typography;
 
 export default function PatientAppointmentsPage() {
   const [appointments, setAppointments] = useState<IAppointmentApiResponse[]>(
     []
-  );
-  const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(true); // Show loading until appointments are loaded
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  ); // State to store appointments
+  const [searchText, setSearchText] = useState(""); // Search filter for purpose
+  const [dateFilter, setDateFilter] = useState<string | null>(null); // Date filter
+  const [statusFilter, setStatusFilter] = useState<number | null>(null); // Status filter
+  const [loading, setLoading] = useState(true); // Loading state
+  const [editModalVisible, setEditModalVisible] = useState(false); // Modal visibility for editing
   const [selectedAppointment, setSelectedAppointment] =
-    useState<IAppointment | null>(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+    useState<IAppointment | null>(null); // Selected appointment for editing
+  const [confirmLoading, setConfirmLoading] = useState(false); // Confirm loading state
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility for deletion
   const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(
     null
-  );
+  ); // Appointment to be deleted
 
   const { isPending, isError, isSuccess, currentPatient } = usePatientState();
   const { getCurrentPatient } = usePatientActions();
@@ -52,6 +55,7 @@ export default function PatientAppointmentsPage() {
     useAppointmentActions();
   const { getCurrentUser } = useUserActions();
 
+  // Fetching patient on reload or initial load
   useEffect(() => {
     if (isPending) setLoading(true);
     if (isError || isSuccess) setLoading(false);
@@ -62,6 +66,7 @@ export default function PatientAppointmentsPage() {
     if (currentPatient) loadAppointments();
   }, [currentPatient]);
 
+  // Fetch patient data on reload
   const fetchPatientOnReload = async () => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
@@ -70,9 +75,11 @@ export default function PatientAppointmentsPage() {
     }
   };
 
+  // Fetch appointments based on the current patient
   const loadAppointments = async () => {
-    setLoading(true); // Show loading spinner
+    setLoading(true);
     const allAppointments = await getAppointments();
+
     const patientAppointments = (allAppointments ?? []).filter(
       (a) =>
         a.patient?.id === currentPatient?.id ||
@@ -85,9 +92,10 @@ export default function PatientAppointmentsPage() {
     }));
 
     setAppointments(enrichedAppointments);
-    setLoading(false); // Stop loading spinner once appointments are available
+    setLoading(false);
   };
 
+  // Deleting appointment
   const handleDeleteAppointment = (id: string) => {
     setAppointmentToDelete(id);
     setIsModalVisible(true);
@@ -95,12 +103,12 @@ export default function PatientAppointmentsPage() {
 
   const confirmDelete = async () => {
     if (appointmentToDelete) {
-      setLoading(true); // Trigger loading state for deletion
+      setLoading(true);
       await deleteAppointment(appointmentToDelete);
       setAppointments((prev) =>
         prev.filter((a) => a.id !== appointmentToDelete)
       );
-      setLoading(false); // Stop loading after delete operation
+      setLoading(false);
     }
     setIsModalVisible(false);
   };
@@ -109,6 +117,7 @@ export default function PatientAppointmentsPage() {
     setIsModalVisible(false);
   };
 
+  // Handling appointment editing
   const handleEditAppointment = (appointment: IAppointmentApiResponse) => {
     setSelectedAppointment({
       ...appointment,
@@ -118,12 +127,12 @@ export default function PatientAppointmentsPage() {
     setEditModalVisible(true);
   };
 
+  // Updating appointment
   const handleUpdateAppointment = async (values: Partial<IAppointment>) => {
     if (!selectedAppointment) return;
 
     const updated = { ...selectedAppointment, ...values };
     setConfirmLoading(true);
-
     await updateAppointment(selectedAppointment.id, updated);
     setConfirmLoading(false);
     setEditModalVisible(false);
@@ -135,10 +144,21 @@ export default function PatientAppointmentsPage() {
     );
   };
 
-  const filteredData = appointments.filter((a) =>
-    a.purpose?.toLowerCase().includes(searchText.toLowerCase())
-  );
+  // Filter appointments based on purpose, date, and status
+  const filteredData = appointments.filter((a) => {
+    const matchesSearch = a.purpose
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase());
+    const matchesDate = dateFilter
+      ? a.appointmentDate?.split("T")[0] === dateFilter
+      : true;
+    const matchesStatus =
+      statusFilter !== null ? a.appointmentStatus === statusFilter : true;
 
+    return matchesSearch && matchesDate && matchesStatus;
+  });
+
+  // Helper functions to handle status display
   const getStatusColor = (status: number) => {
     switch (status) {
       case AppointmentStatusReflist.Completed:
@@ -161,6 +181,7 @@ export default function PatientAppointmentsPage() {
     return entry?.[0] ?? "Unknown";
   };
 
+  // Table columns configuration
   const columns = [
     {
       title: "Date",
@@ -176,11 +197,11 @@ export default function PatientAppointmentsPage() {
       title: "Time",
       dataIndex: "appointmentTime",
       render: (time: string) => {
-        const date = new Date(`1970-01-01T${time}Z`); 
+        const date = new Date(`1970-01-01T${time}Z`);
         return date.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        }); 
+        });
       },
     },
     {
@@ -217,6 +238,7 @@ export default function PatientAppointmentsPage() {
               className="delete-button"
               danger
               onClick={() => handleDeleteAppointment(record.id)}
+              loading={loading}
             >
               Delete
             </Button>
@@ -233,7 +255,8 @@ export default function PatientAppointmentsPage() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <div style={styles.searchFilter}>
+        {/* Search, date, status filter section */}
+        <Space direction="horizontal" size="middle">
           <Input
             placeholder="Search by purpose"
             prefix={<SearchOutlined />}
@@ -241,7 +264,43 @@ export default function PatientAppointmentsPage() {
             onChange={(e) => setSearchText(e.target.value)}
             style={styles.searchInput}
           />
-        </div>
+
+          <DatePicker
+            onChange={(date) =>
+              setDateFilter(date ? date.format("YYYY-MM-DD") : null)
+            }
+            placeholder="Filter by date"
+            allowClear
+          />
+
+          <Select
+            placeholder="Filter by status"
+            style={{ width: 180 }}
+            allowClear
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value)}
+          >
+            {Object.keys(AppointmentStatusReflist)
+              .filter((k) => isNaN(Number(k)))
+              .map((key) => (
+                <Select.Option key={key} value={AppointmentStatusReflist[key]}>
+                  {key}
+                </Select.Option>
+              ))}
+          </Select>
+
+          {/* Clear filters button */}
+          {(dateFilter || statusFilter !== null) && (
+            <Button
+              onClick={() => {
+                setDateFilter(null);
+                setStatusFilter(null);
+              }}
+            >
+              Clear Filters
+            </Button>
+          )}
+        </Space>
       </div>
 
       {loading ? (
@@ -258,6 +317,7 @@ export default function PatientAppointmentsPage() {
         />
       )}
 
+      {/* Delete confirmation modal */}
       <Modal
         title="Are you sure you want to delete this appointment?"
         open={isModalVisible}
@@ -265,10 +325,12 @@ export default function PatientAppointmentsPage() {
         onCancel={cancelDelete}
         okText="Delete"
         cancelText="Cancel"
+        loading={loading}
       >
         <p>This action cannot be undone.</p>
       </Modal>
 
+      {/* Edit appointment modal */}
       <Modal
         title="Edit Appointment"
         open={editModalVisible}

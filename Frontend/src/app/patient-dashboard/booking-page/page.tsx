@@ -38,6 +38,8 @@ import {
 } from "@ant-design/icons";
 
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 import { useUserActions } from "@/providers/users-provider";
 import {
   IInstitution,
@@ -98,7 +100,6 @@ const BookingComponent: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
   const { institutions, isPending: loadingInstitutions } = useLocationState();
   const { providers, isPending: loadingProviders } =
     useProvidersInstitionState();
@@ -169,7 +170,7 @@ const BookingComponent: React.FC = () => {
     setIsSubmitting(true);
     try {
       const appointmentData: IAppointments = {
-        appointmentDate: selectedDate.toDate(),
+        appointmentDate: selectedDate.utc().toDate(),
         appointmentTime: selectedTime,
         purpose: values.purpose,
         appointmentStatus: 1,
