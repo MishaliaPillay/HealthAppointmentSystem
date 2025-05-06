@@ -12,6 +12,7 @@ import {
   Tag,
   Tooltip,
   Typography,
+  DatePicker,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -35,6 +36,8 @@ export default function ProviderAppointmentsPage() {
     []
   );
   const [searchText, setSearchText] = useState("");
+  const [dateFilter, setDateFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<number | null>(null); // Tracks selected status filter
   const [loading, setLoading] = useState(true);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
@@ -62,6 +65,7 @@ export default function ProviderAppointmentsPage() {
     if (currentProvider) loadAppointments();
   }, [currentProvider]);
 
+  // Fetch the current provider if not already available
   const fetchProviderOnReload = async () => {
     const token = sessionStorage.getItem("jwt");
     if (token) {
@@ -70,6 +74,7 @@ export default function ProviderAppointmentsPage() {
     }
   };
 
+  // Load all appointments for the current provider
   const loadAppointments = async () => {
     setLoading(true);
     const allAppointments = await getAppointments();
@@ -135,10 +140,27 @@ export default function ProviderAppointmentsPage() {
     );
   };
 
-  const filteredData = appointments.filter((a) =>
-    a.purpose?.toLowerCase().includes(searchText.toLowerCase())
-  );
+  // Apply filters to the appointments list
+  const filteredData = appointments.filter((a) => {
+    // Filter by purpose (search text)
+    const matchesSearch = a.purpose
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase());
 
+    // Filter by selected date
+    const matchesDate = dateFilter
+      ? a.appointmentDate?.split("T")[0] === dateFilter
+      : true;
+
+    // Filter by selected status
+    const matchesStatus =
+      statusFilter !== null ? a.appointmentStatus === statusFilter : true;
+
+    // Only include records that match all active filters
+    return matchesSearch && matchesDate && matchesStatus;
+  });
+
+  // Assign color based on status
   const getStatusColor = (status: number) => {
     switch (status) {
       case AppointmentStatusReflist.Completed:
@@ -154,6 +176,7 @@ export default function ProviderAppointmentsPage() {
     }
   };
 
+  // Return human-readable label from status enum
   const getStatusLabel = (status: number) => {
     const entry = Object.entries(AppointmentStatusReflist).find(
       ([, val]) => val === status
@@ -217,6 +240,7 @@ export default function ProviderAppointmentsPage() {
               className="delete-button"
               danger
               onClick={() => handleDeleteAppointment(record.id)}
+              loading={loading}
             >
               Delete
             </Button>
@@ -233,13 +257,54 @@ export default function ProviderAppointmentsPage() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <Input
-          placeholder="Search by purpose"
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          style={styles.searchInput}
-        />
+        <Space direction="horizontal" size="middle">
+          {/* Input field to filter by purpose text */}
+          <Input
+            placeholder="Search by purpose"
+            prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={styles.searchInput}
+          />
+
+          {/* Date picker to filter by selected appointment date */}
+          <DatePicker
+            onChange={(date) =>
+              setDateFilter(date ? date.format("YYYY-MM-DD") : null)
+            }
+            placeholder="Filter by date"
+            allowClear
+          />
+
+          {/* Select dropdown to filter by appointment status */}
+          <Select
+            placeholder="Filter by status"
+            style={{ width: 180 }}
+            allowClear
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value)}
+          >
+            {Object.keys(AppointmentStatusReflist)
+              .filter((k) => isNaN(Number(k)))
+              .map((key) => (
+                <Select.Option key={key} value={AppointmentStatusReflist[key]}>
+                  {key}
+                </Select.Option>
+              ))}
+          </Select>
+
+          {/* Button to clear all active filters */}
+          {(dateFilter || statusFilter !== null) && (
+            <Button
+              onClick={() => {
+                setDateFilter(null);
+                setStatusFilter(null);
+              }}
+            >
+              Clear Filters
+            </Button>
+          )}
+        </Space>
       </div>
 
       {loading ? (
@@ -256,6 +321,7 @@ export default function ProviderAppointmentsPage() {
         />
       )}
 
+      {/* Confirmation modal for deleting an appointment */}
       <Modal
         title="Are you sure you want to delete this appointment?"
         open={isModalVisible}
@@ -267,6 +333,7 @@ export default function ProviderAppointmentsPage() {
         <p>This action cannot be undone.</p>
       </Modal>
 
+      {/* Modal for editing an appointment */}
       <Modal
         title="Edit Appointment"
         open={editModalVisible}
