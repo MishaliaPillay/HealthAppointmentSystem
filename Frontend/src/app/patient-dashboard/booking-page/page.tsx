@@ -38,6 +38,8 @@ import {
 } from "@ant-design/icons";
 
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 import { useUserActions } from "@/providers/users-provider";
 import {
   IInstitution,
@@ -168,7 +170,7 @@ const BookingComponent: React.FC = () => {
     setIsSubmitting(true);
     try {
       const appointmentData: IAppointments = {
-        appointmentDate: selectedDate.toDate(),
+        appointmentDate: selectedDate.utc().toDate(),
         appointmentTime: selectedTime,
         purpose: values.purpose,
         appointmentStatus: 1,
