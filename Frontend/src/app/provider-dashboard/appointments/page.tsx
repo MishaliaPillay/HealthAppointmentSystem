@@ -240,6 +240,7 @@ export default function ProviderAppointmentsPage() {
               className="delete-button"
               danger
               onClick={() => handleDeleteAppointment(record.id)}
+              loading={loading}
             >
               Delete
             </Button>
